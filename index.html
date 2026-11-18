@@ -68,8 +68,8 @@ body.dark h1,body.dark h2,body.dark h3,body.dark b{color:#e6e8ec}
 .list-row .grow{flex:1;min-width:180px}
 .money{font-weight:800;font-size:13px;white-space:nowrap}
 .rowacts{display:flex;gap:2px;flex-wrap:wrap;align-items:center}
-.small-btn{border:1px solid #1e40af;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:13px;padding:9px 14px;border-radius:8px;text-decoration:none;opacity:1;box-shadow:0 1px 2px #0005}
-.small-btn.red{background:#b91c1c;border-color:#991b1b;color:#fff}
+.small-btn{border:1px solid #4b5563;background:linear-gradient(180deg,#4a5260 0%,#2b303a 55%,#1c2027 100%);color:#fff;font-weight:600;cursor:pointer;font-size:12px;padding:6px 11px;border-radius:7px;text-decoration:none;opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 5px rgba(0,0,0,.45);text-shadow:0 1px 1px rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.small-btn.red{background:linear-gradient(180deg,#5a2b2b 0%,#3a1a1a 55%,#241010 100%);border-color:#6b3434}
 .field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 label{font-size:11px;color:#65748a;font-weight:650}
@@ -4556,7 +4556,7 @@ async function installIdentityOld(){
     const t=document.querySelector('meta[name=apple-mobile-web-app-title]');if(t)t.content=name;document.title=name+' | Gestão da Oficina'
   }catch(e){}}
 /* assistente de configuração */
-function setupNote(){const r=shopSet.find(x=>x.id==='shop');if(!ws||!ws.id||ws.plan==='proprio'||!isRole('dono')||(r&&r.setupDone))return '';
+function setupNote(){const r=shopSet.find(x=>x.id==='shop');if(ws&&ws.brand&&ws.brand.banner&&ws.brand.logo)return '';if(!ws||!ws.id||ws.plan==='proprio'||!isRole('dono')||(r&&r.setupDone))return '';
   let hidden=false;try{hidden=localStorage.getItem('orbe_setup_hide')==='1'}catch(e){}
   const hasLogo=!!(r&&r.logo&&r.logo.d),hasBanner=!!(r&&r.banner);
   if(hidden||(hasLogo&&hasBanner))return '';
@@ -4762,10 +4762,15 @@ async function admPersonSave(){
 function personPanel(){
   const P=admPer;
   const bn=P.brand.banner,lg=P.brand.logo;
-  const prev='<div class="panel section-gap"><div class="panel-head"><h2>Como o app aparece para a oficina</h2></div>'+
-    '<div style="border-radius:14px;overflow:hidden;border:1px solid #2a2f38"><div style="height:120px;background:'+(bn?'url('+bn+') center/cover':'linear-gradient(135deg,#0b1f4d,#1d4ed8)')+'"></div>'+
-    '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#11141a">'+(lg?'<img src="'+lg+'" alt="" style="height:40px;max-width:170px;object-fit:contain">':'<b style="letter-spacing:2px">ORBE</b>')+'<span class="subtle" style="font-size:12px">'+esc(P.name)+' · plano '+esc(planLabel(P.plan))+'</span></div></div>'+
-    '<div class="fgrid" style="margin-top:12px"><button class="btn soft" onclick="admPersonImg(\'banner\')">🖼 Trocar banner</button><button class="btn soft" onclick="admPersonClear(\'banner\')">Remover banner</button><button class="btn soft" onclick="admPersonImg(\'logo\')">🏷 Trocar logo</button><button class="btn soft" onclick="admPersonClear(\'logo\')">Remover logo</button></div></div>';
+  const bannerBg=bn?'url('+bn+') center/cover':'linear-gradient(135deg,#0b1f4d,#1d4ed8)';
+  const prev='<div class="panel section-gap"><div class="panel-head"><h2>Loja de '+esc(P.name)+'</h2></div>'+
+    '<p class="subtle" style="font-size:12px">Toque no banner ou na logo para trocar a imagem. Ela aparece para a oficina na próxima vez que ela abrir o app.</p>'+
+    '<div onclick="admPersonImg(\'banner\')" style="position:relative;height:120px;border-radius:12px;overflow:hidden;cursor:pointer;background:'+bannerBg+';border:1px solid #2a2f38">'+(bn?'':'<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600">＋ Adicionar banner</span>')+'</div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px">'+
+      '<div onclick="admPersonImg(\'logo\')" style="cursor:pointer;min-width:120px;min-height:44px;display:flex;align-items:center;justify-content:center;border:1px dashed #4b5563;border-radius:10px;padding:6px">'+(lg?'<img src="'+lg+'" alt="" style="height:40px;max-width:170px;object-fit:contain">':'<span class="subtle" style="font-size:12px">＋ Adicionar logo</span>')+'</div>'+
+      '<span class="subtle" style="font-size:12px">'+esc(P.name)+' · plano '+esc(planLabel(P.plan))+'</span>'+
+    '</div>'+
+    '<div class="actions" style="margin-top:10px"><button class="small-btn" onclick="admPersonClear(\'banner\')">Remover banner</button><button class="small-btn" onclick="admPersonClear(\'logo\')">Remover logo</button></div></div>';
   const feats='<div class="panel section-gap"><div class="panel-head"><h2>Telas liberadas</h2></div><p class="subtle" style="font-size:12px">Toque para ligar ou desligar. Tela desligada some do menu da oficina. Tela fora do plano continua bloqueada pelo plano.</p>'+
     CLIENT_MENU.map(g=>'<div class="field"><label>'+g.g+'</label>'+g.items.map(i=>{const on=personFeatureOn(i[0]),inPlan=planHas(P.plan,i[0]);
       return '<div class="list-row" style="cursor:pointer" onclick="admPersonToggle(\''+i[0]+'\')"><div class="grow"><b>'+i[2]+'</b><small>'+(inPlan?'Incluída no plano':'Fora do plano '+planLabel(P.plan))+'</small></div><div class="money">'+(on?'✅ Ligada':'⬜ Desligada')+'</div></div>'}).join('')+'</div>').join('')+'</div>';
@@ -4849,7 +4854,7 @@ function admOficinasPanel(S){
       '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
-      '<div class="actions"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">🎨 Personalizar</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
+      '<div class="actions"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">👁 Visualizar loja</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
       (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
