@@ -2976,7 +2976,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
-  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'admin\')" aria-label="Avisos de atraso">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
+  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
   menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
 }
 function toggleMenu(open){renderMenu();try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
@@ -4799,6 +4799,17 @@ function orbBI(){
     '<div class="panel section-gap"><div class="panel-head"><h2>Anti-crise: sinais de alerta</h2></div><div class="list-stack">'+alertsHTML+'</div></div>'+
     '<div class="panel section-gap"><div class="panel-head"><h2>Cenários</h2></div>'+scenHTML+'</div>';
 }
+/* ---------- ORBE: notificações (sininho) ---------- */
+NEWPAGE.orbe_notif=function(){
+  if(admNeedData())return pageHead('Notificações','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
+  const S=admSummary(admList||[]);
+  const items=S.late.map(r=>{const dias=-r.i.left;
+    return '<div class="list-row"><div class="grow"><b>'+esc(r.t.name)+'</b><small>Atrasada '+dias+' dia(s) · mensalidade '+money(r.i.fee)+(dias>=5?' · passou de 5 dias, verifique o bloqueio':' · bloqueio automático em '+(5-dias)+' dia(s)')+'</small></div></div>';
+  });
+  const body=items.length?'<div class="list-stack">'+items.join('')+'</div>':'<div class="empty">Nenhuma notificação por enquanto.</div>';
+  return pageHead('Notificações','Oficinas com mensalidade em atraso.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
+    '<div class="panel section-gap">'+body+'</div>';
+};
 NEWPAGE.orbe_bi=function(){
   if(admNeedData())return pageHead('BI e planejamento','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
   return orbBI();
