@@ -30,6 +30,8 @@ body.dark input,body.dark select,body.dark textarea{background:#11141a!important
 body.dark .soft{background:#262b33!important;color:#e6e8ec!important}
 body.dark .cap,body.dark .subtle,body.dark .hint,body.dark small{color:#9aa4b2!important}
 body.dark h1,body.dark h2,body.dark h3,body.dark b{color:#e6e8ec}
+.banner[data-empty="1"]{aspect-ratio:auto;height:120px;background:linear-gradient(135deg,#0b1f4d,#1d4ed8)!important;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.banner[data-empty="1"]::after{content:"＋  Adicionar banner da sua oficina";color:#fff;font-weight:800;font-size:14px;letter-spacing:.3px;border:2px dashed #ffffff99;border-radius:14px;padding:10px 16px}
 .top{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#23272e,#101216);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 14px;box-shadow:0 3px 14px #0006;border-bottom:1px solid #4a515b}.top .tabs{order:-1}.top .brandbtn{margin-left:auto;text-align:right}.top .tabs button{background:linear-gradient(180deg,#f4f6f9,#b7bfc9 55%,#8a93a0);border:1px solid #e8ecf1;color:#101216;text-shadow:0 1px 0 #ffffff99;box-shadow:0 2px 8px #0009}.syncb{order:1}
 .brand{font-size:19px;font-weight:900;letter-spacing:1.3px;line-height:1.1}
 .brand small{display:block;font-size:8px;letter-spacing:3px;color:#a9bdd8;margin-top:3px}
@@ -4501,8 +4503,26 @@ async function loadWs(){const r=await sb('/rest/v1/rpc/my_workshop',{method:'POS
 function ownBrand(){return !ws||!ws.id||ws.plan==='proprio'}
 function brandName(){return 'ORBE'}
 function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banner'),bb=document.querySelector('.brandbtn'),r=shopSet.find(x=>x.id==='shop'),bd=r&&r.banner;
-  if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center'}else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display=''}}
-  if(bb&&bb.firstChild)bb.firstChild.nodeValue=brandName();installIdentity()}catch(e){}}
+  if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center';bn.removeAttribute('data-empty');bn.onclick=null}
+    else if(!own){bn.style.display='';bn.style.backgroundImage='';bn.setAttribute('data-empty','1');bn.onclick=function(){brandPick('banner')}}
+    else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display='';bn.removeAttribute('data-empty');bn.onclick=null}}
+  if(bb){const lg=r&&r.logo&&r.logo.d;
+    if(!own&&lg){bb.innerHTML='<img src="'+lg+'" alt="" style="height:34px;max-width:170px;object-fit:contain;display:block">'}
+    else if(bb.querySelector('img')){bb.innerHTML='ORBE<small>GESTÃO DE OFICINAS</small>'}
+    else if(bb.firstChild)bb.firstChild.nodeValue=brandName()}
+  installIdentity()}catch(e){}}
+async function brandPick(kind){
+  const i=document.createElement('input');i.type='file';i.accept='image/*';
+  i.onchange=async function(){const f=i.files&&i.files[0];if(!f)return;
+    try{
+      const r=shopSet.find(x=>x.id==='shop')||{id:'shop'};const o=Object.assign({},r,{id:'shop'});
+      if(kind==='logo')o.logo=await imgToJpeg(f,400,200,0.9,'#ffffff');else o.banner=(await imgToJpeg(f,1200,400,0.8,'#0c0d10')).d;
+      shopSet=shopSet.filter(x=>x.id!=='shop').concat([o]);persist();applyBrand();render();
+    }catch(e){alert('Não consegui ler essa imagem. Tente outra foto.')}
+  };
+  i.click();
+}
+function setupHide(){try{localStorage.setItem('orbe_setup_hide','1')}catch(e){}render()}
 function wsStatusTxt(){if(!ws)return '';if(ws.plan==='proprio')return 'Oficina própria do sistema';if(ws.status==='blocked')return 'Acesso suspenso';if(ws.status==='trial'){const d=Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5);return 'Teste grátis · '+(d>0?'faltam '+d+' dia'+(d>1?'s':''):'termina hoje')}return 'Plano '+(ws.plan||'ativo')+' · ativo'}
 function trialNote(){if(!ws||ws.status!=='trial'||!ws.trial_ends||!isRole('dono'))return '';return '<div class="notice" style="margin-bottom:12px">🎁 <b>'+esc(wsStatusTxt())+'</b><br><span style="font-size:12px">Seus dados ficam guardados. Para continuar depois do teste, fale com o responsável pelo sistema.</span></div>'}
 function wsPanel(){if(!ws||!ws.id)return '';return '<div class="panel section-gap"><h2>Minha oficina</h2><div class="acct"><b>'+esc(ws.name)+'</b><span class="subtle">'+esc(wsStatusTxt())+'</span></div>'+(ws.invite_code?'<p class="subtle" style="margin:12px 0 6px;font-size:12px">Código de convite: quem criar uma conta e digitar este código entra na sua oficina e aguarda a sua liberação em “Gerenciar perfis”.</p><div style="display:flex;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:2px">'+esc(ws.invite_code)+'</b><button class="small-btn" onclick="copyCode()">Copiar</button></div>':'')+'</div>'}
@@ -4533,7 +4553,14 @@ async function installIdentityOld(){
   }catch(e){}}
 /* assistente de configuração */
 function setupNote(){const r=shopSet.find(x=>x.id==='shop');if(!ws||!ws.id||ws.plan==='proprio'||!isRole('dono')||(r&&r.setupDone))return '';
-  return '<div class="notice" style="margin-bottom:12px">✨ <b>Deixe o sistema com a cara da sua oficina</b><br><span style="font-size:12px">Coloque o logo, o banner e os dados da oficina em 2 minutos.</span><br><button class="btn soft" style="margin-top:8px" onclick="wzOpen()">Configurar agora</button></div>'}
+  let hidden=false;try{hidden=localStorage.getItem('orbe_setup_hide')==='1'}catch(e){}
+  const hasLogo=!!(r&&r.logo&&r.logo.d),hasBanner=!!(r&&r.banner);
+  if(hidden||(hasLogo&&hasBanner))return '';
+  const tile=(kind,img,label)=>'<button type="button" onclick="brandPick(\''+kind+'\')" style="border:2px dashed #2563eb;background:#fff;color:#2563eb;border-radius:14px;padding:12px 8px;min-height:110px;cursor:pointer;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">'+
+    (img?'<img src="'+img+'" alt="" style="max-width:100%;max-height:70px;object-fit:contain">':'<span style="font-size:28px;line-height:1">＋</span>')+'<span style="font-size:12px">'+label+'</span></button>';
+  return '<div class="panel section-gap"><div class="panel-head"><h2>Personalize seu app</h2></div><p class="subtle" style="font-size:12px;margin:0 0 10px">Adicione a logo e o banner da sua oficina. Você pode trocar quando quiser.</p>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+tile('logo',r&&r.logo&&r.logo.d,'Logo da oficina')+tile('banner',r&&r.banner,'Banner da oficina')+'</div>'+
+    '<div class="actions" style="margin-top:10px"><button class="small-btn" onclick="setupHide()">Depois</button></div></div>'}
 function imgToJpeg(file,maxW,maxH,q,bg){return new Promise(function(res,rej){const fr=new FileReader();fr.onerror=function(){rej(new Error('leitura'))};
   fr.onload=function(){const im=new Image();im.onerror=function(){rej(new Error('imagem'))};
     im.onload=function(){let w=im.width,h=im.height;const k=Math.min(1,maxW/w,maxH/h);w=Math.max(1,Math.round(w*k));h=Math.max(1,Math.round(h*k));
