@@ -4477,7 +4477,7 @@ function showAuth(msg,ok,wait){
    '<div class="field"><label>E-mail</label><input id="aEmail" type="email" autocomplete="username" inputmode="email" value="'+esc(lastEmail)+'"></div>'+
    '<div class="field" style="margin-top:10px"><label>Senha</label><input id="aPass" type="password" autocomplete="'+(su?'new-password':'current-password')+'" ></div>'+
    '<button class="btn primary" id="aBtn" style="width:100%;margin-top:14px" type="button" onclick="authSubmit()">'+(su?'Criar conta':'Entrar')+'</button>'+
-   '<div class="msg'+(ok?' ok':'')+'" id="aMsg">'+esc(msg||'')+'</div>'+
+   '<div class="msg'+(ok?' ok':'')+'" id="aMsg">'+esc(msg||'')+'</div>'+(su?'':'<button type="button" class="lnk" onclick="forgotPass()">Esqueci a senha</button>')+
    '<button type="button" class="lnk" onclick="authMode=\''+(su?'login':'signup')+'\';showAuth()">'+(su?'Já tenho conta · Entrar':'Primeiro acesso? Criar conta')+'</button></div>';
 }
 async function authSubmit(){
@@ -5252,8 +5252,50 @@ async function createUser(){
     closeModal('userModal');alert('Perfil criado!\n\nNome: '+name+'\nE-mail: '+email+'\nSenha: '+pw+'\n\nPasse esses dados para a pessoa entrar no site.');loadUsers();
   }catch(e){err('Sem conexão. Tente de novo.');b.disabled=false;b.textContent='Criar perfil'}
 }
+/* ---------- Esqueci a senha (link enviado por e-mail) ---------- */
+async function forgotPass(){
+  const email=($('aEmail').value||'').trim().toLowerCase();lastEmail=email;
+  if(email.indexOf('@')<1){showAuth('Digite seu e-mail no campo acima e toque em "Esqueci a senha".');return}
+  try{await fetch(SB_URL+'/auth/v1/recover?redirect_to='+encodeURIComponent(location.origin+location.pathname),{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:email})})}catch(e){}
+  showAuth('Se este e-mail estiver cadastrado, você recebe um link para criar uma nova senha. Confira também a caixa de spam.',true);
+}
+function recoveryHashParams(){
+  const h=location.hash.replace(/^#/,'');if(!h)return null;
+  const p=new URLSearchParams(h);
+  if(p.get('type')!=='recovery'||!p.get('access_token'))return null;
+  return p;
+}
+async function handleRecoveryHash(){
+  const p=recoveryHashParams();if(!p)return false;
+  sessSave({access_token:p.get('access_token'),refresh_token:p.get('refresh_token')||'',user:{}});
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  showRecovery();return true;
+}
+function showRecovery(msg){
+  const a=$('auth');a.style.display='flex';
+  a.innerHTML='<div class="box" onkeydown="if(event.key===\'Enter\')recoverySave()"><div class="brandl">ORBE</div><h1>Nova senha</h1><p class="subtle">Digite a nova senha da sua conta.</p>'+
+   '<div class="field"><label>Nova senha</label><input id="rPass" type="password" autocomplete="new-password"></div>'+
+   '<div class="field" style="margin-top:10px"><label>Repita a senha</label><input id="rPass2" type="password" autocomplete="new-password"></div>'+
+   '<button class="btn primary" id="rBtn" style="width:100%;margin-top:14px" type="button" onclick="recoverySave()">Salvar nova senha</button>'+
+   '<div class="msg" id="rMsg">'+esc(msg||'')+'</div></div>';
+}
+async function recoverySave(){
+  const a=$('rPass').value,b=$('rPass2').value;
+  if(a.length<6){showRecovery('A senha precisa ter pelo menos 6 caracteres.');return}
+  if(a!==b){showRecovery('As senhas não são iguais.');return}
+  const btn=$('rBtn');btn.disabled=true;btn.textContent='Aguarde…';
+  try{
+    const r=await sb('/auth/v1/user',{method:'PUT',body:{password:a}});
+    if(!r.ok){showRecovery('Não consegui salvar a senha. Peça um novo link de "Esqueci a senha".');return}
+    const u=await sb('/auth/v1/user');
+    if(u.ok&&u.json)sessSave(Object.assign({},sess,{user:u.json}));
+    $('auth').innerHTML='';await bootAfterLogin();
+  }catch(e){showRecovery('Sem conexão. Tente de novo.')}
+}
+
 async function boot(){
   sessLoad();
+  if(await handleRecoveryHash())return;
   if(!sess){showAuth();return}
   await bootAfterLogin();
 }
