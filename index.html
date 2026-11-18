@@ -485,6 +485,8 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Plano</label><select id="admPlan" onchange="admPlanChange()"></select></div>
     <div class="field"><label>Mensalidade (R$)</label><input id="admFee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Vazio = valor do plano"></div>
     <div class="field"><label>Dia do vencimento</label><input id="admDay" type="number" inputmode="numeric" min="1" max="31"></div>
+    <div class="field"><label>Teste grátis (dias)</label><input id="admTdays" type="number" inputmode="numeric" min="1" max="365" placeholder="Vazio = não mudar"></div>
+    <div class="field full"><label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:14px"><input id="admLife" type="checkbox" style="width:auto"> Vitalício: liberado para sempre, sem cobrança</label></div>
     <div class="field full"><label>Observações</label><textarea id="admNotes"></textarea></div>
   </div>
   <div class="modal-actions"><button class="btn plain" id="admDelBtn" onclick="admDeleteTenant()" style="margin-right:auto">Excluir conta</button><button class="btn plain" onclick="closeModal('admModal')">Cancelar</button><button class="btn primary" onclick="admSaveEdit()">Salvar</button></div>
@@ -4441,7 +4443,9 @@ const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
+const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],completo:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos']};
+function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
+function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
 function sessLoad(){try{sess=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){sess=null}}
@@ -4649,9 +4653,9 @@ async function admSet(id,status,days){const t=(admList||[]).find(x=>x.id===id);i
 /* ---------- Cobrança: planos, mensalidades e Pix (dados no Supabase) ---------- */
 let admF='todas',admBill,admPlans=[],admPix={},admBusy2=false,admCur='',myBill,myBillBusy=false,pixBusy=false;
 let admSel=new Set(),admSelMode=false;
-const ADM_PLANS=['basico','completo','profissional'];
-const ADM_PLAN_LABEL={basico:'Básico',completo:'Avançado',profissional:'Profissional'};
-const ADM_PLAN_DEFAULT={basico:197.90,completo:247.90,profissional:297.90};
+const ADM_PLANS=['basico','completo','profissional','anual'];
+const ADM_PLAN_LABEL={basico:'Básico',completo:'Intermediário',profissional:'Profissional',anual:'Anual'};
+const ADM_PLAN_DEFAULT={basico:197.90,completo:247.90,profissional:297.90,anual:270};
 function planPrice(p){const r=(admPlans||[]).find(x=>x.plan===p);const v=r&&r.price!=null?Number(r.price):NaN;return isNaN(v)?ADM_PLAN_DEFAULT[p]:v}
 function planOptions(sel){return ADM_PLANS.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>'+ADM_PLAN_LABEL[p]+'</option>').join('')}
 function admPlanChange(){const v=planPrice($('admPlan').value);$('admFee').value=v.toFixed(2)}
@@ -4691,6 +4695,7 @@ function admEditOpen(id){
   $('admPlan').innerHTML=planOptions(plan);
   $('admFee').value=(b.fee_custom!=null)?b.fee_custom:planPrice(plan).toFixed(2);
   $('admDay').value=b.due_day||10;$('admNotes').value=b.notes||'';
+  $('admTdays').value='';$('admLife').checked=!!b.lifetime;
   $('admSub').textContent=t.name+' · mensalidade e dia de vencimento';
   $('admDelBtn').style.display=t.plan==='proprio'?'none':'';
   openModal('admModal');
@@ -4698,22 +4703,24 @@ function admEditOpen(id){
 async function admSaveEdit(){
   const t=(admList||[]).find(x=>x.id===admCur);if(!t)return;
   const day=Number($('admDay').value),fee=$('admFee').value.trim(),plan=$('admPlan').value;
+  const life=$('admLife').checked,td=$('admTdays').value.trim(),wasLife=!!billOf(t.id).lifetime;
+  const days=td===''?null:Number(td);
   if(!(day>=1&&day<=28)){alert('Dia de vencimento: escolha um número entre 1 e 28.');return}
+  if(days!==null&&!(days>=1&&days<=365)){alert('Teste grátis: informe entre 1 e 365 dias.');return}
   const r=await sb('/rest/v1/rpc/admin_billing_save_client',{method:'POST',body:{p_tenant:t.id,p_fee:fee===''?null:Number(fee),p_due_day:day,p_notes:$('admNotes').value.trim()}});
   if(!r.ok){alert('Não consegui salvar a mensalidade: '+((r.json&&r.json.message)||'erro'));return}
-  if(plan&&plan!==t.plan){
+  if(life!==wasLife){
+    const l=await sb('/rest/v1/rpc/admin_billing_set_lifetime',{method:'POST',body:{p_tenant:t.id,p_on:life}});
+    if(!l.ok){alert('Não consegui mudar o vitalício.');return}
+  }
+  if(!life&&days!==null){
+    const x=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:t.id,p_status:'trial',p_plan:plan||t.plan||'basico',p_trial_days:days}});
+    if(!x.ok){alert('Não consegui dar o teste de '+days+' dias.');return}
+  }else if(plan&&plan!==t.plan){
     const p=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:t.id,p_status:t.status,p_plan:plan,p_trial_days:null}});
     if(!p.ok)alert('Mensalidade salva, mas não consegui trocar o plano.');
   }
   closeModal('admModal');admList=undefined;admLoad();
-}
-async function admDeleteTenant(){
-  const t=(admList||[]).find(x=>x.id===admCur);if(!t)return;
-  if(!confirm('Excluir a conta de "'+t.name+'"? Isso apaga os lançamentos, as cobranças e o acesso da oficina.'))return;
-  if(!confirm('Tem certeza? Esta ação NÃO pode ser desfeita. Confirme para excluir "'+t.name+'" definitivamente.'))return;
-  const r=await sb('/rest/v1/rpc/admin_delete_tenant',{method:'POST',body:{p_id:t.id}});
-  if(!r.ok){alert('Não consegui excluir: '+((r.json&&r.json.message)||'erro'));return}
-  closeModal('admModal');admList=undefined;admLoad();alert('Conta excluída.');
 }
 function renderCharges(list){
   const l=list.slice(0,10);
@@ -4919,10 +4926,11 @@ function admPayPanel(){
 }
 function admPlansPanel(){
   const plansPanel='<div class="panel section-gap"><div class="panel-head"><h2>Valores dos planos</h2></div><p class="subtle" style="font-size:12px">Mensalidade padrão de cada plano. Cada oficina pode ter valor próprio em Editar.</p><div class="fgrid">'+
-    ADM_PLANS.map(p=>'<div class="field"><label>'+ADM_PLAN_LABEL[p]+' (R$)</label><input id="adp_'+p+'" type="number" inputmode="decimal" min="0" step="0.01" value="'+planPrice(p).toFixed(2)+'"></div>').join('')+
+    ADM_PLANS.map(p=>'<div class="field"><label>'+ADM_PLAN_LABEL[p]+' (R$ por mês)</label><input id="adp_'+p+'" type="number" inputmode="decimal" min="0" step="0.01" value="'+planPrice(p).toFixed(2)+'" oninput="admPlanTotals()"><small id="adt_'+p+'" class="subtle" style="font-size:12px">Total no ano: '+money(planPrice(p)*12)+'</small></div>').join('')+
     '</div><div class="actions" style="margin-top:10px"><button class="btn primary" onclick="admSavePlans()">Salvar valores</button></div></div>';
   return plansPanel;
 }
+function admPlanTotals(){ADM_PLANS.forEach(p=>{const i=$('adp_'+p),e=$('adt_'+p);if(i&&e)e.textContent='Total no ano: '+money((Number(i.value)||0)*12)})}
 function admNeedData(){if(admList===undefined&&!admBusy)admLoad();return admList===undefined}
 /* Dono da oficina: mensalidade e Pix */
 /* ---------- Plano e cartão (débito automático pelo Mercado Pago) ---------- */
