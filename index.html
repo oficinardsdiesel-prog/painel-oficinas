@@ -68,8 +68,8 @@ body.dark h1,body.dark h2,body.dark h3,body.dark b{color:#e6e8ec}
 .list-row .grow{flex:1;min-width:180px}
 .money{font-weight:800;font-size:13px;white-space:nowrap}
 .rowacts{display:flex;gap:2px;flex-wrap:wrap;align-items:center}
-.small-btn{border:0;background:transparent;color:var(--blue);font-weight:700;cursor:pointer;font-size:12px;padding:7px 8px;text-decoration:none}
-.small-btn.red{color:var(--red)}
+.small-btn{border:1px solid #1d4ed8;background:#1d4ed8;color:#fff;font-weight:700;cursor:pointer;font-size:12px;padding:8px 12px;border-radius:8px;text-decoration:none}
+.small-btn.red{background:#334155;border-color:#475569;color:#fff}
 .field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 label{font-size:11px;color:#65748a;font-weight:650}
@@ -482,7 +482,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="admModal"><div class="modal-box">
   <h2>Editar oficina</h2><p class="modal-sub" id="admSub"></p>
   <div class="form-grid">
-    <div class="field"><label>Plano</label><select id="admPlan" onchange="admPlanChange()"></select></div>
+    <div class="field"><label>Plano</label><select id="admPlan" onchange="admPlanChange()" oninput="admPlanChange()"></select><small id="admPlanHint" class="subtle" style="font-size:12px"></small></div>
     <div class="field"><label>Mensalidade (R$)</label><input id="admFee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Vazio = valor do plano"></div>
     <div class="field"><label>Dia do vencimento</label><input id="admDay" type="number" inputmode="numeric" min="1" max="31"></div>
     <div class="field"><label>Teste grátis (dias)</label><input id="admTdays" type="number" inputmode="numeric" min="1" max="365" placeholder="Vazio = não mudar"></div>
@@ -2832,7 +2832,7 @@ const SLOTS=[
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
 const ADMIN_MENU=[
- {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
+ {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas parceiras'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
@@ -2842,7 +2842,7 @@ const CLIENT_MENU=[
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas clientes: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços fiados e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços fiados e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -4658,7 +4658,7 @@ const ADM_PLAN_LABEL={basico:'Básico',completo:'Intermediário',profissional:'P
 const ADM_PLAN_DEFAULT={basico:197.90,completo:247.90,profissional:297.90,anual:270};
 function planPrice(p){const r=(admPlans||[]).find(x=>x.plan===p);const v=r&&r.price!=null?Number(r.price):NaN;return isNaN(v)?ADM_PLAN_DEFAULT[p]:v}
 function planOptions(sel){return ADM_PLANS.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>'+ADM_PLAN_LABEL[p]+'</option>').join('')}
-function admPlanChange(){const v=planPrice($('admPlan').value);$('admFee').value=v.toFixed(2)}
+function admPlanChange(keepFee){const pl=$('admPlan').value;const v=planPrice(pl);if(!keepFee)$('admFee').value=v.toFixed(2);const h=$('admPlanHint');if(h)h.textContent='Valor do plano '+ADM_PLAN_LABEL[pl]+': '+money(v)+(pl==="anual"?' por mês · total no ano '+money(v*12):'')}
 const ADM_FILTERS={todas:'Todas',ok:'Em dia',due:'A vencer',late:'Atrasadas',trial:'Em teste',life:'Vitalícias',blk:'Bloqueadas'};
 function billOf(id){return (admBill||[]).find(x=>x.id===id)||{}}
 function admInfo(t){
@@ -4693,7 +4693,8 @@ function admEditOpen(id){
   const t=(admList||[]).find(x=>x.id===id);if(!t)return;admCur=id;const b=billOf(id);
   const plan=ADM_PLANS.indexOf(t.plan)>=0?t.plan:'basico';
   $('admPlan').innerHTML=planOptions(plan);
-  $('admFee').value=(b.fee_custom!=null)?b.fee_custom:planPrice(plan).toFixed(2);
+  $('admFee').value=(b.fee_custom!=null&&plan===t.plan)?b.fee_custom:planPrice(plan).toFixed(2);
+  admPlanChange(true);
   $('admDay').value=b.due_day||10;$('admNotes').value=b.notes||'';
   $('admTdays').value='';$('admLife').checked=!!b.lifetime;
   $('admSub').textContent=t.name+' · mensalidade e dia de vencimento';
@@ -4721,6 +4722,14 @@ async function admSaveEdit(){
     if(!p.ok)alert('Mensalidade salva, mas não consegui trocar o plano.');
   }
   closeModal('admModal');admList=undefined;admLoad();
+}
+async function admDeleteTenant(){
+  const t=(admList||[]).find(x=>x.id===admCur);if(!t)return;
+  if(!confirm('Excluir a conta de "'+t.name+'"? Isso apaga os lançamentos, as cobranças e o acesso da oficina.'))return;
+  if(!confirm('Tem certeza? Esta ação NÃO pode ser desfeita. Confirme para excluir "'+t.name+'" definitivamente.'))return;
+  const r=await sb('/rest/v1/rpc/admin_delete_tenant',{method:'POST',body:{p_id:t.id}});
+  if(!r.ok){alert('Não consegui excluir: '+((r.json&&r.json.message)||'erro'));return}
+  closeModal('admModal');admList=undefined;admLoad();alert('Conta excluída.');
 }
 function renderCharges(list){
   const l=list.slice(0,10);
@@ -4801,7 +4810,7 @@ function admOficinasPanel(S){
 }
 NEWPAGE.orbe_oficinas=function(){
   if(admNeedData())return pageHead('Oficinas','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
-  return pageHead('Oficinas','Todas as oficinas cadastradas.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+admOficinasPanel(admSummary(admList));
+  return pageHead('Oficinas parceiras','Todas as oficinas parceiras cadastradas.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+admOficinasPanel(admSummary(admList));
 };
 
 NEWPAGE.orbe_pagamentos=function(){if(admNeedData())return pageHead('Pagamentos','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';return pageHead('Pagamentos','Pagamentos das oficinas clientes. Segure para selecionar.','')+admPayPanel()};
@@ -4892,14 +4901,14 @@ NEWPAGE.orbe_bi=function(){
 };
 function admCoreRender(){
   if(admList===undefined&&!admBusy)admLoad();
-  if(admList===undefined)return pageHead('Oficinas clientes','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
+  if(admList===undefined)return pageHead('Oficinas parceiras','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
   const S=admSummary(admList),ym=ymNow(),mes=ym.slice(5)+'/'+ym.slice(0,4);
   const card=(c,v,h,go)=>'<div class="metric'+(go?' click" role="button" tabindex="0" onclick="navigate(\''+go+'\')"':'"')+'><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
   const item=(r,extra)=>'<div class="list-row"><div class="grow"><b>'+esc(r.t.name)+'</b><small>'+esc(r.i.label)+esc(extra||'')+'</small></div><div class="money">'+money(r.i.fee)+'</div></div>';
   const alerts=S.late.map(r=>item(r,(-r.i.left)>=5?' · passou de 5 dias: verifique o bloqueio':' · bloqueio automático em '+(5-(-r.i.left))+' dia(s)'))
     .concat(S.rows.filter(r=>r.i.key==='due'&&r.i.left<=7&&r.t.status==='active').map(r=>item(r,' · vence em '+fmtDate(r.i.due))))
     .concat(S.trials.filter(r=>r.i.d!==null&&r.i.d<=7).map(r=>'<div class="list-row"><div class="grow"><b>'+esc(r.t.name)+'</b><small>Teste termina em '+(r.i.d>0?r.i.d+' dia(s)':'já encerrado')+'</small></div></div>'));
-  return pageHead('Oficinas clientes','A sua gestão está aqui.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
+  return pageHead('Oficinas parceiras','A sua gestão está aqui.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
     '<div class="cards">'+card('Oficinas ativas',S.act.length,S.trials.length+' em teste · '+S.blocked.length+' bloqueada(s)','orbe_oficinas')+
     card('Receita mensal prevista',money(S.mrr),'Soma das mensalidades ativas','orbe_bi')+
     card('Recebido em '+mes,money(S.recMes),'Pagamentos confirmados no mês','orbe_pagamentos')+
