@@ -4510,23 +4510,26 @@ function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banne
   if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center';bn.removeAttribute('data-empty');bn.onclick=null}
     else if(!own){bn.style.display='';bn.style.backgroundImage='';bn.setAttribute('data-empty','1');bn.onclick=function(){brandPick('banner')}}
     else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display='';bn.removeAttribute('data-empty');bn.onclick=null}}
+  if(bn){let cb=bn.querySelector('.bn-chg');if(!own){bn.style.position='relative';if(!cb){cb=document.createElement('button');cb.type='button';cb.className='small-btn bn-chg';cb.textContent='🖼 Trocar banner';cb.style.cssText='position:absolute;right:10px;bottom:10px;z-index:2';cb.onclick=function(e){e.stopPropagation();brandPick('banner')};bn.appendChild(cb)}}else if(cb)cb.remove()}
   if(bb){if(own)bb.innerHTML='ORBE<small>GESTÃO DE OFICINAS</small>';else{const r2=shopSet.find(x=>x.id==='shop')||{};bb.innerHTML=esc(String(r2.name||(ws&&ws.name)||'Oficina').trim())}}
   installIdentity()}catch(e){}}
 async function brandPick(kind){
   const i=document.createElement('input');i.type='file';i.accept='image/*';
   i.onchange=async function(){const f=i.files&&i.files[0];if(!f)return;
     try{
-      const r=shopSet.find(x=>x.id==='shop')||{id:'shop'};const o=Object.assign({},r,{id:'shop'});
-      if(kind==='logo')o.logo=await imgToJpeg(f,400,200,0.9,'#ffffff');else o.banner=(await imgToJpeg(f,1200,400,0.8,'#0c0d10')).d;
-      shopSet=shopSet.filter(x=>x.id!=='shop').concat([o]);persist();applyBrand();render();
-    }catch(e){alert('Não consegui ler essa imagem. Tente outra foto.')}
+      const pb=kind==='logo'?{logo:await imgToJpeg(f,400,200,0.9,'#ffffff')}:{banner:(await imgToJpeg(f,1200,400,0.8,'#0c0d10')).d};
+      if(ws&&ws.id){const s=await sb('/rest/v1/rpc/my_save_brand',{method:'POST',body:{p_brand:pb}});if(!s.ok)throw new Error('save');ws.brand=Object.assign({},ws.brand||{},pb)}
+      else{const r=shopSet.find(x=>x.id==='shop')||{id:'shop'};const o=Object.assign({},r,{id:'shop'});Object.assign(o,pb);shopSet=shopSet.filter(x=>x.id!=='shop').concat([o]);persist()}
+      applyBrand();render();
+    }catch(e){alert('Não consegui salvar a imagem. Tente outra foto ou tente de novo.')}
   };
   i.click();
 }
 function setupHide(){try{localStorage.setItem('orbe_setup_hide','1')}catch(e){}render()}
 function wsStatusTxt(){if(!ws)return '';if(ws.plan==='proprio')return 'Oficina própria do sistema';if(ws.status==='blocked')return 'Acesso suspenso';if(ws.status==='trial'){const d=Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5);return 'Teste grátis · '+(d>0?'faltam '+d+' dia'+(d>1?'s':''):'termina hoje')}return 'Plano '+(ws.plan||'ativo')+' · ativo'}
 function trialNote(){if(!ws||ws.status!=='trial'||!ws.trial_ends||!isRole('dono'))return '';return '<div class="notice" style="margin-bottom:12px">🎁 <b>'+esc(wsStatusTxt())+'</b><br><span style="font-size:12px">Seus dados ficam guardados. Para continuar depois do teste, fale com o responsável pelo sistema.</span></div>'}
-function wsPanel(){if(!ws||!ws.id)return '';return '<div class="panel section-gap"><h2>Minha oficina</h2><div class="acct"><b>'+esc(ws.name)+'</b><span class="subtle">'+esc(wsStatusTxt())+'</span></div>'+(ws.invite_code?'<p class="subtle" style="margin:12px 0 6px;font-size:12px">Código de convite: quem criar uma conta e digitar este código entra na sua oficina e aguarda a sua liberação em “Gerenciar perfis”.</p><div style="display:flex;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:2px">'+esc(ws.invite_code)+'</b><button class="small-btn" onclick="copyCode()">Copiar</button></div>':'')+'</div>'}
+function wsPanel(){if(!ws||!ws.id)return '';return '<div class="panel section-gap"><h2>Minha oficina</h2><div class="acct"><b>'+esc(ws.name)+'</b><span class="subtle">'+esc(wsStatusTxt())+'</span></div>'+(ws.invite_code?'<p class="subtle" style="margin:12px 0 6px;font-size:12px">Código de convite: quem criar uma conta e digitar este código entra na sua oficina e aguarda a sua liberação em “Gerenciar perfis”.</p><div style="display:flex;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:2px">'+esc(ws.invite_code)+'</b><button class="small-btn" onclick="copyCode()">Copiar</button></div>':'')+'</div>'+brandPanel()}
+function brandPanel(){if(!ws||!ws.id||!isRole('dono'))return '';const b=ws.brand||{};return '<div class="panel section-gap"><h2>Banner e logo</h2><p class="subtle" style="font-size:12px;margin:0 0 10px">O banner aparece na tela inicial. A logo aparece em todos os PDFs do app.</p><div class="actions"><button class="small-btn" onclick="brandPick(\'banner\')">🖼 Trocar banner</button><button class="small-btn" onclick="brandPick(\'logo\')">🏷 Trocar logo</button></div>'+(b.logo&&b.logo.d?'<img src="'+b.logo.d+'" alt="Logo" style="max-height:70px;margin-top:12px;background:#fff;border-radius:8px;padding:6px">':'')+'</div>'}
 function copyCode(){try{navigator.clipboard.writeText(ws.invite_code);alert('Código copiado: '+ws.invite_code)}catch(e){prompt('Copie o código:',ws.invite_code)}}
 function showOnboard(msg){const a=$('auth');a.style.display='flex';
   a.innerHTML='<div class="box"><div class="brandl">GESTÃO DE OFICINAS</div><h1>Primeiros passos</h1><p class="subtle" style="margin:0 0 12px">Sua conta foi criada. Escolha uma opção:</p>'+
