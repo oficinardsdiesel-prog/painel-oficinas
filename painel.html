@@ -207,7 +207,7 @@ window.addEventListener('error',function(e){
 <noscript><div style="background:#7a1f1f;color:#fff;padding:14px;font:14px Arial">O JavaScript está desligado neste navegador. O sistema precisa dele para funcionar. Abra o endereço pelo Chrome.</div></noscript>
 <div class="banner" role="img" aria-label="ORBE - O aplicativo de gestão da sua oficina"></div>
 <header class="top">
-  <button class="brandbtn" onclick="navigate('admin')" aria-label="ORBE">ORBE<small>GESTÃO DE OFICINAS</small></button>
+  <button class="brandbtn" onclick="navigate(ws&&ws.is_admin?'admin':'inicio')" aria-label="ORBE">ORBE<small>GESTÃO DE OFICINAS</small></button>
   <span class="syncb" id="syncb"></span><nav class="tabs"><button onclick="toggleMenu(true)">☰ Menu</button></nav>
 </header>
 <main class="content" id="page"></main>
@@ -2827,10 +2827,17 @@ const SLOTS=[
  {k:'vidros',t:'Vidros em geral'},
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
-const MENU=[
+const ADMIN_MENU=[
  {g:'Gestão',items:[['admin','★','Oficinas clientes'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
+const CLIENT_MENU=[
+ {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de caminhão'],['historico','◷','Histórico'],['agenda','▦','Agenda']]},
+ {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['pagamentos','＄','Pagamentos'],['receber','◈','Fiado / A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
+ {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
+ {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]}
+];
+let MENU=ADMIN_MENU;
 const QUICK={notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas clientes: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços fiados e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
@@ -2979,8 +2986,8 @@ function renderMenu(){
   $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
   menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
 }
-function toggleMenu(open){renderMenu();try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
-function navigate(p,keep,nopush){if(!allowed(p))p='admin';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
+function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
+function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
 /* ---------- Caminhões ---------- */
@@ -4284,7 +4291,7 @@ function importAll(input){
 
 /* ---------- Páginas ---------- */
 function render(){
-  if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin';
+  if(ws&&ws.is_admin){if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin'}else if(/^(admin|orbe_)/.test(currentPage))currentPage='inicio';
   try{applyTheme()}catch(e){}
   updateBillBanner();
   setTimeout(applyBtnEdits,0);
@@ -4494,7 +4501,7 @@ async function loadWs(){const r=await sb('/rest/v1/rpc/my_workshop',{method:'POS
 function ownBrand(){return !ws||!ws.id||ws.plan==='proprio'}
 function brandName(){return 'ORBE'}
 function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banner'),bb=document.querySelector('.brandbtn'),r=shopSet.find(x=>x.id==='shop'),bd=r&&r.banner;
-  if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center'}else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display=own?'':'none'}}
+  if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center'}else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display=''}}
   if(bb&&bb.firstChild)bb.firstChild.nodeValue=brandName();installIdentity()}catch(e){}}
 function wsStatusTxt(){if(!ws)return '';if(ws.plan==='proprio')return 'Oficina própria do sistema';if(ws.status==='blocked')return 'Acesso suspenso';if(ws.status==='trial'){const d=Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5);return 'Teste grátis · '+(d>0?'faltam '+d+' dia'+(d>1?'s':''):'termina hoje')}return 'Plano '+(ws.plan||'ativo')+' · ativo'}
 function trialNote(){if(!ws||ws.status!=='trial'||!ws.trial_ends||!isRole('dono'))return '';return '<div class="notice" style="margin-bottom:12px">🎁 <b>'+esc(wsStatusTxt())+'</b><br><span style="font-size:12px">Seus dados ficam guardados. Para continuar depois do teste, fale com o responsável pelo sistema.</span></div>'}
@@ -5105,11 +5112,11 @@ async function bootAfterLogin(){
   if(ws&&!ws.id){showOnboard();return}
   applyBrand();
   if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Fale com o responsável pelo sistema para ativar o plano e voltar a usar.',btn:true});return}
-  if(!(ws&&ws.is_admin)){showAuth('',false,{t:'Acesso restrito',d:'Este painel é só para o administrador da plataforma.',btn:false});return}
   if(!ROLE_READ[pr.role]){const inat=pr.role==='inativo';showAuth('',false,{t:inat?'Acesso bloqueado':'Aguardando liberação',d:inat?'Fale com o dono da oficina.':'Seu cadastro foi criado. Peça ao dono para liberar o seu acesso e depois toque em “Verificar de novo”.',btn:!inat});return}
   try{await syncAll(true)}catch(e){}
   a.style.display='none';a.innerHTML='';
-  currentPage='admin';
+  MENU=(ws&&ws.is_admin)?ADMIN_MENU:CLIENT_MENU;
+  currentPage=(ws&&ws.is_admin)?'admin':'inicio';
   startPolling();render();
   try{const r=shopSet.find(x=>x.id==='shop');}catch(e){}
 }
