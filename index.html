@@ -4445,7 +4445,7 @@ const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
 const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],completo:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
-function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
+function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
 function sessLoad(){try{sess=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){sess=null}}
@@ -4503,14 +4503,14 @@ async function loadProfile(){
   if(r.ok&&r.json&&r.json[0])return r.json[0];return null;
 }
 let ws=null;
-async function loadWs(){const r=await sb('/rest/v1/rpc/my_workshop',{method:'POST',body:{}});ws=r.ok&&r.json?(r.json.id?r.json:{id:null}):null;return ws}
+async function loadWs(){const r=await sb('/rest/v1/rpc/my_workshop',{method:'POST',body:{}});ws=r.ok&&r.json?(r.json.id?r.json:{id:null}):null;if(ws&&ws.id){const c=await sb('/rest/v1/rpc/my_custom',{method:'POST',body:{}});if(c.ok&&c.json){ws.brand=c.json.brand||{};ws.features=c.json.features||{}}}return ws}
 function ownBrand(){return !ws||!ws.id||ws.plan==='proprio'}
 function brandName(){return 'ORBE'}
-function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banner'),bb=document.querySelector('.brandbtn'),r=shopSet.find(x=>x.id==='shop'),bd=r&&r.banner;
+function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banner'),bb=document.querySelector('.brandbtn'),r=shopSet.find(x=>x.id==='shop'),bd=(ws&&ws.brand&&ws.brand.banner)||(r&&r.banner);
   if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center';bn.removeAttribute('data-empty');bn.onclick=null}
     else if(!own){bn.style.display='';bn.style.backgroundImage='';bn.setAttribute('data-empty','1');bn.onclick=function(){brandPick('banner')}}
     else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display='';bn.removeAttribute('data-empty');bn.onclick=null}}
-  if(bb){const lg=r&&r.logo&&r.logo.d;
+  if(bb){const lg=(ws&&ws.brand&&ws.brand.logo)||(r&&r.logo&&r.logo.d);
     if(!own&&lg){bb.innerHTML='<img src="'+lg+'" alt="" style="height:34px;max-width:170px;object-fit:contain;display:block">'}
     else if(bb.querySelector('img')){bb.innerHTML='ORBE<small>GESTÃO DE OFICINAS</small>'}
     else if(bb.firstChild)bb.firstChild.nodeValue=brandName()}
@@ -4732,6 +4732,51 @@ async function admDeleteTenant(){
   if(!r.ok){alert('Não consegui excluir: '+((r.json&&r.json.message)||'erro'));return}
   closeModal('admModal');admList=undefined;admLoad();alert('Conta excluída.');
 }
+
+/* ---------- Oficinas parceiras: personalização de cada oficina ---------- */
+let admPersonId='',admPer=null,admPerBusy=false;
+function planLabel(p){if(p==='proprio')return 'própria';return ADM_PLAN_LABEL[p]||p||'-'}
+function planHas(plan,p){if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan||'basico'];return !l||l.indexOf(p)>=0}
+function admPersonOpen(id){admPersonId=id;admPer=null;navigate('orbe_personal')}
+async function admPersonLoad(){
+  if(admPerBusy)return;admPerBusy=true;
+  const r=await sb('/rest/v1/rpc/admin_get_tenant_custom',{method:'POST',body:{p_tenant:admPersonId}});
+  admPerBusy=false;
+  admPer=(r.ok&&r.json&&r.json.id)?{id:r.json.id,name:r.json.name,plan:r.json.plan,status:r.json.status,brand:r.json.brand||{},features:r.json.features||{}}:{error:true};
+  render();
+}
+function personFeatureOn(p){return !(admPer&&admPer.features&&admPer.features[p]===false)}
+function admPersonToggle(p){admPer.features=admPer.features||{};if(personFeatureOn(p))admPer.features[p]=false;else delete admPer.features[p];render()}
+function admPersonImg(kind){const i=document.createElement('input');i.type='file';i.accept='image/*';
+  i.onchange=async function(){const f=i.files&&i.files[0];if(!f)return;
+    try{admPer.brand=admPer.brand||{};if(kind==='logo')admPer.brand.logo=(await imgToJpeg(f,400,200,0.9,'#ffffff')).d;else admPer.brand.banner=(await imgToJpeg(f,1200,400,0.8,'#0c0d10')).d;render()}
+    catch(e){alert('Não consegui ler essa imagem. Tente outra foto.')}};
+  i.click()}
+function admPersonClear(kind){admPer.brand=admPer.brand||{};delete admPer.brand[kind];render()}
+async function admPersonSave(){
+  const r=await sb('/rest/v1/rpc/admin_save_tenant_custom',{method:'POST',body:{p_tenant:admPersonId,p_brand:admPer.brand||{},p_features:admPer.features||{}}});
+  if(!r.ok){alert('Não consegui salvar: '+((r.json&&r.json.message)||'erro'));return}
+  alert('Personalização salva. A oficina vê as mudanças na próxima vez que abrir o app.');
+  admPer=null;render();
+}
+function personPanel(){
+  const P=admPer;
+  const bn=P.brand.banner,lg=P.brand.logo;
+  const prev='<div class="panel section-gap"><div class="panel-head"><h2>Como o app aparece para a oficina</h2></div>'+
+    '<div style="border-radius:14px;overflow:hidden;border:1px solid #2a2f38"><div style="height:120px;background:'+(bn?'url('+bn+') center/cover':'linear-gradient(135deg,#0b1f4d,#1d4ed8)')+'"></div>'+
+    '<div style="display:flex;align-items:center;gap:12px;padding:12px;background:#11141a">'+(lg?'<img src="'+lg+'" alt="" style="height:40px;max-width:170px;object-fit:contain">':'<b style="letter-spacing:2px">ORBE</b>')+'<span class="subtle" style="font-size:12px">'+esc(P.name)+' · plano '+esc(planLabel(P.plan))+'</span></div></div>'+
+    '<div class="fgrid" style="margin-top:12px"><button class="btn soft" onclick="admPersonImg(\'banner\')">🖼 Trocar banner</button><button class="btn soft" onclick="admPersonClear(\'banner\')">Remover banner</button><button class="btn soft" onclick="admPersonImg(\'logo\')">🏷 Trocar logo</button><button class="btn soft" onclick="admPersonClear(\'logo\')">Remover logo</button></div></div>';
+  const feats='<div class="panel section-gap"><div class="panel-head"><h2>Telas liberadas</h2></div><p class="subtle" style="font-size:12px">Toque para ligar ou desligar. Tela desligada some do menu da oficina. Tela fora do plano continua bloqueada pelo plano.</p>'+
+    CLIENT_MENU.map(g=>'<div class="field"><label>'+g.g+'</label>'+g.items.map(i=>{const on=personFeatureOn(i[0]),inPlan=planHas(P.plan,i[0]);
+      return '<div class="list-row" style="cursor:pointer" onclick="admPersonToggle(\''+i[0]+'\')"><div class="grow"><b>'+i[2]+'</b><small>'+(inPlan?'Incluída no plano':'Fora do plano '+planLabel(P.plan))+'</small></div><div class="money">'+(on?'✅ Ligada':'⬜ Desligada')+'</div></div>'}).join('')+'</div>').join('')+'</div>';
+  return prev+feats;
+}
+NEWPAGE.orbe_personal=function(){
+  if(!admPersonId)return pageHead('Oficinas parceiras','Escolha uma oficina na lista.','<button class="btn soft" onclick="navigate(\'orbe_oficinas\')">← Voltar</button>')+'<div class="empty">Nenhuma oficina escolhida.</div>';
+  if(admPer===null){admPersonLoad();return pageHead('Personalizar oficina','Carregando…','')+'<div class="empty">Carregando…</div>'}
+  if(admPer.error)return pageHead('Personalizar oficina','Não consegui carregar.','<button class="btn soft" onclick="navigate(\'orbe_oficinas\')">← Voltar</button>')+'<div class="empty">Tente de novo pela lista de oficinas.</div>';
+  return pageHead('Personalizar oficina',esc(admPer.name),'<button class="btn soft" onclick="navigate(\'orbe_oficinas\')">← Voltar</button>')+personPanel()+'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="admPersonSave()">Salvar personalização</button></div>';
+};
 function renderCharges(list){
   const l=list.slice(0,10);
   return l.length?'<div class="list-stack">'+l.map(c=>'<div class="list-row"><div class="grow"><b>'+money(c.amount)+' · ref. '+esc(c.ym)+'</b><small>'+
@@ -4804,7 +4849,7 @@ function admOficinasPanel(S){
       '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
-      '<div class="actions"><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
+      '<div class="actions"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">🎨 Personalizar</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
       (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
