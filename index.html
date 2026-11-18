@@ -68,8 +68,8 @@ body.dark h1,body.dark h2,body.dark h3,body.dark b{color:#e6e8ec}
 .list-row .grow{flex:1;min-width:180px}
 .money{font-weight:800;font-size:13px;white-space:nowrap}
 .rowacts{display:flex;gap:2px;flex-wrap:wrap;align-items:center}
-.small-btn{border:1px solid #1d4ed8;background:#1d4ed8;color:#fff;font-weight:700;cursor:pointer;font-size:12px;padding:8px 12px;border-radius:8px;text-decoration:none}
-.small-btn.red{background:#334155;border-color:#475569;color:#fff}
+.small-btn{border:1px solid #1e40af;background:#2563eb;color:#fff;font-weight:700;cursor:pointer;font-size:13px;padding:9px 14px;border-radius:8px;text-decoration:none;opacity:1;box-shadow:0 1px 2px #0005}
+.small-btn.red{background:#b91c1c;border-color:#991b1b;color:#fff}
 .field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 label{font-size:11px;color:#65748a;font-weight:650}
@@ -4723,6 +4723,7 @@ async function admSaveEdit(){
   }
   closeModal('admModal');admList=undefined;admLoad();
 }
+function admDeleteRow(id){admCur=id;admDeleteTenant()}
 async function admDeleteTenant(){
   const t=(admList||[]).find(x=>x.id===admCur);if(!t)return;
   if(!confirm('Excluir a conta de "'+t.name+'"? Isso apaga os lançamentos, as cobranças e o acesso da oficina.'))return;
@@ -4803,7 +4804,7 @@ function admOficinasPanel(S){
       '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
-      '<div class="actions"><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button><button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
+      '<div class="actions"><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
       (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
