@@ -2828,7 +2828,7 @@ const SLOTS=[
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
 const ADMIN_MENU=[
- {g:'Gestão',items:[['admin','★','Oficinas clientes'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
+ {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
@@ -4735,6 +4735,26 @@ async function admSavePlans(){
   admList=undefined;admLoad();alert('Valores dos planos salvos.');
 }
 NEWPAGE.admin=function(){return admCoreRender()};
+function admOficinasPanel(S){
+  const filters='<div class="field" style="margin:6px 0 12px;max-width:280px"><label>Mostrar</label><select onchange="admFilter(this.value)">'+Object.keys(ADM_FILTERS).map(k=>'<option value="'+k+'"'+(admF===k?' selected':'')+'>'+ADM_FILTERS[k]+'</option>').join('')+'</select></div>';
+  const list=S.rows.filter(admMatch).sort((a,b)=>a.i.left-b.i.left);
+  const rowsHTML=list.length?'<div class="list-stack">'+list.map(r=>{
+    const t=r.t,i=r.i,last=i.last?fmtDate(String(i.last.paid_at).slice(0,10))+' ('+money(i.last.amount)+')':'nenhum';
+    return '<div class="list-row" style="flex-direction:column;align-items:stretch;gap:6px">'+
+      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>'+esc(t.name)+'</b><span class="pill '+i.cls+'">'+esc(i.label)+'</span></div>'+
+      '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
+      '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
+      '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
+      '<div class="actions"><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button><button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
+      (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
+  }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
+  return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
+}
+NEWPAGE.orbe_oficinas=function(){
+  if(admNeedData())return pageHead('Oficinas','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
+  return pageHead('Oficinas','Todas as oficinas cadastradas.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+admOficinasPanel(admSummary(admList));
+};
+
 NEWPAGE.orbe_pagamentos=function(){if(admNeedData())return pageHead('Pagamentos','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';return pageHead('Pagamentos','Pagamentos das oficinas clientes. Segure para selecionar.','')+admPayPanel()};
 NEWPAGE.orbe_planos=function(){if(admNeedData())return pageHead('Planos e valores','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';return pageHead('Planos e valores','Mensalidade padrão de cada plano.','')+admPlansPanel()};
 NEWPAGE.orbe_pix=function(){if(admNeedData())return pageHead('Chave Pix','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';return pageHead('Chave Pix','Para onde as oficinas pagam a mensalidade.','')+admPixPanel()};
@@ -4825,30 +4845,18 @@ function admCoreRender(){
   if(admList===undefined&&!admBusy)admLoad();
   if(admList===undefined)return pageHead('Oficinas clientes','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
   const S=admSummary(admList),ym=ymNow(),mes=ym.slice(5)+'/'+ym.slice(0,4);
-  const card=(c,v,h)=>'<div class="metric"><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
+  const card=(c,v,h,go)=>'<div class="metric'+(go?' click" role="button" tabindex="0" onclick="navigate(\''+go+'\')"':'"')+'><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
   const item=(r,extra)=>'<div class="list-row"><div class="grow"><b>'+esc(r.t.name)+'</b><small>'+esc(r.i.label)+esc(extra||'')+'</small></div><div class="money">'+money(r.i.fee)+'</div></div>';
   const alerts=S.late.map(r=>item(r,(-r.i.left)>=5?' · passou de 5 dias: verifique o bloqueio':' · bloqueio automático em '+(5-(-r.i.left))+' dia(s)'))
     .concat(S.rows.filter(r=>r.i.key==='due'&&r.i.left<=7&&r.t.status==='active').map(r=>item(r,' · vence em '+fmtDate(r.i.due))))
     .concat(S.trials.filter(r=>r.i.d!==null&&r.i.d<=7).map(r=>'<div class="list-row"><div class="grow"><b>'+esc(r.t.name)+'</b><small>Teste termina em '+(r.i.d>0?r.i.d+' dia(s)':'já encerrado')+'</small></div></div>'));
-  const filters='<div class="field" style="margin:6px 0 12px;max-width:280px"><label>Mostrar</label><select onchange="admFilter(this.value)">'+Object.keys(ADM_FILTERS).map(k=>'<option value="'+k+'"'+(admF===k?' selected':'')+'>'+ADM_FILTERS[k]+'</option>').join('')+'</select></div>';
-  const list=S.rows.filter(admMatch).sort((a,b)=>a.i.left-b.i.left);
-  const rowsHTML=list.length?'<div class="list-stack">'+list.map(r=>{
-    const t=r.t,i=r.i,last=i.last?fmtDate(String(i.last.paid_at).slice(0,10))+' ('+money(i.last.amount)+')':'nenhum';
-    return '<div class="list-row" style="flex-direction:column;align-items:stretch;gap:6px">'+
-      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>'+esc(t.name)+'</b><span class="pill '+i.cls+'">'+esc(i.label)+'</span></div>'+
-      '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
-      '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
-      '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
-      '<div class="actions"><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button><button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
-      (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
-  }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return pageHead('Oficinas clientes','A sua gestão está aqui.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
-    '<div class="cards">'+card('Oficinas ativas',S.act.length,S.trials.length+' em teste · '+S.blocked.length+' bloqueada(s)')+
-    card('Receita mensal prevista',money(S.mrr),'Soma das mensalidades ativas')+
-    card('Recebido em '+mes,money(S.recMes),'Pagamentos confirmados no mês')+
-    card('A receber em '+mes,money(S.recv),S.open.length+' sem pagamento · atrasado '+money(S.lateSum))+'</div>'+
+    '<div class="cards">'+card('Oficinas ativas',S.act.length,S.trials.length+' em teste · '+S.blocked.length+' bloqueada(s)','orbe_oficinas')+
+    card('Receita mensal prevista',money(S.mrr),'Soma das mensalidades ativas','orbe_bi')+
+    card('Recebido em '+mes,money(S.recMes),'Pagamentos confirmados no mês','orbe_pagamentos')+
+    card('A receber em '+mes,money(S.recv),S.open.length+' sem pagamento · atrasado '+money(S.lateSum),'orbe_notif')+'</div>'+
     '<div class="panel section-gap"><div class="panel-head"><h2>Alertas</h2></div>'+(alerts.length?'<div class="list-stack">'+alerts.join('')+'</div>':'<div class="empty">Nenhum alerta agora.</div>')+'</div>'+
-    '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
+    admOficinasPanel(S);
 };
 function admPixPanel(){
   const pixPanel='<div class="panel section-gap"><div class="panel-head"><h2>Chave Pix</h2></div><p class="subtle" style="font-size:12px">É para esta chave que as oficinas pagam. Ela aparece no QR code e no copia e cola do dono.</p><div class="fgrid">'+'<div class="field"><label>Chave Pix</label><input id="apxKey" value="'+esc(admPix.pix_key||'')+'"></div>'+'<div class="field"><label>Nome (aparece para quem paga)</label><input id="apxName" value="'+esc(admPix.pix_name||'ORBE')+'"></div>'+'<div class="field"><label>Cidade</label><input id="apxCity" value="'+esc(admPix.pix_city||'SAO PAULO')+'"></div>'+'<div class="field"><label>Chave pública Mercado Pago (APP_USR-...)</label><input id="apxMp" value="'+esc(admPix.mp_public_key||'')+'"></div>'+'<div class="field"><label>Endereço do app (volta após o cartão)</label><input id="apxApp" value="'+esc(admPix.app_url||'')+'"></div>'+'</div><div class="actions" style="margin-top:10px"><button class="btn primary" onclick="admSavePix()">Salvar chave Pix</button></div></div>';
