@@ -4510,7 +4510,7 @@ function applyBrand(){try{const own=ownBrand(),bn=document.querySelector('.banne
   if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center';bn.removeAttribute('data-empty');bn.onclick=null}
     else if(!own){bn.style.display='';bn.style.backgroundImage='';bn.setAttribute('data-empty','1');bn.onclick=function(){brandPick('banner')}}
     else{bn.style.backgroundImage='';bn.style.backgroundSize='';bn.style.display='';bn.removeAttribute('data-empty');bn.onclick=null}}
-  if(bb){if(bb.querySelector('img'))bb.innerHTML='ORBE<small>GESTÃO DE OFICINAS</small>';else if(bb.firstChild)bb.firstChild.nodeValue=brandName()}
+  if(bb){if(own)bb.innerHTML='ORBE<small>GESTÃO DE OFICINAS</small>';else{const r2=shopSet.find(x=>x.id==='shop')||{};bb.innerHTML=esc(String(r2.name||(ws&&ws.name)||'Oficina').trim())}}
   installIdentity()}catch(e){}}
 async function brandPick(kind){
   const i=document.createElement('input');i.type='file';i.accept='image/*';
