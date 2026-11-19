@@ -2846,12 +2846,13 @@ const ADMIN_MENU=[
 ];
 const CLIENT_MENU=[
  {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de caminhão'],['historico','◷','Histórico'],['agenda','▦','Agenda']]},
- {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
+ {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
- {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]}
+ {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -3000,7 +3001,7 @@ function renderMenu(){
   menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
 }
 function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
-function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
+function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
 /* ---------- Caminhões ---------- */
@@ -4313,6 +4314,42 @@ function gestaoHTML(){
   if(c.released)h+='<div class="panel section-gap"><h2>Projeção mensal</h2><p class="subtle" style="margin:-4px 0 10px">Estimativa com base nos lançamentos.</p>'+hbars([['Faturamento médio',c.fatM],['Custos e despesas variáveis',c.cusM+c.othM],['Despesas fixas',c.fixM],['Ponto de equilíbrio',c.pe]],'#2563eb')+'</div>';
   return h;
 }
+
+NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a receber, despesas fixas e metas da oficina.','')+gestaoHTML()};
+let trainKey=null;
+const TRAIN={
+inicio:{t:'Início',b:'Aqui você vê o resumo da oficina: caminhões em andamento, aguardando aprovação e entregues.'},
+cadastro:{t:'Cadastro de caminhão',b:'Preencha cliente, modelo e placa, nessa ordem, e depois o telefone, que tem o botão do WhatsApp. Os dados extras, como CPF/CNPJ, e-mail e endereço, aparecem nos documentos.'},
+historico:{t:'Histórico',b:'Mostra os veículos entregues e as movimentações. Use para consultar um caminhão que já saiu da oficina.'},
+agenda:{t:'Agenda',b:'Calendário de serviços e vencimentos, por dia, para você organizar a semana.'},
+orcamentos:{t:'Orçamentos',b:'Monte o orçamento por caminhão, com peças e mão de obra. Quando o cliente aprovar, o valor entra no faturamento. Dá para imprimir ou gerar o PDF.'},
+financeiro:{t:'Financeiro',b:'Resumo do que foi lançado: faturamento, despesas e resultado. O Básico é simples; o Avançado filtra por período e mostra gráficos. Use Novo lançamento para registrar despesas.'},
+gestao:{t:'Gestão financeira',b:'Acompanhe o caixa, o que falta receber, as despesas fixas e as metas. Confirme os recebimentos quando o dinheiro entrar. A projeção libera depois de 3 meses de lançamentos.'},
+pagamentos:{t:'Pagamentos',b:'Contas a pagar e contas já pagas. Lance cada conta aqui para que o caixa fique certo.'},
+receber:{t:'A receber',b:'Serviços vendidos para o cliente pagar depois. Use Cobrar para mandar a mensagem pronta pelo WhatsApp e Confirmar recebimento quando o dinheiro entrar. Aceita pagamento parcial.'},
+pecas:{t:'Peças a pagar',b:'Mostra quanto a oficina deve às autopeças, para você organizar os pagamentos.'},
+notas:{t:'Notas fiscais',b:'Prepare a nota fiscal quando precisar e envie ao contador.'},
+metas:{t:'Metas dos mecânicos',b:'Defina a meta de produção de cada mecânico e acompanhe quanto cada um já fez.'},
+parceiros:{t:'Parceiros',b:'Empresas que fazem serviço para a oficina. Cadastre aqui para indicar nos orçamentos.'},
+fornecedores:{t:'Fornecedores',b:'De quem a oficina compra peças e materiais. Cadastre para registrar as compras.'},
+mecanicos:{t:'Mecânicos',b:'Cadastre a equipe. Cada orçamento pode ter o mecânico responsável, e a produção aparece em Metas.'},
+usuarios:{t:'Perfil',b:'Sua conta e o acesso de cada pessoa da equipe.'},
+assinatura:{t:'Plano e cartão',b:'Veja o plano atual da oficina e os dados da assinatura.'},
+configuracoes:{t:'Configurações',b:'Dados da oficina, como nome, telefone e chave Pix. A logo e o banner também ficam aqui.'},
+editar:{t:'Editar',b:'Organize, esconda ou adicione blocos nas páginas do app, do jeito que faz mais sentido para a sua oficina.'},
+treinamento:{t:'Treinamento',b:'Esta aba repete o menu. Toque em qualquer item para ver uma explicação rápida.'}
+};
+function trainOpen(k){trainKey=k;render();window.scrollTo(0,0)}
+function trainBack(){trainKey=null;render();window.scrollTo(0,0)}
+function trainSlideHTML(){
+  const s=TRAIN[trainKey];
+  return '<div class="panel" style="text-align:center">'+ORBE_SVG+'<h2 style="font-size:18px;margin:4px 0 8px">'+esc(s.t)+'</h2><p class="subtle" style="max-width:520px;margin:0 auto 16px;font-size:14px">'+esc(s.b)+'</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="trainBack()">‹ Voltar ao treinamento</button><button class="btn primary" onclick="navigate(\''+trainKey+'\')">Abrir esta aba</button></div></div>';
+}
+NEWPAGE.treinamento=function(){
+  if(trainKey&&TRAIN[trainKey])return pageHead('Treinamento','Explicação rápida de cada aba.','')+trainSlideHTML();
+  return pageHead('Treinamento','Toque em uma aba do menu para ver a explicação dela com o Orbe.','')+
+    menuFor().map(g=>{const its=g.items.filter(i=>TRAIN[i[0]]);return its.length?'<div class="panel section-gap"><h2>'+esc(g.g)+'</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px">'+its.map(i=>'<button class="metric click" style="text-align:left;cursor:pointer" onclick="trainOpen(\''+i[0]+'\')"><div class="cap">'+i[1]+' '+esc(i[2])+'</div><div class="hint">Ver explicação</div></button>').join('')+'</div></div>':''}).join('');
+};
 function finBasicoHTML(){
   const D=finData(true),fe=D.fe,fq=D.fq,fat=fq.reduce((x,q)=>x+qTotal(q),0),cus=fq.reduce((x,q)=>x+qCost(q),0),
     fpaid=fe.filter(e=>e.status==='Pago'),fpend=fe.filter(e=>e.status==='Pendente'),cats=Array.from(new Set(fe.map(e=>e.category))),
@@ -4418,9 +4455,9 @@ function render(){
     '<div class="cards">'+metric('Total de orçamentos',quotes.length,'',"setQuoF('')")+metric('Aguardando aprovação',quotes.filter(q=>q.status==='Aguardando aprovação').length,'',"setQuoF('Aguardando aprovação')")+metric('Aprovados',appr.length,'',"setQuoF('Aprovado')")+metric('Valor aprovado',money(appr.reduce((s,q)=>s+qTotal(q),0)),'',"setQuoF('Aprovado')")+'</div>'+
     '<div class="panel"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div><div class="rowacts"><button class="small-btn" onclick="openQuote(\''+q.id+'\',\'\')">Abrir</button></div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
   }else if(currentPage==='financeiro'){
-    h=pageHead('Financeiro',finTab==='gestao'?'Caixa, contas a receber e projeção da oficina.':finTab==='avancado'?'Dados, filtros e gráficos para entender o dinheiro da oficina.':'Resumo simples do que já foi lançado.','<button class="btn primary" onclick="openExpense(\'\')">＋ Novo lançamento</button><button class="btn soft" onclick="reportPDF()">📄 Relatório do período (PDF)</button>')+
-    '<div class="ftabs"><button class="'+(finTab==='basico'?'on':'')+'" onclick="setFinTab(\'basico\')">Básico</button><button class="'+(finTab==='avancado'?'on':'')+'" onclick="setFinTab(\'avancado\')">Avançado</button>'+(isRole('dono')?'<button class="'+(finTab==='gestao'?'on':'')+'" onclick="setFinTab(\'gestao\')">Gestão financeira</button>':'')+'</div>'+
-    (finTab==='gestao'&&isRole('dono')?gestaoHTML():finTab==='avancado'?finAvancadoHTML():finBasicoHTML());
+    h=pageHead('Financeiro',finTab==='avancado'?'Dados, filtros e gráficos para entender o dinheiro da oficina.':'Resumo simples do que já foi lançado.','<button class="btn primary" onclick="openExpense(\'\')">＋ Novo lançamento</button><button class="btn soft" onclick="reportPDF()">📄 Relatório do período (PDF)</button>')+
+    '<div class="ftabs"><button class="'+(finTab==='basico'?'on':'')+'" onclick="setFinTab(\'basico\')">Básico</button><button class="'+(finTab==='avancado'?'on':'')+'" onclick="setFinTab(\'avancado\')">Avançado</button>'+'</div>'+
+    (finTab==='avancado'?finAvancadoHTML():finBasicoHTML());
   }else if(currentPage==='pagamentos'){
     const D=finData(),fe=D.fe,fpaid=fe.filter(e=>e.status==='Pago'),fpend=fe.filter(e=>e.status==='Pendente'),late=fpend.filter(e=>e.due&&e.due<todayISO()).length;
     h=pageHead('Pagamentos','Tudo o que a oficina precisa pagar: fornecedores, parceiros, funcionários, aluguel, contas e compras.','<button class="btn primary" onclick="openExpense(\'\')">＋ Lançar pagamento</button>')+finFilterHTML()+
@@ -4523,15 +4560,15 @@ const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_N
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
 const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
-const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes'],mecanico:['inicio','historico','agenda','usuarios','configuracoes']};
+const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],completo:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos']};
+const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],completo:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
-function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
+function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
 function sessLoad(){try{sess=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){sess=null}}
