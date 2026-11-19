@@ -5621,7 +5621,11 @@ function go(e){const t=e.target&&e.target.closest?e.target.closest(SEL):null;if(
 t.classList.remove('glow');void t.offsetWidth;t.classList.add('glow');setTimeout(()=>t.classList.remove('glow'),750)}
 document.addEventListener('pointerdown',go,true)})();
 
-setInterval(function(){if(document.visibilityState==='visible'&&navigator.onLine&&ws&&ws.id&&!ws.is_admin){sb('/rest/v1/rpc/my_ping',{method:'POST',body:{}}).catch(function(){})}},60000);
+function orbePing(){if(document.visibilityState==='visible'&&navigator.onLine&&ws&&ws.id&&!ws.is_admin){sb('/rest/v1/rpc/my_ping',{method:'POST',body:{}}).catch(function(){})}}
+setInterval(orbePing,20000);
+document.addEventListener('visibilitychange',orbePing);
+setTimeout(orbePing,3000);
+setInterval(function(){if(currentPage==='orbe_tempo'&&ws&&ws.is_admin&&!tempoBusy&&document.visibilityState==='visible')loadTempo()},30000);
 </script>
 </body>
 </html>
