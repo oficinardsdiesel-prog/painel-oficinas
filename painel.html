@@ -69,6 +69,8 @@ body.dark h1,body.dark h2,body.dark h3,body.dark b{color:#e6e8ec}
 .money{font-weight:800;font-size:13px;white-space:nowrap}
 .rowacts{display:flex;gap:2px;flex-wrap:wrap;align-items:center}
 .small-btn{border:1px solid #4b5563;background:linear-gradient(180deg,#4a5260 0%,#2b303a 55%,#1c2027 100%);color:#fff;font-weight:600;cursor:pointer;font-size:12px;padding:6px 11px;border-radius:7px;text-decoration:none;opacity:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 5px rgba(0,0,0,.45);text-shadow:0 1px 1px rgba(0,0,0,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.small-btn.life-on{background:linear-gradient(180deg,#22a06b 0%,#16865b 100%);border-color:#16865b;color:#fff}
+.pill.life-on{background:#d7f5e6;color:#0f6b47}
 .small-btn.red{background:linear-gradient(180deg,#5a2b2b 0%,#3a1a1a 55%,#241010 100%);border-color:#6b3434}
 .field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -499,6 +501,11 @@ window.addEventListener('error',function(e){
     <div class="field full"><label>Observações</label><textarea id="admNotes"></textarea></div>
   </div>
   <div class="modal-actions"><button class="btn plain" id="admDelBtn" onclick="admDeleteTenant()" style="margin-right:auto">Excluir conta</button><button class="btn plain" onclick="closeModal('admModal')">Cancelar</button><button class="btn primary" onclick="admSaveEdit()">Salvar</button></div>
+</div></div>
+<div class="modal" id="admLifeOffModal"><div class="modal-box">
+  <h2>Sair do vitalício</h2><p class="modal-sub" id="admLifeOffSub"></p>
+  <div class="form-grid"><div class="field full"><label>Em qual plano a oficina entra?</label><select id="admLifeOffPlan"></select></div></div>
+  <div class="modal-actions"><button class="btn plain" onclick="closeModal('admLifeOffModal')">Cancelar</button><button class="btn primary" onclick="admLifeOffSave()">Entrar no plano</button></div>
 </div></div>
 <div class="modal" id="admTrialModal"><div class="modal-box">
   <h2>Período de teste</h2><p class="modal-sub" id="admTrialSub"></p>
@@ -4318,32 +4325,38 @@ function gestaoHTML(){
 NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a receber, despesas fixas e metas da oficina.','')+gestaoHTML()};
 let trainKey=null;
 const TRAIN={
-inicio:{t:'Início',b:'Aqui você vê o resumo da oficina: caminhões em andamento, aguardando aprovação e entregues.'},
-cadastro:{t:'Cadastro de caminhão',b:'Preencha cliente, modelo e placa, nessa ordem, e depois o telefone, que tem o botão do WhatsApp. Os dados extras, como CPF/CNPJ, e-mail e endereço, aparecem nos documentos.'},
-historico:{t:'Histórico',b:'Mostra os veículos entregues e as movimentações. Use para consultar um caminhão que já saiu da oficina.'},
-agenda:{t:'Agenda',b:'Calendário de serviços e vencimentos, por dia, para você organizar a semana.'},
-orcamentos:{t:'Orçamentos',b:'Monte o orçamento por caminhão, com peças e mão de obra. Quando o cliente aprovar, o valor entra no faturamento. Dá para imprimir ou gerar o PDF.'},
-financeiro:{t:'Financeiro',b:'Resumo do que foi lançado: faturamento, despesas e resultado. O Básico é simples; o Avançado filtra por período e mostra gráficos. Use Novo lançamento para registrar despesas.'},
-gestao:{t:'Gestão financeira',b:'Acompanhe o caixa, o que falta receber, as despesas fixas e as metas. Confirme os recebimentos quando o dinheiro entrar. A projeção libera depois de 3 meses de lançamentos.'},
-pagamentos:{t:'Pagamentos',b:'Contas a pagar e contas já pagas. Lance cada conta aqui para que o caixa fique certo.'},
-receber:{t:'A receber',b:'Serviços vendidos para o cliente pagar depois. Use Cobrar para mandar a mensagem pronta pelo WhatsApp e Confirmar recebimento quando o dinheiro entrar. Aceita pagamento parcial.'},
-pecas:{t:'Peças a pagar',b:'Mostra quanto a oficina deve às autopeças, para você organizar os pagamentos.'},
-notas:{t:'Notas fiscais',b:'Prepare a nota fiscal quando precisar e envie ao contador.'},
-metas:{t:'Metas dos mecânicos',b:'Defina a meta de produção de cada mecânico e acompanhe quanto cada um já fez.'},
-parceiros:{t:'Parceiros',b:'Empresas que fazem serviço para a oficina. Cadastre aqui para indicar nos orçamentos.'},
-fornecedores:{t:'Fornecedores',b:'De quem a oficina compra peças e materiais. Cadastre para registrar as compras.'},
-mecanicos:{t:'Mecânicos',b:'Cadastre a equipe. Cada orçamento pode ter o mecânico responsável, e a produção aparece em Metas.'},
-usuarios:{t:'Perfil',b:'Sua conta e o acesso de cada pessoa da equipe.'},
-assinatura:{t:'Plano e cartão',b:'Veja o plano atual da oficina e os dados da assinatura.'},
-configuracoes:{t:'Configurações',b:'Dados da oficina, como nome, telefone e chave Pix. A logo e o banner também ficam aqui.'},
-editar:{t:'Editar',b:'Organize, esconda ou adicione blocos nas páginas do app, do jeito que faz mais sentido para a sua oficina.'},
-treinamento:{t:'Treinamento',b:'Esta aba repete o menu. Toque em qualquer item para ver uma explicação rápida.'}
+"inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: caminhões sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de caminhões."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."]]},
+"cadastro":{t:"Cadastro de caminhão",s:[["O que é", "Aqui você registra um caminhão e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O caminhão aparece na lista e já pode ser usado nos orçamentos."]]},
+"historico":{t:"Histórico",s:[["O que é", "Histórico guarda os caminhões já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo caminhão e você quiser lembrar o serviço anterior."]]},
+"agenda":{t:"Agenda",s:[["O que é", "A agenda mostra os serviços marcados e os vencimentos, dia a dia."], ["Como usar", "Escolha o dia no calendário para ver o que está programado."], ["Dica", "Use para organizar a semana e não perder um vencimento."]]},
+"orcamentos":{t:"Orçamentos",s:[["O que é", "Orçamento é a proposta de serviço para um caminhão, com peças e mão de obra, antes de o cliente aprovar."], ["Criar", "Toque em Novo orçamento, escolha o caminhão e adicione os itens."], ["Itens", "Cada linha tem tipo (peça ou mão de obra), quantidade e preço. O total é calculado sozinho."], ["Mecânico", "Escolha o mecânico responsável. Isso alimenta a aba Metas dos mecânicos."], ["Aprovação", "Quando o cliente aprovar, marque como Aprovado. Só os aprovados entram no faturamento."], ["Imprimir", "Use Imprimir ou gere o PDF para mandar ao cliente. A logo da oficina aparece no topo."]]},
+"financeiro":{t:"Financeiro",s:[["O que é", "Financeiro mostra o que entrou e o que saiu da oficina em um período."], ["Básico", "Mostra faturamento, despesas e resultado de forma simples."], ["Avançado", "Permite filtrar por mês, trimestre ou ano e ver gráficos."], ["Lançar despesa", "Toque em Novo lançamento. Informe descrição, categoria, valor e vencimento."], ["Despesa fixa", "Marque como despesa fixa para a conta se repetir todo mês, sozinha."]]},
+"gestao":{t:"Gestão financeira",s:[["O que é", "A Gestão financeira mostra a saúde do caixa e o que ainda precisa ser recebido ou pago. Só o dono vê."], ["Caixa", "Caixa = saldo inicial + recebimentos − pagamentos. Informe o saldo inicial em Caixa e metas; sem ele, o caixa começa em zero."], ["A receber", "Confirme o recebimento quando o dinheiro entrar. O valor fica neutro até o vencimento e vira vermelho a partir dele."], ["Despesas fixas", "Aluguel e outras contas fixas aparecem todo mês. Se passar do vencimento sem lançar, aparece como déficit."], ["Metas", "Ajuste as metas: despesas fixas até 35% do faturamento, reserva de 1 a 3 meses e margem de 5% a 15%."], ["Projeção", "O ponto de equilíbrio e os gráficos liberam depois de 3 meses com lançamentos. Até lá, acompanhe o caixa e as contas."]]},
+"pagamentos":{t:"Pagamentos",s:[["O que é", "Pagamentos reúne as contas a pagar e as que já foram pagas."], ["Filtrar", "Use os filtros para ver só o que está pendente ou vencido."], ["Pagar", "Ao pagar uma conta, marque como paga e informe a data. Isso atualiza o caixa."]]},
+"receber":{t:"A receber",s:[["O que é", "A receber são os serviços que o cliente vai pagar depois."], ["Lançar", "Toque em Lançar a receber, escolha o cliente e informe o valor e o vencimento."], ["Cobrar", "Toque em Cobrar para abrir a mensagem pronta no WhatsApp, no tom certo para o momento."], ["Recebimento", "Quando o dinheiro entrar, toque em Confirmar recebimento. Se pagar aos poucos, registre cada parte."], ["Cores", "O valor fica neutro até o vencimento e vira vermelho a partir do dia do vencimento."]]},
+"pecas":{t:"Peças a pagar",s:[["O que é", "Peças a pagar mostra quanto a oficina deve às autopeças."], ["Como usar", "Veja o que está em aberto por fornecedor."], ["Dica", "Confira essa lista antes de fechar a semana para não atrasar pagamentos."]]},
+"notas":{t:"Notas fiscais",s:[["O que é", "Notas fiscais é onde você prepara a nota fiscal quando o serviço exigir."], ["Como usar", "Confira os dados fiscais da oficina e os do cliente, e gere a nota."], ["Contador", "Envie a nota ao contador pelo e-mail ou WhatsApp cadastrados."]]},
+"metas":{t:"Metas dos mecânicos",s:[["O que é", "Metas dos mecânicos mostra quanto cada mecânico já produziu."], ["Definir", "Toque em um mecânico e informe a meta do mês."], ["Acompanhar", "A barra mostra quanto falta. Os números vêm dos orçamentos aprovados."]]},
+"parceiros":{t:"Parceiros",s:[["O que é", "Parceiros são empresas que fazem serviços para a oficina, como funilaria ou borracharia."], ["Cadastrar", "Toque em Novo parceiro e informe o nome e o contato."], ["Usar", "Indique um parceiro nos orçamentos quando o serviço for dele."]]},
+"fornecedores":{t:"Fornecedores",s:[["O que é", "Fornecedores são as lojas de onde a oficina compra peças e materiais."], ["Cadastrar", "Toque em Novo fornecedor e informe o nome e o contato."], ["Usar", "Escolha o fornecedor ao registrar uma compra de peças."]]},
+"mecanicos":{t:"Mecânicos",s:[["O que é", "Aqui fica a equipe de mecânicos da oficina."], ["Cadastrar", "Toque em Novo mecânico e informe o nome."], ["Usar", "Cada orçamento pode ter o mecânico responsável, e a produção aparece em Metas."]]},
+"usuarios":{t:"Perfil",s:[["O que é", "Perfil é a sua conta e o acesso de cada pessoa da equipe."], ["Papéis", "Dono, atendimento, mecânico e financeiro. Cada papel vê só as abas que precisa."], ["Convidar", "O dono convida pessoas da equipe pelo código de convite."], ["Senha", "Para trocar a sua senha, use Trocar minha senha."]]},
+"assinatura":{t:"Plano e cartão",s:[["O que é", "Aqui você vê o plano atual da oficina e os dados da assinatura."], ["Antes de mudar", "Veja o que está incluído no seu plano antes de pedir uma mudança."], ["Dúvidas", "Para mudar de plano ou alterar o cartão, fale com o responsável pelo sistema."]]},
+"configuracoes":{t:"Configurações",s:[["O que é", "Configurações guarda os dados da oficina usados em todo o app."], ["Dados", "Nome, telefone, endereço e CNPJ aparecem nos documentos."], ["Chave Pix", "A chave Pix aparece no orçamento para o cliente pagar."], ["Logo e banner", "Troque quando quiser. A logo sai no topo dos PDFs."]]},
+"editar":{t:"Editar",s:[["O que é", "Editar permite organizar as páginas do app do jeito que faz mais sentido para a oficina."], ["Como usar", "Mostre, esconda ou reordene os blocos de cada página."], ["Dica", "As mudanças valem só para o seu app."]]},
+"treinamento":{t:"Treinamento",s:[["O que é", "Esta aba repete o menu. Cada item tem explicações em slides."], ["Como usar", "Toque em uma aba e passe os slides com as setas."], ["Voltar", "Use Voltar ao treinamento para escolher outra aba."]]}
 };
-function trainOpen(k){trainKey=k;render();window.scrollTo(0,0)}
-function trainBack(){trainKey=null;render();window.scrollTo(0,0)}
+let trainIdx=0;
+function trainOpen(k){trainKey=k;trainIdx=0;render();window.scrollTo(0,0)}
+function trainBack(){trainKey=null;trainIdx=0;render();window.scrollTo(0,0)}
+function trainGo(d){trainIdx=Math.max(0,Math.min(TRAIN[trainKey].s.length-1,trainIdx+d));render();window.scrollTo(0,0)}
 function trainSlideHTML(){
-  const s=TRAIN[trainKey];
-  return '<div class="panel" style="text-align:center">'+ORBE_SVG+'<h2 style="font-size:18px;margin:4px 0 8px">'+esc(s.t)+'</h2><p class="subtle" style="max-width:520px;margin:0 auto 16px;font-size:14px">'+esc(s.b)+'</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="trainBack()">‹ Voltar ao treinamento</button><button class="btn primary" onclick="navigate(\''+trainKey+'\')">Abrir esta aba</button></div></div>';
+  const T=TRAIN[trainKey],n=T.s.length,i=trainIdx,sl=T.s[i],last=i===n-1;
+  const arrow=(d)=>'<button onclick="trainGo('+d+')" aria-label="'+(d<0?'Slide anterior':'Próximo slide')+'" style="width:34px;height:34px;border-radius:8px;border:1px solid rgba(20,30,50,.3);background:rgba(255,255,255,.75);color:#1c2f5a;font-size:18px;line-height:1;cursor:pointer;padding:0">'+(d<0?'‹':'›')+'</button>';
+  return '<div class="panel" style="text-align:center">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;min-height:34px;margin-bottom:4px"><div>'+(i>0?arrow(-1):'')+'</div><small class="subtle">'+(i+1)+' de '+n+'</small><div>'+(!last?arrow(1):'')+'</div></div>'+
+    ORBE_SVG+'<h2 style="font-size:18px;margin:4px 0 8px">'+esc(sl[0])+'</h2><p class="subtle" style="max-width:520px;margin:0 auto 16px;font-size:14px;text-align:left;line-height:1.5">'+esc(sl[1]).replace(/\n/g,'<br>')+'</p>'+
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="trainBack()">‹ Voltar ao treinamento</button>'+(last?'<button class="btn primary" onclick="navigate(\''+trainKey+'\')">Abrir esta aba</button>':'')+'</div></div>';
 }
 NEWPAGE.treinamento=function(){
   if(trainKey&&TRAIN[trainKey])return pageHead('Treinamento','Explicação rápida de cada aba.','')+trainSlideHTML();
@@ -4796,7 +4809,7 @@ function admInfo(t){
   let key,cls,label;
   if(t.status==='blocked'){key='blk';cls='red';label='Bloqueada'}
   else if(t.status==='trial'){key='trial';cls='s2';label='Teste grátis'+(d!==null?(d>0?' · faltam '+d+' dia(s)':' · encerrado'):'')}
-  else if(b.lifetime){key='life';cls='s5';label='Vitalício · sem cobrança'}
+  else if(b.lifetime){key='life';cls='life-on';label='Vitalício · sem cobrança'}
   else if(paidNow){key='ok';cls='s5';label='Em dia'}
   else if(left<0){key='late';cls='red';label='Atrasada '+(-left)+' dia(s)'}
   else {key='due';cls='s4';label=left===0?'Vence hoje':'Vence em '+left+' dia(s)'}
@@ -4958,6 +4971,23 @@ async function admLifeSet(){
   if(!r.ok){alert('Não consegui liberar.');return}
   closeModal('admTrialModal');admList=undefined;admLoad();
 }
+let admLifeOffId='';
+async function admLifeToggle(id){const t=(admList||[]).find(x=>x.id===id);if(!t)return;
+  if(!billOf(id).lifetime){
+    if(!confirm('Liberar "'+t.name+'" como vitalícia, sem cobrança?'))return;
+    const r=await sb('/rest/v1/rpc/admin_billing_set_lifetime',{method:'POST',body:{p_tenant:id,p_on:true}});
+    if(!r.ok){alert('Não consegui liberar.');return}
+    admList=undefined;admLoad();return;
+  }
+  admLifeOffId=id;$('admLifeOffSub').textContent=t.name+' · sair do vitalício e entrar em um plano pago.';
+  $('admLifeOffPlan').innerHTML=planOptions(ADM_PLANS.indexOf(t.plan)>=0?t.plan:'basico');openModal('admLifeOffModal');
+}
+async function admLifeOffSave(){const t=(admList||[]).find(x=>x.id===admLifeOffId);if(!t)return;const plan=$('admLifeOffPlan').value;
+  const a=await sb('/rest/v1/rpc/admin_billing_set_lifetime',{method:'POST',body:{p_tenant:t.id,p_on:false}});
+  const r=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:t.id,p_status:'active',p_plan:plan,p_trial_days:null}});
+  if(!a.ok||!r.ok){alert('Não consegui mudar para o plano pago.');return}
+  closeModal('admLifeOffModal');admList=undefined;admLoad();
+}
 async function admSavePlans(){
   for(const p of ADM_PLANS){
     const v=$('adp_'+p).value;
@@ -4978,7 +5008,7 @@ function admOficinasPanel(S){
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
       '<div class="actions"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">👁 Visualizar loja</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
-      (t.status==='blocked'?'':'<button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste / vitalício</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
+      (t.status==='blocked'?'':'<button class="small-btn'+(billOf(t.id).lifetime?' life-on':'')+'" onclick="admLifeToggle(\''+t.id+'\')">'+(billOf(t.id).lifetime?'✓ Vitalício':'Vitalício')+'</button><button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste grátis</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
 }
