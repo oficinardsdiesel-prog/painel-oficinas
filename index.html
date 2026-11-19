@@ -3018,10 +3018,10 @@ function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+
 function vehName(t){return [t.client||'Cliente sem nome',t.model,t.plate].filter(Boolean).join(' · ')}
 function truckCard(t,withSelect){
   const wa=waLink(t.phone);
-  return '<div class="tcard"><div class="info"><b style="font-size:16px">'+esc(t.client||'Cliente sem nome')+'</b> <span class="pill '+statusClass(t.status)+'">'+esc(t.status)+'</span>'+
+  return '<div class="tcard" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="info"><b style="font-size:16px">'+esc(t.client||'Cliente sem nome')+'</b> <span class="pill '+statusClass(t.status)+'">'+esc(t.status)+'</span>'+
     '<div style="margin-top:3px;font-weight:600">'+(t.model?esc(t.model)+' · ':'')+esc(t.plate)+'</div>'+
     '<small>'+(t.date?'Entrada '+esc(t.date)+' · ':'')+'Mecânico: '+esc(mechanicName(t.mechanicId))+'</small></div>'+
-    '<div class="rowacts">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
+    '<div class="rowacts" onclick="event.stopPropagation()">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
     waBtn(t.phone,true,t.id)+
     '<button class="small-btn" onclick="openTruck(\''+t.id+'\')">✎ Editar</button></div></div>';
 }
