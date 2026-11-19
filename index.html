@@ -2849,7 +2849,7 @@ const SLOTS=[
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
 const ADMIN_MENU=[
- {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas parceiras'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
+ {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas parceiras'],['orbe_tempo','⏱','Tempo de tela'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
@@ -2918,6 +2918,8 @@ function waBtn(phone,label,tid){const l=waLink(phone);if(l&&tid)return '<button 
 function logEvent(plate,text){events.unshift({id:uid(),plate,text,date:new Date().toLocaleString('pt-BR')});if(events.length>500)events.length=500}
 function mechanicName(id){const m=mechanics.find(m=>m.id===id);return m?m.name:'Não definido'}
 function waLink(phone){const d=String(phone||'').replace(/\D/g,'');if(d.length<10)return '';return 'https://wa.me/'+(d.length<=11?'55'+d:d)}
+function ownWAHelp(id){return '<div style="margin-top:6px"><button type="button" class="wabtn" onclick="ownWA(\''+id+'\')">'+WA_SVG+'Abrir meu WhatsApp</button><small class="subtle" style="display:block;margin-top:6px">Este número recebe os contatos dos clientes e aparece nos orçamentos. Toque para testar se abre o seu WhatsApp.</small></div>'}
+function ownWA(id){const el=$(id);const l=waLink(el?el.value:'');if(!l){alert('Digite o número com DDD para abrir o WhatsApp.');return}window.open(l,'_blank','noopener')}
 function optionsHTML(list,sel){return list.map(v=>'<option'+(v===sel?' selected':'')+'>'+esc(v)+'</option>').join('')}
 function openModal(id){const m=$(id);if(m.classList.contains('open'))return;m.classList.add('open');ovPush(id)}
 function closeModal(id){const m=$(id);if(!m.classList.contains('open'))return;m.classList.remove('open');ovPop(id)}
@@ -4431,6 +4433,41 @@ function importAll(input){
 }
 
 /* ---------- Páginas ---------- */
+/* ---------- Tempo de uso das oficinas (ORBE) ---------- */
+let tempoDays=7,tempoData=undefined,tempoBusy=false,tempoSel=null;
+const TEMPO_ALERT_PCT=0.5;
+function tempoIsAlert(r){return r.status==='active'&&Number(r.baseline)>0&&Number(r.minutes)<TEMPO_ALERT_PCT*Number(r.baseline)}
+function tempoAlerts(){return (Array.isArray(tempoData)?tempoData:[]).filter(tempoIsAlert)}
+function tempoFmt(m){m=Math.round(Number(m)||0);const h=Math.floor(m/60),mm=m%60;return h?(h+'h '+String(mm).padStart(2,'0')+'min'):(mm+' min')}
+async function loadTempoData(){const r=await sb('/rest/v1/rpc/admin_usage_report',{method:'POST',body:{p_days:tempoDays}});tempoData=r.ok&&Array.isArray(r.json)?r.json:[];return tempoData}
+async function loadTempo(){if(tempoBusy)return;tempoBusy=true;try{await loadTempoData()}catch(e){tempoData=[]}tempoBusy=false;render()}
+function tempoSetDays(d){tempoDays=d;tempoData=undefined;tempoSel=null;render();loadTempo()}
+function tempoOpen(id){tempoSel=tempoSel===id?null:id;render()}
+function tempoWA(id){const r=(tempoData||[]).find(x=>x.id===id);if(!r)return;const l=waLink(r.phone||'');if(!l){alert('Esta oficina não tem telefone cadastrado.');return}
+  const msg='Olá, tudo bem? Aqui é do ORBE. Passando para saber se a sua oficina está precisando de alguma coisa, se ficou com alguma dúvida ou se precisa de alguma atualização específica para o seu sistema. Fico à disposição!';
+  window.open(l+'?text='+encodeURIComponent(msg),'_blank','noopener')}
+NEWPAGE.orbe_tempo=function(){
+  if(tempoData===undefined&&!tempoBusy)loadTempo();
+  const seg=(d,lab)=>'<button class="'+(tempoDays===d?'on':'')+'" onclick="tempoSetDays('+d+')">'+lab+'</button>';
+  const filtro='<div class="optrow" style="margin-bottom:14px">'+seg(7,'Esta semana')+seg(30,'Este mês')+'</div>';
+  if(!Array.isArray(tempoData))return pageHead('Tempo de tela','Quanto tempo cada oficina usa o ORBE.','')+filtro+'<div class="empty">Carregando…</div>';
+  const rows=tempoData.slice().sort((a,b)=>Number(b.minutes)-Number(a.minutes));
+  const lista=rows.map(r=>{const al=tempoIsAlert(r);const pct=Number(r.baseline)>0?Math.round(Number(r.minutes)/Number(r.baseline)*100):null;
+    const open=tempoSel===r.id;
+    let det='';
+    if(open){
+      const us=(r.users||[]).map(u=>'<div class="list-row" style="margin-top:6px"><div class="grow"><b>'+esc(u.name)+'</b></div><b>'+tempoFmt(u.minutes)+'</b></div>').join('')||'<div class="empty">Ninguém usou o app neste período.</div>';
+      det='<div style="margin-top:10px"><div class="subtle" style="margin-bottom:4px">Por pessoa</div>'+us+
+        '<div class="actions" style="margin-top:12px">'+(waLink(r.phone||'')?'<button class="btn wa" onclick="tempoWA(\''+r.id+'\')">Chamar no WhatsApp</button>':'<span class="subtle">Sem telefone cadastrado</span>')+'</div></div>';
+    }
+    return '<div class="list-row click" onclick="tempoOpen(\''+r.id+'\')" style="cursor:pointer;flex-direction:column;align-items:stretch">'+
+      '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div class="grow"><b>'+esc(r.name||'Oficina')+'</b><small>'+esc(r.plan||'')+' · média anterior '+tempoFmt(r.baseline)+(pct!=null?' · '+pct+'% da média':'')+'</small></div>'+
+      '<div style="text-align:right"><b>'+tempoFmt(r.minutes)+'</b>'+(al?'<div><span class="pill red">Uso caiu</span></div>':'')+'</div></div>'+det+'</div>';}).join('')||'<div class="empty">Nenhuma oficina ativa ainda.</div>';
+  const nAl=tempoAlerts().length;
+  return pageHead('Tempo de tela','Soma de todos os usuários de cada oficina. Alerta quando o uso cai abaixo de '+Math.round(TEMPO_ALERT_PCT*100)+'% da média.','')+filtro+
+    (nAl?'<div class="notice"><b>'+nAl+' oficina(s)</b> com o uso abaixo da média. Toque na oficina e chame no WhatsApp.</div>':'')+
+    '<div class="panel"><div class="list-stack">'+lista+'</div></div>';
+};
 function render(){
   if(ws&&ws.is_admin){if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin'}else if(/^(admin|orbe_)/.test(currentPage))currentPage='inicio';
   try{applyTheme()}catch(e){}
@@ -4492,7 +4529,7 @@ function render(){
     h=pageHead('Configurações','Pequenos ajustes do sistema.','')+
     (ed?'<div class="panel section-gap"><h2>Identidade da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Logo, banner, dados e aparência, passo a passo.</p><button class="btn primary" onclick="wzOpen()">✨ Abrir assistente de configuração</button></div>':'')+
     '<div class="panel section-gap"><h2>Dados da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Aparecem no topo do orçamento impresso.'+(ed?'':' Só o dono pode alterar.')+'</p><div class="fgrid">'+
-    '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div><div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
+    '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div>'+(ed?ownWAHelp('sPhone'):'')+'<div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
     '<div class="field"><label>CNPJ</label><input id="sCnpj" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
     '<div class="field" style="margin-top:12px"><label>Texto no rodapé do orçamento (ex.: validade, garantia)</label><textarea id="sFoot" '+(ed?'':'disabled')+'>'+esc(sh.foot||'')+'</textarea></div>'+(ed?'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="saveShop()">Salvar dados da oficina</button></div>':'')+'</div>'+
     (ed?'<div class="panel section-gap"><h2>Mensagens prontas do WhatsApp</h2><p class="subtle" style="margin:-6px 0 12px;font-size:12px">Use <b>{cliente}</b> (primeiro nome), <b>{placa}</b>, <b>{modelo}</b>, <b>{valor}</b>, <b>{oficina}</b>; na cobrança também <b>{vencimento}</b>, <b>{descricao}</b> e <b>{pix}</b>; na agenda <b>{data}</b>, <b>{hora}</b>, <b>{servico}</b> e <b>{endereco}</b>. Elas aparecem no botão verde de WhatsApp do caminhão.</p>'+ALLT().map(t=>'<div class="field" style="margin-bottom:10px"><label>'+t[1]+'</label><textarea id="wm_'+t[0]+'" rows="3">'+esc(waTpl(t[0]))+'</textarea></div>').join('')+'<div class="actions"><button class="btn primary" onclick="saveMsgs()">Salvar mensagens</button><button class="btn soft" onclick="resetMsgs()">Voltar ao padrão</button></div></div>':'')+
@@ -4793,7 +4830,7 @@ function wzRender(msg){
   const optb=function(k,list){return '<div class="optrow">'+list.map(function(o){return '<button type="button" class="'+(PREF[k]===o[0]?'on':'')+'" onclick="setPref(\''+k+'\',\''+o[0]+'\');wzRender()">'+o[1]+'</button>'}).join('')+'</div>'};
   let b='',skip='';
   if(st===0)b='<div class="wz-hero">👋</div><h1>Bem-vindo!</h1><p class="subtle" style="font-size:14px;margin:6px 0 0">Vamos deixar o sistema com a <b>cara da sua oficina</b>. Leva uns 2 minutos e você pode mudar tudo depois em <b>Configurações</b>.</p><p class="subtle" style="font-size:13px;margin:12px 0 0">Você vai colocar: nome e dados, logo, banner e a aparência.</p>';
-  else if(st===1)b='<h1>Dados da oficina</h1><p class="subtle" style="font-size:13px;margin:4px 0 0">Esses dados saem no topo dos orçamentos, ordens de serviço e relatórios em PDF.</p>'+fld('wName','Nome da oficina *',wz.name,'Ex.: Oficina do João')+fld('wPhone','Telefone / WhatsApp',wz.phone,'(00) 00000-0000','inputmode="tel"')+fld('wCnpj','CNPJ (se tiver)',wz.cnpj,'00.000.000/0000-00')+fld('wAddr','Endereço',wz.addr,'Rua, número, cidade')+fld('wPix','Chave Pix (aparece nas cobranças)',wz.pix,'CNPJ, telefone ou e-mail');
+  else if(st===1)b='<h1>Dados da oficina</h1><p class="subtle" style="font-size:13px;margin:4px 0 0">Esses dados saem no topo dos orçamentos, ordens de serviço e relatórios em PDF.</p>'+fld('wName','Nome da oficina *',wz.name,'Ex.: Oficina do João')+fld('wPhone','Telefone / WhatsApp',wz.phone,'(00) 00000-0000','inputmode="tel"')+ownWAHelp('wPhone')+fld('wCnpj','CNPJ (se tiver)',wz.cnpj,'00.000.000/0000-00')+fld('wAddr','Endereço',wz.addr,'Rua, número, cidade')+fld('wPix','Chave Pix (aparece nas cobranças)',wz.pix,'CNPJ, telefone ou e-mail');
   else if(st===2){skip='Pular';b='<h1>Logo da oficina</h1><p class="subtle" style="font-size:13px;margin:4px 0 12px">Aparece no topo dos PDFs. Pode ser uma foto da sua logomarca tirada do celular.</p>'+
     (wz.logo?'<div style="text-align:center"><img src="'+wz.logo.d+'" style="max-width:100%;max-height:90px;object-fit:contain;background:#fff;border:1px solid #d5dbe5;border-radius:10px;padding:6px"></div>':'<div class="empty" style="padding:18px">Nenhum logo escolhido.</div>')+
     '<label class="btn soft" style="width:100%;margin-top:12px;cursor:pointer;text-align:center;display:block">'+(wz.logo?'Trocar logo':'📷 Escolher logo')+'<input type="file" accept="image/*" style="display:none" onchange="wzPick(this,\'logo\')"></label>'+(wz.logo?'<button type="button" class="lnk" onclick="wz.logo=null;wzRender()">Remover logo</button>':'')}
@@ -4809,7 +4846,7 @@ function wzRender(msg){
   a.innerHTML='<div class="box" style="max-width:420px;border-radius:22px;background:linear-gradient(180deg,#fff,#f3f6fb);box-shadow:0 30px 60px -20px rgba(15,23,42,.5)">'+dots+b+'<div class="msg" id="wMsg">'+esc(msg||'')+'</div>'+nav+'</div>';if(st===5)setTimeout(wzCardMount,0)}
 /* painel do administrador do sistema */
 let admList,admBusy=false;
-function updateBell(){const b=$('bellN');if(!b)return;const n=admList?admSummary(admList).late.length:0;b.textContent=n;b.style.display=n?'block':'none'}
+function updateBell(){const b=$('bellN');if(!b)return;const n=(admList?admSummary(admList).late.length:0)+tempoAlerts().length;b.textContent=n;b.style.display=n?'block':'none'}
 async function autoBlockOverdue(){
   if(!ws||!ws.is_admin||!admList)return;
   const late=admSummary(admList).late.filter(r=>r.t.status==='active'&&-r.i.left>=5);
@@ -4817,7 +4854,7 @@ async function autoBlockOverdue(){
     try{const x=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:r.t.id,p_status:'blocked',p_plan:'',p_trial_days:null}});if(x.ok)r.t.status='blocked'}catch(e){}
   }
 }
-async function admLoad(){admBusy=true;try{const [r,b,pl,ps]=await Promise.all([sb('/rest/v1/rpc/admin_tenants',{method:'POST',body:{}}),sb('/rest/v1/rpc/admin_billing_list',{method:'POST',body:{}}),sb('/rest/v1/billing_plans?select=plan,price',{method:'GET'}),sb('/rest/v1/billing_settings?select=pix_key,pix_name,pix_city,mp_public_key,app_url',{method:'GET'})]);admList=r.ok&&Array.isArray(r.json)?r.json:[];admBill=b.ok&&Array.isArray(b.json)?b.json:[];admPlans=pl.ok&&Array.isArray(pl.json)?pl.json:[];admPix=ps.ok&&Array.isArray(ps.json)&&ps.json[0]?ps.json[0]:{}}catch(e){admList=[];admBill=[];admPlans=[];admPix={}}try{await autoBlockOverdue()}catch(e){}admBusy=false;render()}
+async function admLoad(){admBusy=true;try{const [r,b,pl,ps]=await Promise.all([sb('/rest/v1/rpc/admin_tenants',{method:'POST',body:{}}),sb('/rest/v1/rpc/admin_billing_list',{method:'POST',body:{}}),sb('/rest/v1/billing_plans?select=plan,price',{method:'GET'}),sb('/rest/v1/billing_settings?select=pix_key,pix_name,pix_city',{method:'GET'})]);admList=r.ok&&Array.isArray(r.json)?r.json:[];admBill=b.ok&&Array.isArray(b.json)?b.json:[];admPlans=pl.ok&&Array.isArray(pl.json)?pl.json:[];admPix=ps.ok&&Array.isArray(ps.json)&&ps.json[0]?ps.json[0]:{}}catch(e){admList=[];admBill=[];admPlans=[];admPix={}}try{await autoBlockOverdue()}catch(e){}try{await loadTempoData()}catch(e){}admBusy=false;render()}
 async function admSet(id,status,days){const t=(admList||[]).find(x=>x.id===id);if(!t)return;let plan='';
   if(status==='active'){const v=prompt('Plano desta oficina (basico, intermediario ou profissional):',t.plan||'basico');if(v===null)return;plan=v.trim()}
   if(status==='blocked'&&!confirm('Bloquear a oficina "'+t.name+'"? Ninguém dela conseguirá usar até você reativar.'))return;
@@ -5584,6 +5621,8 @@ function go(e){const t=e.target&&e.target.closest?e.target.closest(SEL):null;if(
 t.classList.remove('glow');void t.offsetWidth;t.classList.add('glow');setTimeout(()=>t.classList.remove('glow'),750)}
 document.addEventListener('pointerdown',go,true)})();
 
+setInterval(function(){if(document.visibilityState==='visible'&&navigator.onLine&&ws&&ws.id&&!ws.is_admin){sb('/rest/v1/rpc/my_ping',{method:'POST',body:{}}).catch(function(){})}},60000);
 </script>
 </body>
 </html>
+
