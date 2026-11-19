@@ -3023,7 +3023,7 @@ function truckCard(t,withSelect){
     '<small>'+(t.date?'Entrada '+esc(t.date)+' · ':'')+'Mecânico: '+esc(mechanicName(t.mechanicId))+'</small></div>'+
     '<div class="rowacts" onclick="event.stopPropagation()">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
     waBtn(t.phone,true,t.id)+
-    '<button class="small-btn" onclick="openTruck(\''+t.id+'\')">✎ Editar</button></div></div>';
+    '</div></div>';
 }
 function truckList(items,withSelect){return items.length?'<div class="list-stack">'+items.map(t=>truckCard(t,withSelect)).join('')+'</div>':'<div class="empty">Nenhum caminhão encontrado.</div>'}
 function quickStatus(id,status){const t=trucks.find(x=>x.id===id);if(!t||t.status===status)return;logEvent(t.plate,'Status alterado: '+t.status+' → '+status);t.status=status;persist();render()}
