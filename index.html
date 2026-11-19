@@ -4729,7 +4729,7 @@ function wzCss(){
 function wzCardHtml(){
   if(myBill===undefined)return '<div class="empty">Carregando planos…</div>';
   if(myBill.lifetime)return '<div class="empty">Sua oficina tem acesso vitalício. Nada a cadastrar aqui.</div>';
-  const planos=(myPlans||[]).map(p=>'<label class="panel" style="display:flex;gap:10px;align-items:center;cursor:pointer;margin:0 0 6px;padding:10px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1;text-transform:capitalize"><b>'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado.</div>';
+  const planos=(myPlans||[]).map(p=>'<label class="panel" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer;margin:0 0 6px;padding:10px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1;text-transform:capitalize"><b>'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado.</div>';
   return '<div style="max-height:44vh;overflow:auto;padding-right:2px">'+planos+'<div style="margin-top:10px">'+cardFieldsHtml(false)+'</div></div>';
 }
 function cardFieldsHtml(auto){
@@ -5203,7 +5203,7 @@ NEWPAGE.assinatura=function(){
   if(!myBill)return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão.','')+'<div class="empty">Carregando…</div>';
   if(myBill.lifetime)return pageHead('Plano e cartão','Sua oficina tem acesso vitalício.','')+'<div class="panel section-gap"><p>Não há mensalidade nem cartão para cadastrar.</p></div>';
   const sub=myBill.sub,auto=!!(sub&&sub.status==='ativa');
-  const planCards=(myPlans||[]).map(p=>'<label class="panel" style="display:flex;gap:10px;align-items:center;cursor:pointer;margin:0 0 8px;padding:12px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1"><b style="text-transform:capitalize">'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado ainda.</div>';
+  const planCards=(myPlans||[]).map(p=>'<label class="panel" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer;margin:0 0 8px;padding:12px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1"><b style="text-transform:capitalize">'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado ainda.</div>';
   const status=auto?'<div class="notice" style="margin-bottom:12px">✅ <b>Débito automático ativo</b> · cartão final '+esc(sub.card_last4||'????')+' · '+money(sub.amount)+' por mês. Para trocar o cartão ou o plano, preencha o formulário abaixo.</div>':'<div class="notice" style="margin-bottom:12px">Ainda não há cartão cadastrado. Escolha o plano e preencha o cartão.</div>';
   const form='<div class="panel section-gap"><h2>'+(auto?'Trocar cartão':'Cadastrar cartão')+'</h2><p class="subtle" style="font-size:12px">Os dados são enviados direto ao Asaas. O ORBE não guarda o número do cartão nem o código de segurança.</p>'+cardFieldsHtml(auto)+'</div>';
   return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+(auto?'':pixBlock())+
