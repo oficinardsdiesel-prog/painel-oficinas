@@ -2832,7 +2832,6 @@ var qrcode = function() {
 }));
 
 </script>
-<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
 'use strict';
 /* ---------- Dados (ficam salvos neste aparelho) ---------- */
@@ -4579,7 +4578,7 @@ const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],completo:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
+const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
 function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
@@ -4732,21 +4731,12 @@ function wzCardHtml(){
   if(myBill.lifetime)return '<div class="empty">Sua oficina tem acesso vitalício. Nada a cadastrar aqui.</div>';
   const planos=(myPlans||[]).map(p=>'<label class="panel" style="display:flex;gap:10px;align-items:center;cursor:pointer;margin:0 0 6px;padding:10px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1;text-transform:capitalize"><b>'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado.</div>';
   return '<div style="max-height:44vh;overflow:auto;padding-right:2px">'+planos+
-    '<form id="form-checkout" style="margin-top:10px"><div class="fgrid">'+
-    '<div class="field full"><label>Número do cartão</label><div id="form-checkout__cardNumber" style="'+MPB+'"></div></div>'+
-    '<div class="field"><label>Validade</label><div id="form-checkout__expirationDate" style="'+MPB+'"></div></div>'+
-    '<div class="field"><label>Código de segurança</label><div id="form-checkout__securityCode" style="'+MPB+'"></div></div>'+
-    '<div class="field full"><label>Nome como está no cartão</label><input id="form-checkout__cardholderName"></div>'+
-    '<div class="field"><label>Tipo de documento</label><select id="form-checkout__identificationType"></select></div>'+
-    '<div class="field"><label>CPF do titular</label><input id="form-checkout__identificationNumber" inputmode="numeric"></div>'+
-    '<div class="field full"><label>E-mail</label><input id="form-checkout__cardholderEmail" type="email"></div>'+
-    '<div class="field full"><select id="form-checkout__issuer" style="display:none"></select><select id="form-checkout__installments" style="display:none"><option value="1">1</option></select></div>'+
-    '</div><button type="submit" class="btn primary" id="form-checkout__submit" style="width:100%;margin-top:10px">Cadastrar cartão</button></form></div>';
+    '<div class="field full" style="margin-top:10px"><label>CPF ou CNPJ do titular</label><input id="asCpf" inputmode="numeric" placeholder="Somente números"></div>'+
+    '<button type="button" class="btn primary" id="asSubmit" onclick="assSubmitAsaas()" style="width:100%;margin-top:10px">Cadastrar cartão</button></div>';
 }
 function wzCardMount(){
   if(!wz||wz.step!==5)return;
   if(myBill===undefined){loadMyBill().then(()=>{if(wz&&wz.step===5)wzRender()});return}
-  mountCardForm();
 }
 function wzRender(msg){
   wzCss();const a=$('auth');a.style.display='flex';const st=wz.step;
@@ -4782,16 +4772,16 @@ async function autoBlockOverdue(){
 }
 async function admLoad(){admBusy=true;try{const [r,b,pl,ps]=await Promise.all([sb('/rest/v1/rpc/admin_tenants',{method:'POST',body:{}}),sb('/rest/v1/rpc/admin_billing_list',{method:'POST',body:{}}),sb('/rest/v1/billing_plans?select=plan,price',{method:'GET'}),sb('/rest/v1/billing_settings?select=pix_key,pix_name,pix_city,mp_public_key,app_url',{method:'GET'})]);admList=r.ok&&Array.isArray(r.json)?r.json:[];admBill=b.ok&&Array.isArray(b.json)?b.json:[];admPlans=pl.ok&&Array.isArray(pl.json)?pl.json:[];admPix=ps.ok&&Array.isArray(ps.json)&&ps.json[0]?ps.json[0]:{}}catch(e){admList=[];admBill=[];admPlans=[];admPix={}}try{await autoBlockOverdue()}catch(e){}admBusy=false;render()}
 async function admSet(id,status,days){const t=(admList||[]).find(x=>x.id===id);if(!t)return;let plan='';
-  if(status==='active'){const v=prompt('Plano desta oficina (basico, completo ou profissional):',t.plan||'basico');if(v===null)return;plan=v.trim()}
+  if(status==='active'){const v=prompt('Plano desta oficina (basico, intermediario ou profissional):',t.plan||'basico');if(v===null)return;plan=v.trim()}
   if(status==='blocked'&&!confirm('Bloquear a oficina "'+t.name+'"? Ninguém dela conseguirá usar até você reativar.'))return;
   try{const r=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:id,p_status:status,p_plan:plan,p_trial_days:days===undefined?null:days}});if(!r.ok)alert('Não consegui alterar.')}catch(e){alert('Sem conexão.')}
   admList=undefined;admLoad()}
 /* ---------- Cobrança: planos, mensalidades e Pix (dados no Supabase) ---------- */
 let admF='todas',admBill,admPlans=[],admPix={},admBusy2=false,admCur='',myBill,myBillBusy=false,pixBusy=false;
 let admSel=new Set(),admSelMode=false;
-const ADM_PLANS=['basico','completo','profissional','anual'];
-const ADM_PLAN_LABEL={basico:'Básico',completo:'Intermediário',profissional:'Profissional',anual:'Anual'};
-const ADM_PLAN_DEFAULT={basico:197.90,completo:247.90,profissional:297.90,anual:270};
+const ADM_PLANS=['basico','intermediario','profissional','anual'];
+const ADM_PLAN_LABEL={basico:'Básico',intermediario:'Intermediário',profissional:'Profissional',anual:'Anual'};
+const ADM_PLAN_DEFAULT={basico:197.90,intermediario:247.00,profissional:297.90,anual:270};
 function planPrice(p){const r=(admPlans||[]).find(x=>x.plan===p);const v=r&&r.price!=null?Number(r.price):NaN;return isNaN(v)?ADM_PLAN_DEFAULT[p]:v}
 function planOptions(sel){return ADM_PLANS.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>'+ADM_PLAN_LABEL[p]+'</option>').join('')}
 function admPlanChange(keepFee){const pl=$('admPlan').value;const v=planPrice(pl);if(!keepFee)$('admFee').value=v.toFixed(2);const h=$('admPlanHint');if(h)h.textContent='Valor do plano '+ADM_PLAN_LABEL[pl]+': '+money(v)+(pl==="anual"?' por mês · total no ano '+money(v*12):'')}
@@ -4950,8 +4940,6 @@ async function admSavePix(){
   if(!k){alert('Informe a chave Pix.');return}
   const r=await sb('/rest/v1/rpc/admin_billing_save_pix',{method:'POST',body:{p_key:k,p_name:n,p_city:c}});
   if(!r.ok){alert('Não consegui salvar a chave Pix.');return}
-  const m=await sb('/rest/v1/rpc/admin_billing_save_mp',{method:'POST',body:{p_public_key:$('apxMp').value.trim(),p_app_url:$('apxApp').value.trim()}});
-  if(!m.ok){alert('Chave Pix salva, mas não consegui salvar as chaves do Mercado Pago.');return}
   admList=undefined;admLoad();alert('Chaves salvas.');
 }
 let admTrialId='';
@@ -5121,7 +5109,7 @@ function admCoreRender(){
     admOficinasPanel(S);
 };
 function admPixPanel(){
-  const pixPanel='<div class="panel section-gap"><div class="panel-head"><h2>Chave Pix</h2></div><p class="subtle" style="font-size:12px">É para esta chave que as oficinas pagam. Ela aparece no QR code e no copia e cola do dono.</p><div class="fgrid">'+'<div class="field"><label>Chave Pix</label><input id="apxKey" value="'+esc(admPix.pix_key||'')+'"></div>'+'<div class="field"><label>Nome (aparece para quem paga)</label><input id="apxName" value="'+esc(admPix.pix_name||'ORBE')+'"></div>'+'<div class="field"><label>Cidade</label><input id="apxCity" value="'+esc(admPix.pix_city||'SAO PAULO')+'"></div>'+'<div class="field"><label>Chave pública Mercado Pago (APP_USR-...)</label><input id="apxMp" value="'+esc(admPix.mp_public_key||'')+'"></div>'+'<div class="field"><label>Endereço do app (volta após o cartão)</label><input id="apxApp" value="'+esc(admPix.app_url||'')+'"></div>'+'</div><div class="actions" style="margin-top:10px"><button class="btn primary" onclick="admSavePix()">Salvar chave Pix</button></div></div>';
+  const pixPanel='<div class="panel section-gap"><div class="panel-head"><h2>Chave Pix</h2></div><p class="subtle" style="font-size:12px">É para esta chave que as oficinas pagam. Ela aparece no QR code e no copia e cola do dono.</p><div class="fgrid">'+'<div class="field"><label>Chave Pix</label><input id="apxKey" value="'+esc(admPix.pix_key||'')+'"></div>'+'<div class="field"><label>Nome (aparece para quem paga)</label><input id="apxName" value="'+esc(admPix.pix_name||'ORBE')+'"></div>'+'<div class="field"><label>Cidade</label><input id="apxCity" value="'+esc(admPix.pix_city||'SAO PAULO')+'"></div>'+'</div><div class="actions" style="margin-top:10px"><button class="btn primary" onclick="admSavePix()">Salvar chave Pix</button></div></div>';
   return pixPanel;
 }
 function admPayPanel(){
@@ -5146,8 +5134,8 @@ function admPlansPanel(){
 function admPlanTotals(){ADM_PLANS.forEach(p=>{const i=$('adp_'+p),e=$('adt_'+p);if(i&&e)e.textContent='Total no ano: '+money((Number(i.value)||0)*12)})}
 function admNeedData(){if(admList===undefined&&!admBusy)admLoad();return admList===undefined}
 /* Dono da oficina: mensalidade e Pix */
-/* ---------- Plano e cartão (débito automático pelo Mercado Pago) ---------- */
-let myPlans=[],mpInst=null,mpCardForm=null,assBusy=false;
+/* ---------- Plano e cartão (assinatura pelo Asaas) ---------- */
+let myPlans=[],assBusy=false;
 async function loadMyBill(){
   myBillBusy=true;
   try{
@@ -5199,7 +5187,6 @@ function updateBillBanner(){
   d.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform='perspective(600px) rotateX('+(-y*14)+'deg) rotateY('+(x*18)+'deg)'});
   d.addEventListener('pointerleave',()=>{card.style.transform=''});
 }
-const MPB='height:44px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;padding:0 10px;display:flex;align-items:center';
 NEWPAGE.assinatura=function(){
   if(myBill===undefined&&!myBillBusy)loadMyBill();
   if(!myBill)return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão.','')+'<div class="empty">Carregando…</div>';
@@ -5207,51 +5194,25 @@ NEWPAGE.assinatura=function(){
   const sub=myBill.sub,auto=!!(sub&&sub.status==='ativa');
   const planCards=(myPlans||[]).map(p=>'<label class="panel" style="display:flex;gap:10px;align-items:center;cursor:pointer;margin:0 0 8px;padding:12px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1"><b style="text-transform:capitalize">'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado ainda.</div>';
   const status=auto?'<div class="notice" style="margin-bottom:12px">✅ <b>Débito automático ativo</b> · cartão final '+esc(sub.card_last4||'????')+' · '+money(sub.amount)+' por mês. Para trocar o cartão ou o plano, preencha o formulário abaixo.</div>':'<div class="notice" style="margin-bottom:12px">Ainda não há cartão cadastrado. Escolha o plano e preencha o cartão.</div>';
-  const form='<form id="form-checkout" class="panel section-gap"><h2>Cartão de crédito</h2><p class="subtle" style="font-size:12px">Os dados do cartão são digitados direto no Mercado Pago. Este app não guarda o número do cartão.</p>'+
-    '<div class="fgrid">'+
-    '<div class="field full"><label>Número do cartão</label><div id="form-checkout__cardNumber" style="'+MPB+'"></div></div>'+
-    '<div class="field"><label>Validade</label><div id="form-checkout__expirationDate" style="'+MPB+'"></div></div>'+
-    '<div class="field"><label>Código de segurança</label><div id="form-checkout__securityCode" style="'+MPB+'"></div></div>'+
-    '<div class="field full"><label>Nome como está no cartão</label><input id="form-checkout__cardholderName"></div>'+
-    '<div class="field"><label>Tipo de documento</label><select id="form-checkout__identificationType"></select></div>'+
-    '<div class="field"><label>CPF do titular</label><input id="form-checkout__identificationNumber" inputmode="numeric"></div>'+
-    '<div class="field full"><label>E-mail</label><input id="form-checkout__cardholderEmail" type="email"></div>'+
-    '<div class="field full"><select id="form-checkout__issuer" style="display:none"></select><select id="form-checkout__installments" style="display:none"><option value="1">1</option></select></div>'+
-    '</div><div class="actions" style="margin-top:12px"><button type="submit" class="btn primary" id="form-checkout__submit">'+(auto?'Trocar cartão':'Cadastrar cartão e assinar')+'</button></div></form>';
-  setTimeout(mountCardForm,0);
-  return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+(auto?'':pixBlock())+
+  const inv=asInvoice?'<div class="notice" style="margin-bottom:12px">Falta só pagar: <a href="'+esc(asInvoice)+'" target="_blank" rel="noopener"><b>abrir a página segura do Asaas</b></a>. Depois do pagamento confirmado, a assinatura fica ativa sozinha.</div>':'';
+  const form='<div class="panel section-gap"><h2>Cadastrar cartão</h2><p class="subtle" style="font-size:12px">Você será levado à página segura do Asaas, onde o cartão é digitado. O ORBE não guarda os dados do cartão.</p><div class="fgrid"><div class="field full"><label>CPF ou CNPJ do titular</label><input id="asCpf" inputmode="numeric" placeholder="Somente números"></div></div><div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="asSubmit" onclick="assSubmitAsaas()">'+(auto?'Trocar cartão ou plano':'Cadastrar cartão')+'</button></div></div>';
+  return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+inv+(auto?'':pixBlock())+
     '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+form;
 };
-function mountCardForm(){
-  if(!$('form-checkout'))return;
-  if(!window.MercadoPago){alert('Não consegui carregar o formulário do Mercado Pago. Verifique a conexão e atualize a página.');return}
-  if(!myBill||!myBill.mp_public_key){const h=$('form-checkout__cardNumber');if(h)h.innerHTML='<small>Chave pública do Mercado Pago ainda não configurada. Fale com o ORBE.</small>';return}
-  const box=$('form-checkout__cardNumber');if(box&&box.querySelector('iframe'))return;
-  const sel=(document.querySelector('input[name=assPlan]:checked')||{}).value||myBill.plan;
-  const plano=(myPlans||[]).find(p=>p.plan===sel);
-  mpInst=mpInst||new MercadoPago(myBill.mp_public_key,{locale:'pt-BR'});
-  try{
-    mpCardForm=mpInst.cardForm({
-      amount:String(Number((plano&&plano.price)||myBill.fee||0).toFixed(2)),autoMount:true,
-      form:{id:'form-checkout'},
-      callbacks:{onFormMounted:err=>{if(err)console.warn(err)},onSubmit:e=>{e.preventDefault();assSubmit()}}
-    });
-  }catch(e){alert('Não consegui iniciar o formulário do cartão.')}
-}
-async function assSubmit(){
+let asInvoice='';
+async function assSubmitAsaas(){
   if(assBusy)return;
-  const data=mpCardForm&&mpCardForm.getCardFormData?mpCardForm.getCardFormData():{};
-  if(!data.token){alert('Confira os dados do cartão.');return}
   const plan=(document.querySelector('input[name=assPlan]:checked')||{}).value||myBill.plan;
+  const cpf=(($('asCpf')||{}).value||'').replace(/\D/g,'');
+  if(cpf.length!==11&&cpf.length!==14){alert('Informe um CPF ou CNPJ válido.');return}
   assBusy=true;
   try{
-    const r=await sb('/functions/v1/mp-subscribe',{method:'POST',body:{card_token:data.token,plan:plan}});
-    if(r.ok&&r.json&&r.json.status==='ativa'){alert('Cartão cadastrado! O débito automático começa no dia do vencimento.');myBill=undefined;}
-    else alert((r.json&&r.json.error)||'Não consegui cadastrar o cartão. Confira os dados e tente de novo.');
+    const r=await sb('/functions/v1/asaas-subscribe',{method:'POST',body:{plan:plan,cpf_cnpj:cpf}});
+    if(r.ok&&r.json&&r.json.status){asInvoice=r.json.invoice_url||'';alert(asInvoice?'Assinatura criada. Abra o link que apareceu na tela para digitar o cartão.':'Assinatura criada. A primeira fatura aparece em instantes; atualize a página para abrir o link.')}
+    else alert((r.json&&r.json.error)||'Não consegui criar a assinatura. Tente de novo.');
   }catch(e){alert('Sem conexão. Tente de novo.')}
   assBusy=false;
-  if(wz){if(myBill===undefined)loadMyBill().then(()=>{if(wz)wzRender()});else wzRender()}
-  else{if(myBill===undefined)loadMyBill();else render()}
+  if(myBill===undefined)loadMyBill();else render();
 }
 function subLabel(id){const b=billOf(id);if(b.lifetime)return 'não precisa (vitalícia)';if(b.sub_status==='ativa')return 'ativo · cartão final '+esc(b.card_last4||'????');if(b.sub_status)return esc(b.sub_status);return 'sem cartão'}
 /* ---------- Edição de botões: segurar 1,5 s (somente administrador) ---------- */
@@ -5347,15 +5308,6 @@ async function admSelDelete(){
     if(r&&(admSel.size>0||admSelMode)){e.stopPropagation();e.preventDefault();admSelToggle(r.dataset.cid,false)}
   },true);
 })();
-async function genPix(){
-  pixBusy=true;render();
-  try{
-    const r=await sb('/functions/v1/mp-create-pix',{method:'POST',body:{}});
-    if(r.ok&&r.json&&r.json.charge)myBill=Object.assign({},myBill,{charge:r.json.charge});
-    else alert((r.json&&r.json.error)||'Não consegui gerar o Pix. Tente de novo.');
-  }catch(e){alert('Sem conexão. Tente de novo.')}
-  pixBusy=false;render();
-}
 /* Pix estático (copia e cola) gerado a partir da chave */
 function pixField(id,v){const s=String(v);return id+String(s.length).padStart(2,'0')+s}
 function pixStrip(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim()}
