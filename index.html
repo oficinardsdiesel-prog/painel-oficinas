@@ -2999,7 +2999,7 @@ let procF='',quoF='',pagF='';
 const PF={pat:['Caminhões no pátio',t=>t.status!=='Entregue'],manut:['Em manutenção',t=>t.status==='Em manutenção'],aprov:['Aguardando aprovação',t=>t.status==='Aguardando aprovação'],concl:['Concluídos / aguardando retirada',t=>['Serviço concluído','Aguardando retirada'].indexOf(t.status)>=0],ret:['Aguardando retirada',t=>t.status==='Aguardando retirada']};
 const PAGF={pend:'Contas a pagar (pendentes)',paid:'Já pagos',late:'Vencidos'};
 const chip=(label,fn)=>'<div class="chip"><span>Mostrando: <b>'+esc(label)+'</b></span><button class="small-btn" onclick="'+fn+'">✕ Mostrar tudo</button></div>';
-function goTruck(k){}
+function goTruck(k){procF=k;render();setTimeout(function(){const e=$('movPanel');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
 function goQuo(k){quoF=k;navigate('orcamentos',true)}
 function goPag(k){pagF=k;navigate('pagamentos',true)}
 function goFin(k){finTab='avancado';finOpen[k]=true;navigate('financeiro',true);setTimeout(function(){const e=$('fin_'+k);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
@@ -4485,7 +4485,7 @@ function render(){
     if(myBill===undefined&&!myBillBusy&&isRole('dono'))loadMyBill();
     h=billNote()+trialNote()+setupNote()+homeAlerts()+'<div class="qa">'+'<button class="qa-b main" onclick="openNewTruck()"><span>＋</span>Cadastrar caminhão</button>'+(isRole('dono','atendimento')?'<button class="qa-b" onclick="openQuote(\'\',\'\')"><span>＋</span>Novo orçamento</button>':'')+(isRole('dono')?'<button class="qa-b" onclick="openExpense(\'\')"><span>＋</span>Lançar despesa</button>':'')+'</div>'+
     '<div class="cards">'+metric('Caminhões no pátio',open.length,'Veículos ainda não entregues',"goTruck('pat')")+metric('Em manutenção',working.length,'Serviços em andamento',"goTruck('manut')")+metric('Aguardando aprovação',waiting.length,'Orçamentos pendentes',"goTruck('aprov')")+metric('Concluídos / retirada',done.length,'Prontos para a próxima etapa',"goTruck('concl')")+'</div>'+
-    '<div class="layout2"><div class="panel"><div class="panel-head"><h2>Movimentação dos caminhões</h2></div>'+truckList(open.slice(0,6),false)+'</div>'+
+    '<div class="layout2"><div class="panel" id="movPanel"><div class="panel-head"><h2>'+(procF&&PF[procF]?esc(PF[procF][0]):'Movimentação dos caminhões')+'</h2>'+(procF?'<button class="small-btn" onclick="setProcF(\'\')">✕ Mostrar tudo</button>':(open.length>6?'<button class="small-btn" onclick="goTruck(\'pat\')">Ver todos ('+open.length+')</button>':''))+'</div>'+(procF&&PF[procF]?'<p class="subtle" style="font-size:12px;margin:0 0 10px">'+trucks.filter(PF[procF][1]).length+' caminhão(ões) neste status</p>':'')+truckList(procF&&PF[procF]?trucks.filter(PF[procF][1]):open.slice(0,6),false)+'</div>'+
     (!isRole('dono')?'':'<div class="panel"><div class="panel-head"><h2>Contas da oficina</h2><button class="small-btn" onclick="navigate(\'pagamentos\')">Ver pagamentos</button></div><div class="list-stack">'+
       '<div class="list-row click" onclick="goPag(\'pend\')"><div><b>Contas pendentes</b><small>Pagamentos ainda não realizados</small></div><div class="money neg">'+money(sum(pending))+'</div></div>'+
       '<div class="list-row click" onclick="goPag(\'paid\')"><div><b>Pagamentos realizados</b><small>Marcados como pagos</small></div><div class="money neg">'+money(sum(paid))+'</div></div>'+
