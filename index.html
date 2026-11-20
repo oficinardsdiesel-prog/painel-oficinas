@@ -228,7 +228,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="newTruckModal"><div class="modal-box">
   <h2>Cadastro de veículo</h2><p class="modal-sub">Registre a entrada, os dados do cliente e as fotos do estado do veículo.</p>
   <div class="form-grid">
-    <div class="field"><label>Cliente *</label><input id="nClient" placeholder="Nome do cliente"></div>
+    <div class="field"><label>Cliente (ou escolha a empresa abaixo)</label><input id="nClient" placeholder="Nome do cliente"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
     <div class="field"><label>Placa *</label><input id="nPlate" placeholder="ABC1D23" autocapitalize="characters"></div>
@@ -251,7 +251,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="truckModal"><div class="modal-box">
   <h2 id="dTitle"></h2><p class="modal-sub" id="dSub"></p>
   <div class="form-grid">
-    <div class="field"><label>Nome do cliente *</label><input id="dClient"></div>
+    <div class="field"><label>Nome do cliente (ou escolha a empresa abaixo)</label><input id="dClient"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select></div>
     <div class="field"><label>Modelo</label><input id="dModel"></div>
     <div class="field"><label>Placa *</label><input id="dPlate" autocapitalize="characters"></div>
@@ -3081,8 +3081,8 @@ function openNewTruck(){
   $('newTruckModal').scrollTop=0;openModal('newTruckModal');
 }
 async function saveNewTruck(){
-  const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim();
-  if(!plate||!client){alert('Informe a placa e o nome do cliente.');return}
+  const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim()||companyName('n');
+  if(!plate||!client){alert('Informe a placa e o nome do cliente ou escolha a empresa.');return}
   if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
   const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString()};
   try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
@@ -3108,8 +3108,8 @@ function truckQuotesHTML(id){const qs=quotes.filter(q=>q.truckId===id);
 function openQuoteFromTruck(qid){if(saveTruckEdit(true)===false)return;closeModal('truckModal');openQuote(qid)}
 function saveTruckEdit(keep){
   const t=trucks.find(x=>x.id===curTruck);if(!t)return false;
-  const plate=$('dPlate').value.trim().toUpperCase(),client=$('dClient').value.trim();
-  if(!plate||!client){alert('Informe a placa e o nome do cliente.');return false}
+  const plate=$('dPlate').value.trim().toUpperCase(),client=$('dClient').value.trim()||companyName('d');
+  if(!plate||!client){alert('Informe a placa e o nome do cliente ou escolha a empresa.');return false}
   t.companyId=$('dCompany').value;
   if(plate!==t.plate){logEvent(plate,'Placa alterada: '+t.plate+' → '+plate);quotes.forEach(q=>{if(q.truckId===t.id)q.plate=plate});t.plate=plate}
   if(client!==t.client){quotes.forEach(q=>{if(q.truckId===t.id&&q.client!=null)q.client=client});t.client=client}
@@ -3156,6 +3156,7 @@ let empSel='';
 function showCompany(id){empSel=id;render();window.scrollTo(0,0)}
 function fillCompanySel(p,sel){const el=$(p+'Company');if(!el)return;el.innerHTML='<option value="">Sem empresa (particular)</option>'+partners.filter(x=>x.kind==='cliente').map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('')}
 function pickCompany(p){const c=partners.find(x=>x.id===$(p+'Company').value&&x.kind==='cliente');if(!c)return;const cl=$(p==='n'?'nClient':'dClient'),pe=$(p==='n'?'nPhone':'dPhone');if(!cl.value.trim())cl.value=c.name;if(!pe.value.trim())pe.value=c.phone||''}
+function companyName(p){const c=partners.find(x=>x.kind==='cliente'&&x.id===$(p+'Company').value);return c?c.name:''}
 function companyNewTruck(id){openNewTruck();fillCompanySel('n',id)}
 function companyDetail(id){
   const c=partners.find(x=>x.id===id&&x.kind==='cliente');
@@ -3240,15 +3241,16 @@ function linkOptions(sel){
    (suppliers.length?'<optgroup label="Fornecedores">'+suppliers.map(s=>'<option value="suppliers:'+esc(s.id)+'"'+(sel==='suppliers:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'')+
    (partners.length?'<optgroup label="Parceiros/freelancers">'+partners.filter(p=>p.kind!=='cliente').map(s=>'<option value="partners:'+esc(s.id)+'"'+(sel==='partners:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'');
 }
+function payeeToggle(){const f=$('ePayee').parentElement;f.style.display=$('eLink').value?'none':''}
 function expenseLinkChanged(){
-  const v=$('eLink').value;if(!v)return;const [k,id]=v.split(':'),it=(k==='partners'?partners:suppliers).find(x=>x.id===id);
+  const v=$('eLink').value;payeeToggle();if(!v)return;const [k,id]=v.split(':'),it=(k==='partners'?partners:suppliers).find(x=>x.id===id);
   if(it){$('ePayee').value=it.name;if(k==='partners'&&$('eCategory').value==='Fornecedor / peças')$('eCategory').value='Parceiros / serviços terceirizados'}
 }
 function openExpense(id){
   const e=id?expenses.find(x=>x.id===id):null;curExp=id||'';
   $('eTitle').textContent=e?'Editar lançamento':'Lançar despesa ou pagamento';
   $('eDesc').value=e?e.desc:'';$('eCategory').innerHTML=optionsHTML(CATEGORIES,e?e.category:CATEGORIES[0]);
-  $('eLink').innerHTML=linkOptions(e&&e.linkKind?e.linkKind+':'+e.linkId:'');$('ePayee').value=e?e.payee||'':'';
+  $('eLink').innerHTML=linkOptions(e&&e.linkKind?e.linkKind+':'+e.linkId:'');$('ePayee').value=e?e.payee||'':'';payeeToggle();
   $('eAmount').value=e?mstr(e.amount):'';$('eMethod').value=e?e.method||'Pix':'Pix';$('eDue').value=e?e.due||'':'';
   $('ePaidDate').value=e?e.paidDate||'':'';$('eStatus').value=e?e.status:'Pendente';$('eDelBtn').style.display=e?'':'none';
   $('eFixWrap').innerHTML=!e?'<label style="display:flex;gap:10px;align-items:flex-start;font-weight:700;cursor:pointer"><input type="checkbox" id="eFixa" style="width:22px;height:22px;margin:0;flex:none"><span>🔁 Despesa fixa: repetir todo mês<small style="display:block;font-weight:400;color:var(--muted);margin-top:2px">Para contas de valor fixo (aluguel, folha, internet). O dia do vencimento acima se repete todo mês. Escolha a categoria certa (Aluguel, Funcionários, Internet...) para entrar em “Despesas fixas” no Financeiro. Conta que muda de valor (luz, água) lance normal, só quando pagar.</small></span></label>':(e.fixaId?'<div class="notice">🔁 Esta conta vem de uma <b>despesa fixa mensal</b>. Mudar algo aqui altera só este mês. Para mudar de vez, use “Despesas fixas” na tela Pagamentos.</div>':'');
