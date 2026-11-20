@@ -229,6 +229,7 @@ window.addEventListener('error',function(e){
   <h2>Cadastro de veículo</h2><p class="modal-sub">Registre a entrada, os dados do cliente e as fotos do estado do veículo.</p>
   <div class="form-grid">
     <div class="field"><label>Cliente *</label><input id="nClient" placeholder="Nome do cliente"></div>
+    <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
     <div class="field"><label>Placa *</label><input id="nPlate" placeholder="ABC1D23" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp</label><input id="nPhone" inputmode="tel" placeholder="(11) 99999-9999" oninput="$('nWa').innerHTML=waBtn(this.value,true)"><div id="nWa" style="margin-top:6px"></div></div>
@@ -251,6 +252,7 @@ window.addEventListener('error',function(e){
   <h2 id="dTitle"></h2><p class="modal-sub" id="dSub"></p>
   <div class="form-grid">
     <div class="field"><label>Nome do cliente *</label><input id="dClient"></div>
+    <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select></div>
     <div class="field"><label>Modelo</label><input id="dModel"></div>
     <div class="field"><label>Placa *</label><input id="dPlate" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp do cliente</label><input id="dPhone" inputmode="tel" oninput="$('dWa').innerHTML=waBtn(this.value,true)"></div>
@@ -298,7 +300,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Cliente *</label><input id="rcClient"></div>
     <div class="field"><label>WhatsApp do cliente</label><input id="rcPhone" inputmode="tel"></div>
     <div class="field full"><label>Referente a *</label><input id="rcDesc" placeholder="Ex.: troca dos bicos injetores"></div>
-    <div class="field"><label>Valor (R$) *</label><input id="rcAmount" inputmode="decimal" placeholder="0,00"></div>
+    <div class="field"><label>Valor (R$) *</label><input id="rcAmount" type="text" inputmode="decimal" class="money" placeholder="0,00"></div>
     <div class="field"><label>Vencimento *</label><input type="date" id="rcDue"></div>
     <div class="field full"><label>Observações</label><textarea id="rcNotes"></textarea></div>
   </div>
@@ -308,7 +310,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="rpModal"><div class="modal-box">
   <h2>💰 Receber pagamento</h2><p class="modal-sub" id="rpSub"></p>
   <div class="form-grid">
-    <div class="field"><label>Valor recebido (R$) *</label><input id="rpAmount" inputmode="decimal"></div>
+    <div class="field"><label>Valor recebido (R$) *</label><input id="rpAmount" type="text" inputmode="decimal" class="money"></div>
     <div class="field"><label>Data</label><input type="date" id="rpDate"></div>
   </div>
   <div class="modal-actions"><button class="btn plain" onclick="closeModal('rpModal')">Cancelar</button><button class="btn primary" onclick="rpSave()">Registrar</button></div>
@@ -345,7 +347,7 @@ window.addEventListener('error',function(e){
     <div class="field full"><label>Endereço completo</label><input id="nfAddr" placeholder="Rua, número, bairro, CEP"></div>
     <div class="field full"><label>Cidade / UF</label><input id="nfCity"></div>
     <div class="field full"><label>Descrição dos serviços / peças *</label><textarea id="nfDesc" placeholder="Ex.: Revisão do sistema de injeção; troca de 4 bicos injetores"></textarea></div>
-    <div class="field"><label>Valor da nota (R$) *</label><input id="nfValue" inputmode="decimal" placeholder="0,00" oninput="nfWarn()"></div>
+    <div class="field"><label>Valor da nota (R$) *</label><input id="nfValue" type="text" inputmode="decimal" class="money" placeholder="0,00" oninput="nfWarn()"></div>
     <div class="field"><label>Data</label><input type="date" id="nfDate"></div>
     <div class="field full" id="nfWarnBox" style="display:none"><div class="notice" id="nfWarn"></div></div>
     <div class="field"><label>Situação</label><select id="nfStatus" onchange="nfStat()"><option>Rascunho</option><option>Enviada ao contador</option><option>Emitida</option></select></div>
@@ -380,7 +382,7 @@ window.addEventListener('error',function(e){
     <div class="field full"><label>Autopeça / fornecedor *</label><select id="ptSup" onchange="ptSupPick()"></select></div>
     <div class="field full" id="ptNewBox" style="display:none"><label>Nome do novo fornecedor *</label><input id="ptNewSup"></div>
     <div class="field"><label>Data</label><input type="date" id="ptDate"></div>
-    <div class="field"><label>Valor (R$) *</label><input id="ptAmount" inputmode="decimal" placeholder="0,00"></div>
+    <div class="field"><label>Valor (R$) *</label><input id="ptAmount" type="text" inputmode="decimal" class="money" placeholder="0,00"></div>
     <div class="field full"><label id="ptDescL">Peça / nota *</label><input id="ptDesc"></div>
     <div class="field full" id="ptTruckBox"><label>Veículo (opcional)</label><select id="ptTruck"></select></div>
   </div>
@@ -410,7 +412,7 @@ window.addEventListener('error',function(e){
   <div class="form-grid">
     <div class="field"><label>Descrição *</label><input id="fDesc" placeholder="Ex.: Aluguel da oficina"></div>
     <div class="field"><label>Categoria</label><select id="fCat"></select></div>
-    <div class="field"><label>Valor fixo (R$) *</label><input id="fAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
+    <div class="field"><label>Valor fixo (R$) *</label><input id="fAmount" type="text" inputmode="decimal" class="money" placeholder="0,00"></div>
     <div class="field"><label>Vence todo dia *</label><input id="fDay" type="number" inputmode="numeric" min="1" max="31" placeholder="Ex.: 10"></div>
     <div class="field"><label>Forma de pagamento</label><select id="fMethod"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Transferência</option><option>Boleto</option><option>Outro</option></select></div>
     <div class="field"><label>Favorecido (nome)</label><input id="fPayee" placeholder="Nome"></div>
@@ -427,7 +429,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Categoria</label><select id="eCategory"></select></div>
     <div class="field"><label>Fornecedor / parceiro cadastrado</label><select id="eLink" onchange="expenseLinkChanged()"></select></div>
     <div class="field"><label>Favorecido (nome)</label><input id="ePayee" placeholder="Nome"></div>
-    <div class="field"><label>Valor (R$) *</label><input id="eAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0,00"></div>
+    <div class="field"><label>Valor (R$) *</label><input id="eAmount" type="text" inputmode="decimal" class="money" placeholder="0,00"></div>
     <div class="field"><label>Forma de pagamento</label><select id="eMethod"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Transferência</option><option>Boleto</option><option>Outro</option></select></div>
     <div class="field"><label>Vencimento</label><input id="eDue" type="date"></div>
     <div class="field"><label>Data do pagamento</label><input id="ePaidDate" type="date"></div>
@@ -500,7 +502,7 @@ window.addEventListener('error',function(e){
   <h2>Editar oficina</h2><p class="modal-sub" id="admSub"></p>
   <div class="form-grid">
     <div class="field"><label>Plano</label><select id="admPlan" onchange="admPlanChange()" oninput="admPlanChange()"></select><small id="admPlanHint" class="subtle" style="font-size:12px"></small></div>
-    <div class="field"><label>Mensalidade (R$)</label><input id="admFee" type="number" inputmode="decimal" min="0" step="0.01" placeholder="Vazio = valor do plano"></div>
+    <div class="field"><label>Mensalidade (R$)</label><input id="admFee" type="text" inputmode="decimal" class="money" placeholder="Vazio = valor do plano"></div>
     <div class="field"><label>Dia do vencimento</label><input id="admDay" type="number" inputmode="numeric" min="1" max="31"></div>
     <div class="field"><label>Teste grátis (dias)</label><input id="admTdays" type="number" inputmode="numeric" min="1" max="365" placeholder="Vazio = não mudar"></div>
     <div class="field full"><label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:14px"><input id="admLife" type="checkbox" style="width:auto"> Vitalício: liberado para sempre, sem cobrança</label></div>
@@ -529,7 +531,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="admPayModal"><div class="modal-box">
   <h2>Registrar pagamento</h2><p class="modal-sub" id="admPaySub"></p>
   <div class="form-grid">
-    <div class="field"><label>Valor recebido (R$) *</label><input id="admPayAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>
+    <div class="field"><label>Valor recebido (R$) *</label><input id="admPayAmt" type="text" inputmode="decimal" class="money"></div>
     <div class="field"><label>Data *</label><input id="admPayDate" type="date"></div>
     <div class="field full"><label>Observação</label><input id="admPayNote" placeholder="Ex.: Pix"></div>
   </div>
@@ -2859,12 +2861,12 @@ const ADMIN_MENU=[
 const CLIENT_MENU=[
  {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda'],['garantia','🛡','Garantia']]},
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
- {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
+ {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso'],['privacidade','🔒','Privacidade']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -3051,7 +3053,7 @@ function msSearch(v){
   r.innerHTML=hits.length?hits.map(function(h){const i=h.i;return '<button class="item" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+esc(i[2])+'</button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
 }
 function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
-function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
+function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF='';empSel=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
 /* ---------- Veículos ---------- */
@@ -3074,7 +3076,7 @@ function fillTruckSelects(prefix,sel){
 function mechOptions(sel){return '<option value="">Não definido</option>'+mechanics.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===sel?' selected':'')+'>'+esc(m.name)+'</option>').join('')}
 function openNewTruck(){
   ['nPlate','nClient','nPhone','nModel','nDoc','nEmail','nAddr','nDriver','nKm','nReason','nDamage'].forEach(i=>$(i).value='');
-  fillTruckSelects('n');$('nMech').innerHTML=mechOptions('');
+  fillTruckSelects('n');$('nMech').innerHTML=mechOptions('');fillCompanySel('n','');
   ph={truckId:uid(),live:false,list:[],box:'phNew'};renderPhotos();
   $('newTruckModal').scrollTop=0;openModal('newTruckModal');
 }
@@ -3082,7 +3084,7 @@ async function saveNewTruck(){
   const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim();
   if(!plate||!client){alert('Informe a placa e o nome do cliente.');return}
   if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
-  const t={id:ph.truckId,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString()};
+  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString()};
   try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
   trucks.unshift(t);logEvent(plate,'Entrada cadastrada · '+t.status+(ph.list.length?' · '+ph.list.length+' foto(s)':''));persist();
   closeModal('newTruckModal');ph={truckId:'',live:false,list:[],box:''};navigate('inicio');
@@ -3092,7 +3094,7 @@ function openTruck(id){
   const t=trucks.find(x=>x.id===id);if(!t)return;curTruck=id;
   $('dTitle').textContent='Editar · '+vehName(t);
   $('dSub').textContent='Todas as informações deste veículo. Altere e toque em “Salvar alterações”.';
-  $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
+  $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
   $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
@@ -3108,6 +3110,7 @@ function saveTruckEdit(keep){
   const t=trucks.find(x=>x.id===curTruck);if(!t)return false;
   const plate=$('dPlate').value.trim().toUpperCase(),client=$('dClient').value.trim();
   if(!plate||!client){alert('Informe a placa e o nome do cliente.');return false}
+  t.companyId=$('dCompany').value;
   if(plate!==t.plate){logEvent(plate,'Placa alterada: '+t.plate+' → '+plate);quotes.forEach(q=>{if(q.truckId===t.id)q.plate=plate});t.plate=plate}
   if(client!==t.client){quotes.forEach(q=>{if(q.truckId===t.id&&q.client!=null)q.client=client});t.client=client}
   t.phone=$('dPhone').value.trim();t.model=$('dModel').value.trim();t.doc=$('dDoc').value.trim();t.email=$('dEmail').value.trim();t.addr=$('dAddr').value.trim();t.driver=$('dDriver').value.trim();t.diagnosis=$('dDiag').value.trim();
@@ -3128,9 +3131,9 @@ function quoteForTruck(){const id=curTruck;closeModal('truckModal');openQuote(''
 
 /* ---------- Cadastros: parceiros, fornecedores, mecânicos ---------- */
 const REG={
- partners:{page:'parceiros',title:'Parceiros',one:'parceiro',btn:'＋ Cadastrar parceiro',
+ partners:{page:'parceiros',title:'Parceiros/freelancers',one:'parceiro',btn:'＋ Cadastrar parceiro',
   desc:'Empresas que fazem serviço para a oficina (carcaça, retífica, torno, elétrica...). Cadastre cada uma aqui.',
-  get:()=>partners,set:v=>{partners=v},
+  get:()=>partners.filter(p=>p.kind!=='cliente'),set:v=>{partners=partners.filter(p=>p.kind==='cliente').concat(v)},
   fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Carcaça Valente'},{k:'service',l:'Tipo de serviço *',req:1,ph:'Ex.: carcaça, retífica, torno'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.service,i.contact,i.phone,i.city].filter(Boolean).join(' · ')},
  suppliers:{page:'fornecedores',title:'Fornecedores',one:'fornecedor',btn:'＋ Cadastrar fornecedor',
@@ -3141,12 +3144,38 @@ const REG={
  mechanics:{page:'mecanicos',title:'Mecânicos',one:'mecânico',btn:'＋ Cadastrar mecânico',
   desc:'Cadastre a equipe e associe cada profissional aos veículos em que trabalhou.',
   get:()=>mechanics,set:v=>{mechanics=v},
-  fields:[{k:'name',l:'Nome *',req:1,ph:'Ex.: Mecânico A'},{k:'phone',l:'Telefone',tel:1},{k:'goal',l:'Meta de mão de obra por mês (R$)',num:1,dono:1,ph:'Ex.: 10000'},{k:'salary',l:'Salário / custo mensal do mecânico (R$)',num:1,dono:1,ph:'Ex.: 3500'},{k:'hours',l:'Horas de trabalho por mês',num:1,dono:1,ph:'176'},{k:'notes',l:'Especialidade / observações',area:1}],
+  fields:[{k:'name',l:'Nome *',req:1,ph:'Ex.: Mecânico A'},{k:'phone',l:'Telefone',tel:1},{k:'goal',l:'Meta de mão de obra por mês (R$)',num:1,money:1,dono:1,ph:'Ex.: 10000'},{k:'salary',l:'Salário / custo mensal do mecânico (R$)',num:1,money:1,dono:1,ph:'Ex.: 3500'},{k:'hours',l:'Horas de trabalho por mês',num:1,dono:1,ph:'176'},{k:'notes',l:'Especialidade / observações',area:1}],
   sub:i=>[i.phone].filter(Boolean).join(' · ')}
 };
+REG.clients={page:'empresas',title:'Empresas clientes',one:'empresa',btn:'＋ Cadastrar empresa',
+  desc:'Empresas que levam caminhões para a oficina. Cadastre a empresa e escolha-a no cadastro de cada caminhão.',
+  get:()=>partners.filter(p=>p.kind==='cliente'),set:v=>{partners=partners.filter(p=>p.kind!=='cliente').concat(v.map(x=>Object.assign(x,{kind:'cliente'})))},
+  fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Festa Eventos'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'doc',l:'CNPJ'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
+  sub:i=>[i.contact,i.phone,i.doc].filter(Boolean).join(' · ')};
+let empSel='';
+function showCompany(id){empSel=id;render();window.scrollTo(0,0)}
+function fillCompanySel(p,sel){const el=$(p+'Company');if(!el)return;el.innerHTML='<option value="">Sem empresa (particular)</option>'+partners.filter(x=>x.kind==='cliente').map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('')}
+function pickCompany(p){const c=partners.find(x=>x.id===$(p+'Company').value&&x.kind==='cliente');if(!c)return;const cl=$(p==='n'?'nClient':'dClient'),pe=$(p==='n'?'nPhone':'dPhone');if(!cl.value.trim())cl.value=c.name;if(!pe.value.trim())pe.value=c.phone||''}
+function companyNewTruck(id){openNewTruck();fillCompanySel('n',id)}
+function companyDetail(id){
+  const c=partners.find(x=>x.id===id&&x.kind==='cliente');
+  if(!c){empSel='';return regPage('clients')}
+  const list=trucks.filter(t=>t.companyId===id).map(t=>({t:t,info:garInfo(t)})).sort((a,b)=>String(a.t.plate||'').localeCompare(String(b.t.plate||'')));
+  const rows=list.length?'<div class="list-stack">'+list.map(h=>{const t=h.t,i=h.info;let pill,txt;
+    if(i.st==='on'){pill='<span class="pill green">Na garantia</span>';txt='Faltam '+i.left+(i.left===1?' dia':' dias')+' · até '+garFmt(i.end)}
+    else if(i.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(i.end)}
+    else if(i.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Ainda não marcado como Entregue'}
+    else {pill='<span class="pill s1">Sem prazo</span>';txt='Sem garantia em dias cadastrada'}
+    return '<div class="list-row click" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="grow"><b>'+esc(t.client||c.name)+'</b><small>'+esc([t.plate,t.model].filter(Boolean).join(' · '))+'</small><small>'+esc(t.status)+' · '+esc(mechanicName(t.mechanicId)||'Sem mecânico')+'</small><small>'+(t.deliveredAt?'Retirada em '+fmtDate(t.deliveredAt)+' · ':'')+txt+'</small></div><div>'+pill+'</div></div>'}).join('')+'</div>'
+    :'<div class="empty">Nenhum caminhão desta empresa ainda.</div>';
+  return pageHead(esc(c.name),[c.contact,c.phone,c.doc].filter(Boolean).join(' · ')||'Empresa cliente','<button class="btn soft" onclick="showCompany(\'\')">← Empresas</button><button class="btn soft" onclick="openReg(\'clients\',\''+c.id+'\')">Editar empresa</button><button class="btn primary" onclick="companyNewTruck(\''+c.id+'\')">＋ Caminhão desta empresa</button>')+
+    '<div class="panel"><div class="panel-head"><h2>Caminhões ('+list.length+')</h2></div>'+rows+'</div>';
+}
+NEWPAGE.empresas=function(){return empSel?companyDetail(empSel):regPage('clients')};
 const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics'};
 let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:''};
 function regExtra(kind,i){
+  if(kind==='clients'){const n=trucks.filter(t=>t.companyId===i.id).length;return n+' caminhão(ões)'}
   if(kind==='mechanics'){const n=trucks.filter(t=>t.mechanicId===i.id).length;return n+' veículo(s) associado(s)'}
   const ex=expenses.filter(e=>e.linkKind===kind&&e.linkId===i.id);
   return ex.length?ex.length+' lançamento(s) · '+money(sum(ex))+' no total':'Nenhum lançamento financeiro ainda';
@@ -3158,7 +3187,7 @@ function regListHTML(kind){
   if(!items.length)return '<div class="empty">Nada encontrado para essa busca.</div>';
   return '<div class="list-stack">'+items.map(i=>{
     const wa=waLink(i.phone);
-    return '<div class="list-row click" onclick="openReg(\''+kind+'\',\''+i.id+'\')"><div class="grow"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small>'+(i.notes?'<small>Obs.: '+esc(i.notes)+'</small>':'')+'</div>'+
+    return '<div class="list-row click" onclick="'+(kind==='clients'?'showCompany(\''+i.id+'\')':'openReg(\''+kind+'\',\''+i.id+'\')')+'"><div class="grow"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small>'+(i.notes?'<small>Obs.: '+esc(i.notes)+'</small>':'')+'</div>'+
       '<div class="rowacts" onclick="event.stopPropagation()">'+waBtn(i.phone,true)+
       (kind==='mechanics'?'<button class="small-btn" onclick="showMechanicJobs(\''+i.id+'\')">Ver serviços</button>':'')+
       '<button class="small-btn red" onclick="deleteReg(\''+kind+'\',\''+i.id+'\')">Excluir</button></div></div>';
@@ -3179,7 +3208,7 @@ function openReg(kind,id){
     let inp;
     if(f.sel)inp='<select id="rf_'+f.k+'">'+f.sel.map(o=>'<option'+(o===v?' selected':'')+'>'+o+'</option>').join('')+'</select>';
     else if(f.area)inp='<textarea id="rf_'+f.k+'">'+esc(v)+'</textarea>';
-    else inp='<input id="rf_'+f.k+'" value="'+esc(v)+'" placeholder="'+esc(f.ph||'')+'"'+(f.tel?' inputmode="tel"':'')+(f.num?' inputmode="decimal"':'')+'>';
+    else inp='<input id="rf_'+f.k+'" value="'+esc(f.money?mstr(v):v)+'" placeholder="'+esc(f.ph||'')+'"'+(f.tel?' inputmode="tel"':'')+(f.money?' inputmode="decimal" class="money"':f.num?' inputmode="numeric"':'')+'>';
     return '<div class="'+cls+'"><label>'+f.l+'</label>'+inp+'</div>';
   }).join('');
   $('regModal').scrollTop=0;openModal('regModal');
@@ -3188,13 +3217,14 @@ function saveReg(){
   const {kind,id}=regState,cfg=REG[kind],data={};
   for(const f of cfg.fields.filter(f=>!f.dono||isRole('dono'))){const v=$('rf_'+f.k).value.trim();if(f.req&&!v){alert('Preencha: '+f.l.replace(' *',''));return}data[f.k]=v}
   const list=cfg.get();
-  if(id){const i=list.find(x=>x.id===id);Object.assign(i,data)}else list.push(Object.assign({id:uid()},data));
+  if(id){const i=list.find(x=>x.id===id);Object.assign(i,data)}else list.push(Object.assign({id:uid()},data));cfg.set(list);
   persist();closeModal('regModal');render();
 }
 function deleteReg(kind,id){
   const cfg=REG[kind],i=cfg.get().find(x=>x.id===id);if(!i)return;
   if(!confirm('Excluir '+cfg.one+' “'+i.name+'”?'))return;
   cfg.set(cfg.get().filter(x=>x.id!==id));
+  if(kind==='clients')trucks.forEach(t=>{if(t.companyId===id)t.companyId=''});
   if(kind==='mechanics'){trucks.forEach(t=>{if(t.mechanicId===id)t.mechanicId=''});quotes.forEach(q=>{if(Array.isArray(q.mechIds))q.mechIds=q.mechIds.filter(x=>x!==id);if(q.mechanicId===id)q.mechanicId=''})}
   else expenses.forEach(e=>{if(e.linkKind===kind&&e.linkId===id){e.linkKind='';e.linkId=''}});
   persist();render();
@@ -3209,7 +3239,7 @@ let curExp='';
 function linkOptions(sel){
   return '<option value="">Nenhum (digitar o nome)</option>'+
    (suppliers.length?'<optgroup label="Fornecedores">'+suppliers.map(s=>'<option value="suppliers:'+esc(s.id)+'"'+(sel==='suppliers:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'')+
-   (partners.length?'<optgroup label="Parceiros">'+partners.map(s=>'<option value="partners:'+esc(s.id)+'"'+(sel==='partners:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'');
+   (partners.length?'<optgroup label="Parceiros/freelancers">'+partners.filter(p=>p.kind!=='cliente').map(s=>'<option value="partners:'+esc(s.id)+'"'+(sel==='partners:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'');
 }
 function expenseLinkChanged(){
   const v=$('eLink').value;if(!v)return;const [k,id]=v.split(':'),it=(k==='partners'?partners:suppliers).find(x=>x.id===id);
@@ -3220,13 +3250,13 @@ function openExpense(id){
   $('eTitle').textContent=e?'Editar lançamento':'Lançar despesa ou pagamento';
   $('eDesc').value=e?e.desc:'';$('eCategory').innerHTML=optionsHTML(CATEGORIES,e?e.category:CATEGORIES[0]);
   $('eLink').innerHTML=linkOptions(e&&e.linkKind?e.linkKind+':'+e.linkId:'');$('ePayee').value=e?e.payee||'':'';
-  $('eAmount').value=e?e.amount:'';$('eMethod').value=e?e.method||'Pix':'Pix';$('eDue').value=e?e.due||'':'';
+  $('eAmount').value=e?mstr(e.amount):'';$('eMethod').value=e?e.method||'Pix':'Pix';$('eDue').value=e?e.due||'':'';
   $('ePaidDate').value=e?e.paidDate||'':'';$('eStatus').value=e?e.status:'Pendente';$('eDelBtn').style.display=e?'':'none';
   $('eFixWrap').innerHTML=!e?'<label style="display:flex;gap:10px;align-items:flex-start;font-weight:700;cursor:pointer"><input type="checkbox" id="eFixa" style="width:22px;height:22px;margin:0;flex:none"><span>🔁 Despesa fixa: repetir todo mês<small style="display:block;font-weight:400;color:var(--muted);margin-top:2px">Para contas de valor fixo (aluguel, folha, internet). O dia do vencimento acima se repete todo mês. Escolha a categoria certa (Aluguel, Funcionários, Internet...) para entrar em “Despesas fixas” no Financeiro. Conta que muda de valor (luz, água) lance normal, só quando pagar.</small></span></label>':(e.fixaId?'<div class="notice">🔁 Esta conta vem de uma <b>despesa fixa mensal</b>. Mudar algo aqui altera só este mês. Para mudar de vez, use “Despesas fixas” na tela Pagamentos.</div>':'');
   openModal('expenseModal');
 }
 function saveExpense(){
-  const desc=$('eDesc').value.trim(),amount=Number($('eAmount').value);
+  const desc=$('eDesc').value.trim(),amount=pnum($('eAmount').value);
   if(!desc||!(amount>0)){alert('Informe a descrição e um valor válido.');return}
   const link=$('eLink').value,[lk,li]=link?link.split(':'):['',''];
   const status=$('eStatus').value;let paid=$('ePaidDate').value;if(status==='Pago'&&!paid)paid=todayISO();if(status==='Pendente')paid='';
@@ -3275,8 +3305,8 @@ function renderQItems(){
    '<div class="qitem"><div class="qrow1"><select onchange="qSet('+i+',\'type\',this.value)"><option'+(it.type==='Peça'?' selected':'')+'>Peça</option><option'+(it.type==='Mão de obra'?' selected':'')+'>Mão de obra</option></select><button class="small-btn red" onclick="qDel('+i+')">Remover</button></div>'+
    '<input placeholder="Descrição (ex.: bomba injetora, troca de óleo)" value="'+esc(it.desc)+'" oninput="qSet('+i+',\'desc\',this.value)">'+
    '<div class="qrow3"><div class="field"><label>Qtd</label><input type="number" inputmode="decimal" min="0" step="any" value="'+it.qty+'" oninput="qSet('+i+',\'qty\',this.value)"></div>'+
-   '<div class="field"><label>Custo un. (R$)</label><input type="number" inputmode="decimal" min="0" step="0.01" value="'+it.cost+'" oninput="qSet('+i+',\'cost\',this.value)"></div>'+
-   '<div class="field"><label>Cobrado un. (R$)</label><input type="number" inputmode="decimal" min="0" step="0.01" value="'+it.price+'" oninput="qSet('+i+',\'price\',this.value)"></div></div>'+
+   '<div class="field"><label>Custo un. (R$)</label><input type="text" inputmode="decimal" class="money" value="'+mstr(it.cost)+'" oninput="qSet('+i+',\'cost\',this.value)"></div>'+
+   '<div class="field"><label>Cobrado un. (R$)</label><input type="text" inputmode="decimal" class="money" value="'+mstr(it.price)+'" oninput="qSet('+i+',\'price\',this.value)"></div></div>'+
    '<div class="subtle">Subtotal cobrado: <b id="qs'+i+'">'+money(it.qty*it.price)+'</b></div></div>').join('');
   qTotals();
 }
@@ -3286,7 +3316,7 @@ function qTotals(){
   $('qTotals').innerHTML='<div><span>Total cobrado do cliente</span><b>'+money(t)+'</b></div><div><span>Custo (peças e mão de obra)</span><span>'+money(c)+'</span></div><div><span>Lucro estimado</span><b style="color:'+(t-c>=0?'#14724d':'#b33d3d')+'">'+money(t-c)+'</b></div>';
 }
 function qSet(i,k,v){
-  const it=qState.items[i];it[k]=(k==='type'||k==='desc')?v:(Number(v)||0);
+  const it=qState.items[i];it[k]=(k==='type'||k==='desc')?v:(k==='qty'?(Number(v)||0):pnum(v));
   const el=$('qs'+i);if(el)el.textContent=money(it.qty*it.price);qTotals();
 }
 function qAdd(type){qState.items.push({type,desc:'',qty:1,cost:0,price:0});renderQItems()}
@@ -3678,7 +3708,7 @@ async function voiceDo(review){
   if(c.type==='status'){quickStatus(c.truck.id,c.status);navigate('inicio');return}
   if(c.type==='orcamento'){openQuote('',c.truck.id);if(c.items.length){qState.items=c.items.map(i=>Object.assign({},i));renderQItems()}return}
   if(c.type==='cadastrar'){const f=c.f;openNewTruck();$('nPlate').value=f.plate;$('nClient').value=f.client;$('nPhone').value=f.phone;$('nModel').value=f.model;$('nKm').value=f.km;$('nReason').value=f.reason;$('nMech').value=f.mechId;if(!review)await saveNewTruck();return}
-  if(c.type==='despesa'){const f=c.f;openExpense('');$('eDesc').value=f.desc;$('eAmount').value=f.amount;$('eCategory').value=f.cat;$('eDue').value=f.due;$('eStatus').value=f.paid?'Pago':'Pendente';if(f.fixa&&$('eFixa'))$('eFixa').checked=true;if(!review)saveExpense();return}
+  if(c.type==='despesa'){const f=c.f;openExpense('');$('eDesc').value=f.desc;$('eAmount').value=mstr(f.amount);$('eCategory').value=f.cat;$('eDue').value=f.due;$('eStatus').value=f.paid?'Pago':'Pendente';if(f.fixa&&$('eFixa'))$('eFixa').checked=true;if(!review)saveExpense();return}
 }
 function openVoice(auto){$('vText').value='';$('vResult').innerHTML='';$('vState').textContent='';openModal('voiceModal');if(auto!==false&&(window.SpeechRecognition||window.webkitSpeechRecognition)){if(!recOn)voiceToggle()}}
 let REC=null,recOn=false,vStop=false,vBase='',vLast=0,vTick=null;
@@ -3735,12 +3765,12 @@ let curFix='';
 function openFixa(id){
   const it=id?fxItems().find(x=>x.id===id):null;curFix=id||'';
   $('fxTitle').textContent=it?'Editar despesa fixa':'Nova despesa fixa';
-  $('fDesc').value=it?it.desc:'';$('fCat').innerHTML=optionsHTML(CATEGORIES,it?it.category:CATEGORIES[3]);$('fAmount').value=it?it.amount:'';$('fDay').value=it?it.day:'';
+  $('fDesc').value=it?it.desc:'';$('fCat').innerHTML=optionsHTML(CATEGORIES,it?it.category:CATEGORIES[3]);$('fAmount').value=it?mstr(it.amount):'';$('fDay').value=it?it.day:'';
   $('fMethod').value=it?it.method||'Pix':'Pix';$('fPayee').value=it?it.payee||'':'';$('fStart').value=it?it.start:ymNow();$('fStartW').style.display=it?'none':'';
   $('fDelBtn').style.display=it?'':'none';$('fEndBtn').style.display=it?'':'none';$('fEndBtn').textContent=it&&it.end?'Reativar':'Encerrar';
   openModal('fixaModal')}
 function fxSave(){
-  const desc=$('fDesc').value.trim(),amount=Number($('fAmount').value),day=Number($('fDay').value);
+  const desc=$('fDesc').value.trim(),amount=pnum($('fAmount').value),day=Number($('fDay').value);
   if(!desc||!(amount>0)||!(day>=1&&day<=31)){alert('Informe a descrição, o valor e o dia do vencimento (1 a 31).');return}
   const f={desc,category:$('fCat').value,amount,day,method:$('fMethod').value,payee:$('fPayee').value.trim()};
   if(curFix){const it=fxItems().find(x=>x.id===curFix);if(!it)return;Object.assign(it,f);
@@ -3895,6 +3925,9 @@ async function reportPDF(){
 /* =====================================================================
    NOVOS MÓDULOS: fiado, metas, agenda, peças a pagar
    ===================================================================== */
+function mstr(v){if(v===''||v==null||v===false)return '';const n=Number(v);if(isNaN(n))return '';return n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function moneyIn(el){const d=el.value.replace(/\D/g,'').slice(0,12);if(!d){el.value='';return}el.value=(parseInt(d,10)/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+document.addEventListener('input',function(e){const t=e.target;if(t&&t.classList&&t.classList.contains('money'))moneyIn(t)},true);
 const pnum=v=>{let t=String(v==null?'':v).trim().replace(/[^\d.,-]/g,'');if(!t)return 0;if(t.indexOf(',')>=0)t=t.replace(/\./g,'').replace(',','.');const n=parseFloat(t);return isNaN(n)?0:n};
 const pad2=n=>String(n).padStart(2,'0');
 const dayDiff=(a,b)=>Math.round((new Date(a+'T12:00:00')-new Date(b+'T12:00:00'))/864e5);
@@ -3959,7 +3992,7 @@ function openRecv(id,pre){
   $('rcTitle').textContent=r?'Editar a receber':'Lançar a receber';
   const o=r||pre||{};
   $('rcTruck').innerHTML=rcTruckOpts(o.truckId||'');
-  $('rcClient').value=o.client||'';$('rcPhone').value=o.phone||'';$('rcDesc').value=o.desc||'';$('rcAmount').value=o.amount?String(o.amount).replace('.',','):'';
+  $('rcClient').value=o.client||'';$('rcPhone').value=o.phone||'';$('rcDesc').value=o.desc||'';$('rcAmount').value=o.amount?mstr(o.amount):'';
   const d=new Date();d.setDate(d.getDate()+30);
   $('rcDue').value=o.due||(d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()));$('rcNotes').value=o.notes||'';
   $('rcPays').innerHTML=r&&(r.pays||[]).length?'<div class="panel" style="margin-top:12px"><b>Pagamentos recebidos</b>'+r.pays.map((p,i)=>'<div class="list-row"><div class="grow"><b>'+money(p.amount)+'</b><small>'+fmtDate(p.date)+'</small></div><button class="small-btn red" onclick="rcDelPay(\''+r.id+'\','+i+')">Desfazer</button></div>').join('')+'</div>':'';
@@ -3980,7 +4013,7 @@ function rcSave(){
 function rcDelete(){if(!rcCur||!confirm('Excluir este lançamento a receber?'))return;recv=recv.filter(x=>x.id!==rcCur);persist();closeModal('rcModal');render()}
 function rcDelPay(id,i){const r=recv.find(x=>x.id===id);if(!r||!confirm('Desfazer este pagamento?'))return;r.pays.splice(i,1);persist();openRecv(id);render()}
 let rpId='';
-function rcPay(id){const r=recv.find(x=>x.id===id);if(!r)return;rpId=id;$('rpSub').textContent=r.client+' · restam '+money(rcOpen(r));$('rpAmount').value=String(rcOpen(r).toFixed(2)).replace('.',',');$('rpDate').value=todayISO();openModal('rpModal')}
+function rcPay(id){const r=recv.find(x=>x.id===id);if(!r)return;rpId=id;$('rpSub').textContent=r.client+' · restam '+money(rcOpen(r));$('rpAmount').value=mstr(rcOpen(r));$('rpDate').value=todayISO();openModal('rpModal')}
 function rpSave(){
   const r=recv.find(x=>x.id===rpId);if(!r)return;const v=pnum($('rpAmount').value);
   if(!(v>0)){alert('Informe o valor recebido.');return}
@@ -4173,7 +4206,7 @@ function openPt(kind,id){
   $('ptSub').textContent=pay?'Quanto você pagou para abater a dívida.':'Peça que você pegou a prazo na autopeça (entra no que você deve).';
   $('ptDescL').textContent=pay?'Observação (Pix, dinheiro, referente a quais notas...)':'Peça / número da nota *';
   $('ptSup').innerHTML=ptSupOpts(r?r.supId:'');if(!suppliers.length&&!r)$('ptSup').value='__new';ptSupPick();$('ptNewSup').value='';
-  $('ptDate').value=r?r.date:todayISO();$('ptAmount').value=r?String(r.amount).replace('.',','):'';$('ptDesc').value=r?r.desc||'':'';
+  $('ptDate').value=r?r.date:todayISO();$('ptAmount').value=r?mstr(r.amount):'';$('ptDesc').value=r?r.desc||'':'';
   $('ptTruckBox').style.display=pay?'none':'';
   $('ptTruck').innerHTML='<option value="">—</option>'+trucks.filter(t=>t.status!=='Entregue').map(t=>'<option value="'+esc(t.plate)+'"'+(r&&r.plate===t.plate?' selected':'')+'>'+esc(vehName(t))+'</option>').join('');
   $('ptDel').style.display=r?'':'none';openModal('ptModal');
@@ -4204,7 +4237,7 @@ function nfQuoteOpts(sel){return '<option value="">— sem orçamento —</optio
 function nfQuoteTotal(){const q=quotes.find(x=>x.id===$('nfQuote').value);return q?qTotal(q):null}
 function nfPick(){const q=quotes.find(x=>x.id===$('nfQuote').value);if(!q){nfWarn();return}const t=trucks.find(x=>x.id===q.truckId)||{};
   if(!$('nfName').value.trim())$('nfName').value=t.client||'';if(!$('nfPhone').value.trim())$('nfPhone').value=t.phone||'';
-  $('nfValue').value=String(qTotal(q).toFixed(2)).replace('.',',');
+  $('nfValue').value=mstr(qTotal(q));
   if(!$('nfDesc').value.trim())$('nfDesc').value=(q.items||[]).map(function(i){return (i.qty>1?i.qty+'x ':'')+(i.desc||i.type)}).join('; ');
   const tp=(q.items||[]).some(i=>i.type==='Mão de obra'),pc=(q.items||[]).some(i=>i.type!=='Mão de obra');$('nfTipo').value=tp&&pc?'Serviço + peças':(pc?'Peças (NF-e)':'Serviço (NFS-e)');nfWarn()}
 function nfWarn(){const tot=nfQuoteTotal(),v=pnum($('nfValue').value),b=$('nfWarnBox');
@@ -4215,7 +4248,7 @@ function openNf(id){
   $('nfTitle').textContent=r?'Editar nota fiscal':'Nova nota fiscal';
   $('nfQuote').innerHTML=nfQuoteOpts(r?r.quoteId:'');
   $('nfTipo').value=r?r.tipo:'Serviço (NFS-e)';$('nfName').value=r?r.name:'';$('nfDoc').value=r?r.doc||'':'';$('nfPhone').value=r?r.phone||'':'';$('nfEmail').value=r?r.email||'':'';$('nfAddr').value=r?r.addr||'':'';$('nfCity').value=r?r.city||'':(ownBrand()?'':'');
-  $('nfDesc').value=r?r.desc||'':'';$('nfValue').value=r?String(r.value).replace('.',','):'';$('nfDate').value=r?r.date:todayISO();$('nfStatus').value=r?r.status:'Rascunho';$('nfNum').value=r?r.num||'':'';$('nfNotes').value=r?r.notes||'':'';
+  $('nfDesc').value=r?r.desc||'':'';$('nfValue').value=r?mstr(r.value):'';$('nfDate').value=r?r.date:todayISO();$('nfStatus').value=r?r.status:'Rascunho';$('nfNum').value=r?r.num||'':'';$('nfNotes').value=r?r.notes||'':'';
   $('nfDel').style.display=r?'':'none';nfStat();nfWarn();openModal('nfModal')}
 function nfSave(){
   const name=$('nfName').value.trim(),doc=$('nfDoc').value.trim(),desc=$('nfDesc').value.trim(),v=pnum($('nfValue').value);
@@ -4409,6 +4442,7 @@ NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a 
 let trainKey=null;
 const TRAIN={
 "inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: veículos sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de veículos."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."], ["Pesquisar no menu", "Abra o menu (☰) e digite no campo Pesquisar. Aparecem as abas que combinam com o que você digitou, começando pelas que começam com essas letras. Toque em uma para abrir."], ["Microfone", "O botão do microfone fica sobre a tela. Um toque abre o comando por voz. Segure por cerca de 1 segundo para arrastar o botão para outro lugar; ele lembra a posição."], ["Cartões clicáveis", "Os quadrados coloridos são botões: cada um abre a lista certa. Se o filtro já estiver marcado, a tela desce até a lista."]]},
+"empresas":{t:"Empresas clientes",s:[["O que é", "Cadastre a empresa que leva caminhões para a oficina. Assim todos os caminhões dela ficam juntos."], ["Como usar", "Toque em uma empresa para ver os caminhões dela, com garantia, status, mecânico e data de retirada."], ["No cadastro do caminhão", "Escolha a empresa na lista. Nome e telefone entram sozinhos."]]},
 "garantia":{t:"Garantia",s:[["O que é", "Garantia mostra os veículos que ainda estão dentro do prazo de garantia depois da retirada."], ["Como a contagem funciona", "A contagem começa no dia da retirada, que é o dia 1. Com 30 dias de garantia, o veículo sai da lista no dia 31."], ["Como marcar a retirada", "Ao marcar o veículo como Entregue, o app guarda a data. Informe a garantia em dias na ficha do veículo."], ["Pesquisar", "Digite a placa para ver se o veículo ainda está na garantia e até quando vai. Toque no veículo para abrir a ficha com a data de retirada e o mecânico. Veículos fora da garantia não aparecem nesta aba."]]},
 "cadastro":{t:"Cadastro de veículo",s:[["O que é", "Aqui você registra um veículo e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O veículo aparece na lista e já pode ser usado nos orçamentos."]]},
 "historico":{t:"Histórico",s:[["O que é", "Histórico guarda os veículos já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo veículo e você quiser lembrar o serviço anterior."], ["Data de retirada", "Quando o status muda para Entregue, o app guarda a data da retirada. Ela é usada para contar a garantia, que você informa em dias na ficha do veículo."]]},
@@ -4421,7 +4455,7 @@ const TRAIN={
 "pecas":{t:"Peças a pagar",s:[["O que é", "Peças a pagar mostra quanto a oficina deve às autopeças."], ["Como usar", "Veja o que está em aberto por fornecedor."], ["Dica", "Confira essa lista antes de fechar a semana para não atrasar pagamentos."]]},
 "notas":{t:"Notas fiscais",s:[["O que é", "Notas fiscais é onde você prepara a nota fiscal quando o serviço exigir."], ["Como usar", "Confira os dados fiscais da oficina e os do cliente, e gere a nota."], ["Contador", "Envie a nota ao contador pelo e-mail ou WhatsApp cadastrados."]]},
 "metas":{t:"Metas dos mecânicos",s:[["O que é", "Metas dos mecânicos mostra quanto cada mecânico já produziu."], ["Definir", "Toque em um mecânico e informe a meta do mês."], ["Acompanhar", "A barra mostra quanto falta. Os números vêm dos orçamentos aprovados."]]},
-"parceiros":{t:"Parceiros",s:[["O que é", "Parceiros são empresas que fazem serviços para a oficina, como funilaria ou borracharia."], ["Cadastrar", "Toque em Novo parceiro e informe o nome e o contato."], ["Usar", "Indique um parceiro nos orçamentos quando o serviço for dele."]]},
+"parceiros":{t:"Parceiros/freelancers",s:[["O que é", "Parceiros são empresas que fazem serviços para a oficina, como funilaria ou borracharia."], ["Cadastrar", "Toque em Novo parceiro e informe o nome e o contato."], ["Usar", "Indique um parceiro nos orçamentos quando o serviço for dele."]]},
 "fornecedores":{t:"Fornecedores",s:[["O que é", "Fornecedores são as lojas de onde a oficina compra peças e materiais."], ["Cadastrar", "Toque em Novo fornecedor e informe o nome e o contato."], ["Usar", "Escolha o fornecedor ao registrar uma compra de peças."]]},
 "mecanicos":{t:"Mecânicos",s:[["O que é", "Aqui fica a equipe de mecânicos da oficina."], ["Cadastrar", "Toque em Novo mecânico e informe o nome."], ["Usar", "Cada orçamento pode ter o mecânico responsável, e a produção aparece em Metas."]]},
 "usuarios":{t:"Perfil",s:[["O que é", "Perfil é a sua conta e o acesso de cada pessoa da equipe."], ["Papéis", "Dono, atendimento, mecânico e financeiro. Cada papel vê só as abas que precisa."], ["Convidar", "O dono convida pessoas da equipe pelo código de convite."], ["Senha", "Para trocar a sua senha, use Trocar minha senha."]]},
@@ -4618,7 +4652,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
     (!isRole('dono')?'':'<div class="panel"><div class="panel-head"><h2>Contas da oficina</h2><button class="small-btn" onclick="navigate(\'pagamentos\')">Ver pagamentos</button></div><div class="list-stack">'+
       '<div class="list-row click" onclick="goPag(\'pend\')"><div><b>Contas pendentes</b><small>Pagamentos ainda não realizados</small></div><div class="money neg">'+money(sum(pending))+'</div></div>'+
       '<div class="list-row click" onclick="goPag(\'paid\')"><div><b>Pagamentos realizados</b><small>Marcados como pagos</small></div><div class="money neg">'+money(sum(paid))+'</div></div>'+
-      '<div class="list-row click" onclick="navigate(\'parceiros\')"><div><b>Parceiros / fornecedores</b><small>Cadastrados</small></div><div class="money">'+partners.length+' / '+suppliers.length+'</div></div></div></div>')+'</div>'+
+      '<div class="list-row click" onclick="navigate(\'parceiros\')"><div><b>Parceiros / fornecedores</b><small>Cadastrados</small></div><div class="money">'+partners.filter(p=>p.kind!=='cliente').length+' / '+suppliers.length+'</div></div></div></div>')+'</div>'+
     '<div class="panel section-gap"><h2>Acesso rápido</h2><div class="quick-grid">'+menuFor().flatMap(g=>g.items).filter(i=>i[0]!=='inicio').map(i=>'<button class="quick" onclick="navigate(\''+i[0]+'\')"><b>'+i[1]+' '+i[2]+'</b><span>'+QUICK[i[0]]+'</span></button>').join('')+'</div></div>'+
     (!isRole('dono')?'':'<div class="panel section-gap"><h2>Backup dos dados</h2><p class="subtle" style="font-size:12px">Baixe um arquivo com tudo (veículos, financeiro, cadastros, orçamentos, despesas fixas e configurações). Guarde no Drive ou mande para o seu WhatsApp. Os dados também ficam salvos na nuvem; o backup é a sua cópia extra.</p><p style="font-size:13px;margin:0 0 10px"><b>Último backup:</b> '+(lastBackup()?fmtDate(lastBackup()):'ainda não fez')+'</p><div class="actions"><button class="btn primary" onclick="exportAll()">⬇ Baixar backup</button><label class="btn soft" style="cursor:pointer">⬆ Importar backup<input type="file" accept="application/json,.json" style="display:none" onchange="importAll(this)"></label></div>'+safeList()+'</div>');
   }else if(currentPage==='cadastro'){
@@ -4741,13 +4775,13 @@ const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_N
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
 const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
-const ROLE_PAGES={atendimento:['inicio','cadastro','garantia','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
+const ROLE_PAGES={atendimento:['inicio','cadastro','garantia','historico','agenda','receber','orcamentos','parceiros','empresas','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
+const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','empresas','mecanicos','gestao']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
 function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
@@ -5034,7 +5068,7 @@ function admEditOpen(id){
   const t=(admList||[]).find(x=>x.id===id);if(!t)return;admCur=id;const b=billOf(id);
   const plan=ADM_PLANS.indexOf(t.plan)>=0?t.plan:'basico';
   $('admPlan').innerHTML=planOptions(plan);
-  $('admFee').value=(b.fee_custom!=null&&plan===t.plan)?b.fee_custom:planPrice(plan).toFixed(2);
+  $('admFee').value=mstr((b.fee_custom!=null&&plan===t.plan)?b.fee_custom:planPrice(plan));
   admPlanChange(true);
   $('admDay').value=b.due_day||10;$('admNotes').value=b.notes||'';
   $('admTdays').value='';$('admLife').checked=!!b.lifetime;
@@ -5049,7 +5083,7 @@ async function admSaveEdit(){
   const days=td===''?null:Number(td);
   if(!(day>=1&&day<=28)){alert('Dia de vencimento: escolha um número entre 1 e 28.');return}
   if(days!==null&&!(days>=1&&days<=365)){alert('Teste grátis: informe entre 1 e 365 dias.');return}
-  const r=await sb('/rest/v1/rpc/admin_billing_save_client',{method:'POST',body:{p_tenant:t.id,p_fee:fee===''?null:Number(fee),p_due_day:day,p_notes:$('admNotes').value.trim()}});
+  const r=await sb('/rest/v1/rpc/admin_billing_save_client',{method:'POST',body:{p_tenant:t.id,p_fee:fee===''?null:pnum(fee),p_due_day:day,p_notes:$('admNotes').value.trim()}});
   if(!r.ok){alert('Não consegui salvar a mensalidade: '+((r.json&&r.json.message)||'erro'));return}
   if(life!==wasLife){
     const l=await sb('/rest/v1/rpc/admin_billing_set_lifetime',{method:'POST',body:{p_tenant:t.id,p_on:life}});
@@ -5133,12 +5167,12 @@ function renderCharges(list){
 function admPayOpen(id){
   const t=(admList||[]).find(x=>x.id===id);if(!t)return;admCur=id;const i=admInfo(t);
   $('admPaySub').textContent=t.name+' · mensalidade de '+money(i.fee)+' · vence dia '+i.day;
-  $('admPayAmt').value=i.fee||'';$('admPayDate').value=todayISO();$('admPayNote').value='';
+  $('admPayAmt').value=mstr(i.fee);$('admPayDate').value=todayISO();$('admPayNote').value='';
   $('admPayList').innerHTML=renderCharges(i.charges);
   openModal('admPayModal');
 }
 async function admPaySave(){
-  const amt=Number($('admPayAmt').value),date=$('admPayDate').value;
+  const amt=pnum($('admPayAmt').value),date=$('admPayDate').value;
   if(!(amt>0)||!date){alert('Informe o valor e a data do pagamento.');return}
   const r=await sb('/rest/v1/rpc/admin_billing_register',{method:'POST',body:{p_tenant:admCur,p_ym:date.slice(0,7),p_amount:amt,p_date:date,p_note:$('admPayNote').value.trim()}});
   if(!r.ok){alert('Não consegui registrar o pagamento: '+((r.json&&r.json.message)||'erro'));return}
@@ -5194,7 +5228,7 @@ async function admLifeOffSave(){const t=(admList||[]).find(x=>x.id===admLifeOffI
 async function admSavePlans(){
   for(const p of ADM_PLANS){
     const v=$('adp_'+p).value;
-    const r=await sb('/rest/v1/rpc/admin_billing_save_plan',{method:'POST',body:{p_plan:p,p_price:v===''?0:Number(v)}});
+    const r=await sb('/rest/v1/rpc/admin_billing_save_plan',{method:'POST',body:{p_plan:p,p_price:v===''?0:pnum(v)}});
     if(!r.ok){alert('Não consegui salvar o plano '+p);return}
   }
   admList=undefined;admLoad();alert('Valores dos planos salvos.');
@@ -5342,11 +5376,11 @@ function admPayPanel(){
 }
 function admPlansPanel(){
   const plansPanel='<div class="panel section-gap"><div class="panel-head"><h2>Valores dos planos</h2></div><p class="subtle" style="font-size:12px">Mensalidade padrão de cada plano. Cada oficina pode ter valor próprio em Editar.</p><div class="fgrid">'+
-    ADM_PLANS.map(p=>'<div class="field"><label>'+ADM_PLAN_LABEL[p]+' (R$ por mês)</label><input id="adp_'+p+'" type="number" inputmode="decimal" min="0" step="0.01" value="'+planPrice(p).toFixed(2)+'" oninput="admPlanTotals()"><small id="adt_'+p+'" class="subtle" style="font-size:12px">Total no ano: '+money(planPrice(p)*12)+'</small></div>').join('')+
+    ADM_PLANS.map(p=>'<div class="field"><label>'+ADM_PLAN_LABEL[p]+' (R$ por mês)</label><input id="adp_'+p+'" type="text" inputmode="decimal" class="money" value="'+mstr(planPrice(p))+'" oninput="admPlanTotals()"><small id="adt_'+p+'" class="subtle" style="font-size:12px">Total no ano: '+money(planPrice(p)*12)+'</small></div>').join('')+
     '</div><div class="actions" style="margin-top:10px"><button class="btn primary" onclick="admSavePlans()">Salvar valores</button></div></div>';
   return plansPanel;
 }
-function admPlanTotals(){ADM_PLANS.forEach(p=>{const i=$('adp_'+p),e=$('adt_'+p);if(i&&e)e.textContent='Total no ano: '+money((Number(i.value)||0)*12)})}
+function admPlanTotals(){ADM_PLANS.forEach(p=>{const i=$('adp_'+p),e=$('adt_'+p);if(i&&e)e.textContent='Total no ano: '+money((pnum(i.value)||0)*12)})}
 function admNeedData(){if(admList===undefined&&!admBusy)admLoad();return admList===undefined}
 /* Dono da oficina: mensalidade e Pix */
 /* ---------- Plano e cartão (assinatura pelo Asaas) ---------- */
