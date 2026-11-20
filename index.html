@@ -201,6 +201,7 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
 .drawer{background:linear-gradient(180deg,#6b7480 0%,#2e343c 30%,#171a1f 60%,#2a3038 100%)!important}
 .primary{box-shadow:0 2px 0 #7b848f,0 0 16px -3px var(--accent)!important}
 </style>
+<style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
 </head>
 <body>
 <aside class="drawer" id="drawer"></aside><button id="vfab" aria-label="Assistente de voz">🎤</button>
@@ -2858,7 +2859,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso'],['privacidade','🔒','Privacidade']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -3034,7 +3035,18 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
   $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
-  menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
+  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
+}
+function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
+function msSearch(v){
+  const q=msNorm(v).trim(),g=document.getElementById('msGroups'),r=document.getElementById('msRes');
+  if(!g||!r)return;
+  if(!q){g.style.display='';r.innerHTML='';return}
+  g.style.display='none';
+  const hits=[];
+  menuFor().forEach(function(gr){gr.items.forEach(function(i){const lab=msNorm(i[2]);const hay=lab+' '+msNorm(gr.g)+' '+msNorm(QUICK[i[0]]||'');if(hay.indexOf(q)<0)return;const rank=lab.indexOf(q)===0?0:(lab.split(/\s+/).some(function(w){return w.indexOf(q)===0})?1:(lab.indexOf(q)>=0?2:3));hits.push({i:i,rank:rank})})});
+  hits.sort(function(a,b){return a.rank-b.rank});
+  r.innerHTML=hits.length?hits.map(function(h){const i=h.i;return '<button class="item" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+esc(i[2])+'</button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
 }
 function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
 function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
@@ -4374,7 +4386,9 @@ const TRAIN={
 "assinatura":{t:"Plano e cartão",s:[["O que é", "Aqui você vê o plano atual da oficina e os dados da assinatura."], ["Antes de mudar", "Veja o que está incluído no seu plano antes de pedir uma mudança."], ["Dúvidas", "Para mudar de plano ou alterar o cartão, fale com o responsável pelo sistema."]]},
 "configuracoes":{t:"Configurações",s:[["O que é", "Configurações guarda os dados da oficina usados em todo o app."], ["Dados", "Nome, telefone, endereço e CNPJ aparecem nos documentos."], ["Chave Pix", "A chave Pix aparece no orçamento para o cliente pagar."], ["Logo e banner", "Troque quando quiser. A logo sai no topo dos PDFs."]]},
 "editar":{t:"Editar",s:[["O que é", "Editar permite organizar as páginas do app do jeito que faz mais sentido para a oficina."], ["Como usar", "Mostre, esconda ou reordene os blocos de cada página."], ["Dica", "As mudanças valem só para o seu app."]]},
-"suporte":{t:"Suporte",s:[["O que é","Aqui você fala com a equipe oficial da ORBE. A sua mensagem chega para nós pelo WhatsApp oficial."],["Como usar","Escreva o que precisa no campo, toque em Enviar pelo WhatsApp e a conversa abre com o nome da sua oficina já escrito."],["Horário","[confirmar] horário de atendimento."]]},
+"termos":{t:"Termos de uso",s:[["O que é","Aqui estão as regras de uso do ORBE: o que cada parte pode fazer, o que é proibido e como o serviço é cobrado."],["Como usar","Leia com calma. Dúvidas sobre o contrato você envia pela aba Suporte."]]},
+"privacidade":{t:"Privacidade",s:[["O que é","Explica quais dados o ORBE guarda, para que servem, por quanto tempo ficam guardados e quais são os seus direitos."],["Como usar","Você pode pedir a cópia, a correção ou a exclusão dos seus dados pelo Suporte."]]},
+"suporte":{t:"Suporte",s:[["O que é","Aqui você fala com a equipe oficial da ORBE. A sua mensagem chega para nós pelo WhatsApp oficial."],["Como usar","Escreva o que precisa no campo, toque em Enviar pelo WhatsApp e a conversa abre com o nome da sua oficina já escrito."],["Horário","Atendemos de segunda a sexta, das 8h às 19h. Fora desse horário, a sua mensagem fica registrada e respondemos no próximo dia útil."]]},
 "treinamento":{t:"Treinamento",s:[["O que é", "Esta aba repete o menu. Cada item tem explicações em slides."], ["Como usar", "Toque em uma aba e passe os slides com as setas."], ["Voltar", "Use Voltar ao treinamento para escolher outra aba."]]}
 };
 let trainIdx=0;
@@ -4390,19 +4404,49 @@ function trainSlideHTML(){
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="trainBack()">‹ Voltar ao treinamento</button>'+(last?'<button class="btn primary" onclick="navigate(\''+trainKey+'\')">Abrir esta aba</button>':'')+'</div></div>';
 }
 const ORBE_SUPORTE_FONE='5511993659000';
+NEWPAGE.termos=function(){
+  return pageHead('Termos de uso','Versão 1.0 · Rascunho para revisão jurídica antes de publicar.','')+
+  '<div class="panel section-gap legal">'+
+  '<h2>1. Quem somos</h2><p>O ORBE é um sistema de gestão para oficinas mecânicas, de motos e de caminhões diesel, operado por [razão social e CNPJ da empresa ORBE].</p>'+
+  '<h2>2. O que o sistema faz</h2><p>O ORBE ajuda a oficina a cadastrar veículos, orçamentos, serviços, contas a pagar e a receber, equipe e clientes. Você usa o sistema para organizar o seu trabalho.</p>'+
+  '<h2>3. Conta e acesso</h2><p>Você é responsável pela senha e por quem usa a sua conta. Não compartilhe seu acesso com pessoas fora da oficina. Avise o ORBE imediatamente se perceber uso indevido.</p>'+
+  '<h2>4. Planos e pagamento</h2><p>O uso é cobrado conforme o plano escolhido. A mensalidade vence no dia combinado. Se houver atraso, o acesso pode ser suspenso até a regularização, sem apagar os seus dados.</p>'+
+  '<h2>5. Seus dados e os dados dos seus clientes</h2><p>Os dados de clientes, veículos e serviços que você lança pertencem à sua oficina. O ORBE guarda esses dados para prestar o serviço. Veja a página Privacidade.</p>'+
+  '<h2>6. Uso permitido</h2><p>É proibido usar o sistema para fraude, enviar mensagens em massa não solicitadas, tentar invadir ou copiar o sistema, ou inserir dados que você não tem direito de usar.</p>'+
+  '<h2>7. Disponibilidade</h2><p>Trabalhamos para manter o sistema no ar o tempo todo, mas podem ocorrer interrupções para manutenção ou por falhas de internet e de terceiros.</p>'+
+  '<h2>8. Cancelamento</h2><p>Você pode cancelar a qualquer momento pela área Plano e cartão. Após o cancelamento, você pode pedir a exportação dos seus dados pelo Suporte.</p>'+
+  '<h2>9. Mudanças nestes termos</h2><p>Podemos atualizar estes termos. Avisaremos no sistema antes de as mudanças valerem.</p>'+
+  '<h2>10. Foro</h2><p>Fica eleito o foro da comarca de [cidade e estado da empresa] para resolver qualquer disputa, com renúncia a qualquer outro.</p>'+
+  '</div>';
+};
+NEWPAGE.privacidade=function(){
+  return pageHead('Privacidade','Versão 1.0 · Rascunho para revisão jurídica antes de publicar. Segue a Lei Geral de Proteção de Dados (LGPD).','')+
+  '<div class="panel section-gap legal">'+
+  '<h2>1. Quem é o responsável</h2><p>Para os dados da sua oficina e da sua conta, o ORBE é o responsável. Para os dados de clientes finais que você cadastra, a sua oficina é a responsável e o ORBE trata esses dados em seu nome.</p>'+
+  '<h2>2. Quais dados guardamos</h2><ul><li>Dados da oficina e da conta: nome, e-mail, telefone, endereço e CNPJ.</li><li>Dados de clientes e veículos que você lança: nome, telefone, placa, modelo e histórico de serviços.</li><li>Dados financeiros: orçamentos, pagamentos, contas e cobranças.</li><li>Dados de uso: quanto tempo cada pessoa usa o sistema, por dia, para medir o uso do plano.</li></ul>'+
+  '<h2>3. Para que usamos</h2><p>Para prestar o serviço, emitir cobranças, dar suporte e melhorar o sistema. Não vendemos dados e não usamos os dados dos seus clientes para outra finalidade.</p>'+
+  '<h2>4. Por quanto tempo guardamos</h2><p>Os dados da oficina e os dados de serviço ficam guardados enquanto a conta estiver ativa. Depois do cancelamento, eles são apagados em até 90 dias, salvo o que a lei exigir guardar. Os dados de tempo de uso ficam guardados por 12 meses e depois são apagados. [Confirmar prazos antes de publicar.]</p>'+
+  '<h2>5. Com quem compartilhamos</h2><p>Compartilhamos apenas o necessário com fornecedores que fazem o sistema funcionar: hospedagem e banco de dados em nuvem, serviço de cobrança e envio de mensagens. Eles só usam os dados para o serviço contratado.</p>'+
+  '<h2>6. Seus direitos</h2><p>Você pode pedir: confirmação de que tratamos seus dados, acesso, correção, exportação, exclusão e informação sobre com quem compartilhamos. Faça o pedido pelo Suporte.</p>'+
+  '<h2>7. Segurança</h2><p>Usamos conexão segura, senhas protegidas e controle de acesso por tipo de usuário. Nenhum sistema é totalmente livre de risco, por isso também recomendamos senhas fortes e acesso restrito.</p>'+
+  '<h2>8. Encarregado de dados</h2><p>Contato do encarregado: [nome e e-mail do encarregado, a definir].</p>'+
+  '<h2>9. Alterações</h2><p>Avisaremos no sistema quando esta política mudar.</p>'+
+  '</div>';
+};
+
 NEWPAGE.suporte=function(){
   return pageHead('Suporte','Fale com a equipe oficial da ORBE.','')+
     '<div class="panel section-gap"><h2>Mande sua mensagem</h2>'+
     '<div class="field"><label>O que você precisa?</label><textarea id="supMsg" rows="4" placeholder="Escreva aqui o problema ou a dúvida."></textarea></div>'+
     '<div class="actions" style="margin-top:10px"><button class="btn primary" onclick="supEnviar()">Enviar pelo WhatsApp</button></div>'+
-    (ORBE_SUPORTE_FONE?'':'<p class="subtle" style="font-size:12px;margin-top:10px">Canal de suporte em configuração.</p>')+'</div>';
+    '<p class="subtle" style="font-size:12px;margin-top:10px">Atendimento: segunda a sexta, das 8h às 19h.</p>'+(ORBE_SUPORTE_FONE?'':'<p class="subtle" style="font-size:12px;margin-top:10px">Canal de suporte em configuração.</p>')+'</div>';
 };
 function supEnviar(){
   const m=((document.getElementById('supMsg')||{}).value||'').trim();
   if(!m){alert('Escreva a sua mensagem antes de enviar.');return}
   if(!ORBE_SUPORTE_FONE){alert('O suporte ainda não está configurado.');return}
   const txt='Oficina: '+((ws&&ws.name)||'-')+'\n'+m;
-  window.open('https://wa.me/'+ORBE_SUPORTE_FONE+'?text='+encodeURIComponent(txt),'_blank');
+  waChoose(ORBE_SUPORTE_FONE,txt);
 }
 NEWPAGE.treinamento=function(){
   if(trainKey&&TRAIN[trainKey])return pageHead('Treinamento','Explicação rápida de cada aba.','')+trainSlideHTML();
@@ -4637,8 +4681,8 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
     clearTimeout(tm);
     const was=drag.on,last=drag.p;
     drag=null;fab.classList.remove('vf-hold','vf-drag');
-    if(was){
-      if(last){pos=last;try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}}
+    if(was&&last){
+      pos=last;try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}
       fab.dataset.dragged='1';setTimeout(function(){delete fab.dataset.dragged},300);
     }
   }
@@ -4647,6 +4691,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
   fab.addEventListener('click',function(e){
     if(fab.dataset.dragged){e.preventDefault();e.stopImmediatePropagation()}
   },true);
+  fab.addEventListener('click',function(){openVoice()});
 })();
 
 /* ---------- Nuvem (Supabase): login e sincronização ---------- */
@@ -4654,14 +4699,14 @@ const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_N
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
 const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
-const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte']};
+const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
 const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
-function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
+function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
 function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
@@ -5277,6 +5322,7 @@ function pixBlock(){
   if(!myBill||!myBill.pix_key||!(Number(myBill.fee)>0))return '';
   const payload=pixPayload(myBill.pix_key,myBill.pix_name,myBill.pix_city,myBill.fee);
   return '<div class="panel section-gap"><div class="panel-head"><h2>Ou pague por Pix</h2></div><p class="subtle" style="font-size:12px">Mensalidade de '+myBill.ym.slice(5)+'/'+myBill.ym.slice(0,4)+': '+money(myBill.fee)+'. Escaneie o QR code ou copie o código.</p>'+
+    '<p style="font-size:13px;margin:6px 0"><b>Chave Pix:</b> '+esc(myBill.pix_key)+'<br><small class="subtle">Favorecido: '+esc(myBill.pix_name||'')+(myBill.pix_city?' · '+esc(myBill.pix_city):'')+'</small></p>'+
     '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:10px 0"><div id="pixQr" style="background:#fff;padding:8px;border-radius:8px;width:190px">'+pixQrSvg(payload)+'</div>'+
     '<div style="flex:1;min-width:200px"><textarea id="pixCode" readonly style="width:100%;font-size:11px;height:80px">'+esc(payload)+'</textarea><button class="btn soft" style="margin-top:8px" onclick="copyPix()">Copiar código Pix</button></div></div>'+
     '<small>Depois de pagar, avise o ORBE para liberar o acesso.</small></div>';
