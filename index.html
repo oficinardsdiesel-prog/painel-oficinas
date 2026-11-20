@@ -15,7 +15,7 @@
 <meta name="referrer" content="no-referrer">
 <title>ORBE</title>
 <style>
-#vfab,#billFloat{display:none!important}
+#billFloat{display:none!important}
 
 :root{--accent:#2563eb;--navy:#101216;--navy2:#22262d;--blue:#2d333b;--blue2:#e9ecf0;--bg:#e9eaed;--ink:#172338;--muted:#718096;--line:#e4e9f1;--green:#16865b;--amber:#a96b08;--red:#bd4545;--shadow:0 8px 24px rgba(22,38,62,.06)}
 *{box-sizing:border-box}
@@ -161,7 +161,7 @@ body.editing #edbar{display:flex}body.editing .content{padding-bottom:110px}
 #vfab{display:none;position:fixed;right:16px;bottom:20px;width:58px;height:36px;border-radius:12px;border:1px solid #d3d8df;background:linear-gradient(180deg,#ffffff,#e4e8ee);color:#101216;font-size:17px;line-height:1;z-index:35;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 #b9bfc8,0 4px 10px #10182833;cursor:pointer;align-items:center;justify-content:center;padding:0}
 body.editing #vfab{bottom:86px}
 #vfab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .2s,box-shadow .2s}
-#vfab.vf-hold{transform:scale(1.08);transition:transform 1.5s linear}
+#vfab.vf-hold{transform:scale(1.08);transition:transform 1s linear}
 #vfab.vf-drag{transform:scale(1.12);box-shadow:0 14px 34px #0008;outline:3px dashed #2563eb;outline-offset:4px;transition:none}
 .vcard{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;background:#f7f9fc}.vcard h4{margin:0 0 6px;font-size:14px}.vcard ul{margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.6}.vcard .warn{color:#a96b08;font-size:12px;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;color:var(--navy)}.chips button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.chips button.sug::after{content:" ★";color:#e6a700}
@@ -4468,7 +4468,7 @@ NEWPAGE.orbe_tempo=function(){
     (nAl?'<div class="notice"><b>'+nAl+' oficina(s)</b> com o uso abaixo da média. Toque na oficina e chame no WhatsApp.</div>':'')+
     '<div class="panel"><div class="list-stack">'+lista+'</div></div>';
 };
-function render(){
+function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl.style.display=(ws&&ws.id&&isRole('dono','atendimento','mecanico'))?'flex':'none'}catch(e){}
   if(ws&&ws.is_admin){if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin'}else if(/^(admin|orbe_)/.test(currentPage))currentPage='inicio';
   try{applyTheme()}catch(e){}
   updateBillBanner();
@@ -4577,7 +4577,7 @@ function render(){
       if(window.__btnEditing){drag=null;fab.classList.remove('vf-hold');return}
       drag.on=true;fab.classList.remove('vf-hold');fab.classList.add('vf-drag');
       try{navigator.vibrate&&navigator.vibrate(60)}catch(_){}
-    },1500);
+    },1000);
   });
   window.addEventListener('pointermove',function(e){
     if(!drag)return;
