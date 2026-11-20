@@ -261,6 +261,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Status</label><select id="dStatus"></select></div>
     <div class="field"><label>Mecânico responsável</label><select id="dMech"></select></div>
     <div class="field"><label>Quilometragem</label><input id="dKm" inputmode="numeric"></div>
+    <div class="field"><label>Garantia (dias)</label><input id="dGar" inputmode="numeric" placeholder="Ex.: 30"></div>
     <div class="field"><label>Entrada</label><input id="dDate" disabled></div>
     <div class="field full"><label>Problema relatado / serviço</label><textarea id="dReason"></textarea></div>
     <div class="field full"><label>Diagnóstico</label><textarea id="dDiag" placeholder="O que o mecânico encontrou"></textarea></div>
@@ -2855,14 +2856,14 @@ const ADMIN_MENU=[
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
- {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda']]},
+ {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda'],['garantia','🛡','Garantia']]},
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso'],['privacidade','🔒','Privacidade']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -3064,7 +3065,7 @@ function truckCard(t,withSelect){
     '</div></div>';
 }
 function truckList(items,withSelect){return items.length?'<div class="list-stack">'+items.map(t=>truckCard(t,withSelect)).join('')+'</div>':'<div class="empty">Nenhum veículo encontrado.</div>'}
-function quickStatus(id,status){const t=trucks.find(x=>x.id===id);if(!t||t.status===status)return;logEvent(t.plate,'Status alterado: '+t.status+' → '+status);t.status=status;persist();render()}
+function quickStatus(id,status){const t=trucks.find(x=>x.id===id);if(!t||t.status===status)return;logEvent(t.plate,'Status alterado: '+t.status+' → '+status);t.status=status;setDeliveryDate(t);persist();render()}
 
 function fillTruckSelects(prefix,sel){
   $(prefix+'Status').innerHTML=optionsHTML(STATUSES,sel||STATUSES[0]);
@@ -3094,7 +3095,7 @@ function openTruck(id){
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
   $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
-  $('dKm').value=t.km||'';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
+  $('dKm').value=t.km||'';$('dGar').value=t.warrantyDays||'';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
   ph={truckId:id,live:true,list:[],box:'phDet'};renderPhotos();
   dbOf(id).then(list=>{if(ph.truckId===id){ph.list=list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));renderPhotos()}}).catch(()=>{});
   $('truckModal').scrollTop=0;openModal('truckModal');
@@ -3110,9 +3111,9 @@ function saveTruckEdit(keep){
   if(client!==t.client){quotes.forEach(q=>{if(q.truckId===t.id&&q.client!=null)q.client=client});t.client=client}
   t.phone=$('dPhone').value.trim();t.model=$('dModel').value.trim();t.doc=$('dDoc').value.trim();t.email=$('dEmail').value.trim();t.addr=$('dAddr').value.trim();t.driver=$('dDriver').value.trim();t.diagnosis=$('dDiag').value.trim();
   const ns=$('dStatus').value,nm=$('dMech').value;
-  if(ns!==t.status){logEvent(t.plate,'Status alterado: '+t.status+' → '+ns);t.status=ns}
+  if(ns!==t.status){logEvent(t.plate,'Status alterado: '+t.status+' → '+ns);t.status=ns;setDeliveryDate(t)}
   if(nm!==t.mechanicId){t.mechanicId=nm;logEvent(t.plate,'Mecânico responsável: '+mechanicName(nm))}
-  t.km=$('dKm').value.trim();t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
+  t.km=$('dKm').value.trim();t.warrantyDays=parseInt($('dGar').value,10)||null;t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
   persist();if(!keep)closeModal('truckModal');render();return true;
 }
 async function deleteTruck(){
@@ -4004,6 +4005,44 @@ function quoteToRecv(){
    ===================================================================== */
 let metaY=new Date().getFullYear(),metaM=new Date().getMonth()+1;
 function metaGo(d){metaM+=d;if(metaM>12){metaM=1;metaY++}if(metaM<1){metaM=12;metaY--}render()}
+let grQ='';
+function setDeliveryDate(t){if(t.status==='Entregue')t.deliveredAt=t.deliveredAt||todayISO();else t.deliveredAt=''}
+function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
+function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
+function garFmt(d){return d.toLocaleDateString('pt-BR')}
+function garInfo(t){
+  const s=garIso(t.deliveredAt),days=Number(t.warrantyDays)||0;
+  if(!s)return {st:'nodate'};
+  if(days<=0)return {st:'nodays'};
+  const end=new Date(s.getFullYear(),s.getMonth(),s.getDate()+days-1);
+  const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  if(today<=end)return {st:'on',end:end,left:Math.round((end-today)/86400000)+1};
+  return {st:'off',end:end};
+}
+function garRow(t,info){
+  const veh=[t.model,t.plate].filter(Boolean).join(' · ');
+  let pill,txt;
+  if(info.st==='on'){pill='<span class="pill green">Na garantia</span>';txt='Faltam '+info.left+(info.left===1?' dia':' dias')+' · até '+garFmt(info.end)}
+  else if(info.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(info.end)}
+  else if(info.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Marque o veículo como Entregue para começar a contar'}
+  else {pill='<span class="pill s1">Sem prazo</span>';txt='Informe a garantia em dias na ficha do veículo'}
+  return '<div class="list-row"><div class="grow"><b>'+esc(veh||'Veículo sem placa')+'</b><small>'+esc(t.client||'Cliente sem nome')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
+}
+function garBody(q){
+  const k=garKey(q);
+  if(k){
+    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0).map(t=>({t:t,info:garInfo(t)}));
+    return hits.length?'<div class="list-stack">'+hits.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo com a placa “'+esc(q)+'”.</div>';
+  }
+  const act=trucks.map(t=>({t:t,info:garInfo(t)})).filter(h=>h.info.st==='on').sort((a,b)=>a.info.end-b.info.end);
+  return act.length?'<div class="list-stack">'+act.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo na garantia no momento.</div>';
+}
+function grSearch(v){grQ=v;const r=$('grRes');if(r)r.innerHTML=garBody(v)}
+NEWPAGE.garantia=function(){
+  return pageHead('Garantia','Veículos dentro do prazo de garantia. A contagem começa na data de retirada: o dia da retirada é o dia 1.','')+
+   '<div class="msearch" style="margin:0 0 12px"><span class="mslupa" aria-hidden="true">🔍</span><input id="grQ" type="search" placeholder="Pesquisar placa" autocomplete="off" oninput="grSearch(this.value)" aria-label="Pesquisar placa" value="'+esc(grQ)+'"></div>'+
+   '<div id="grRes">'+garBody(grQ)+'</div>';
+};
 NEWPAGE.metas=function(){
   const ym=metaY+'-'+pad2(metaM),now=new Date(),isCur=(now.getFullYear()===metaY&&now.getMonth()+1===metaM),future=(metaY>now.getFullYear()||(metaY===now.getFullYear()&&metaM>now.getMonth()+1)),
     dim=new Date(metaY,metaM,0).getDate(),el=future?0:(isCur?now.getDate():dim),
@@ -4367,9 +4406,10 @@ function gestaoHTML(){
 NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a receber, despesas fixas e metas da oficina.','')+gestaoHTML()};
 let trainKey=null;
 const TRAIN={
-"inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: veículos sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de veículos."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."]]},
+"inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: veículos sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de veículos."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."], ["Pesquisar no menu", "Abra o menu (☰) e digite no campo Pesquisar. Aparecem as abas que combinam com o que você digitou, começando pelas que começam com essas letras. Toque em uma para abrir."], ["Microfone", "O botão do microfone fica sobre a tela. Um toque abre o comando por voz. Segure por cerca de 1 segundo para arrastar o botão para outro lugar; ele lembra a posição."], ["Cartões clicáveis", "Os quadrados coloridos são botões: cada um abre a lista certa. Se o filtro já estiver marcado, a tela desce até a lista."]]},
+"garantia":{t:"Garantia",s:[["O que é", "Garantia mostra os veículos que ainda estão dentro do prazo de garantia depois da retirada."], ["Como a contagem funciona", "A contagem começa no dia da retirada, que é o dia 1. Com 30 dias de garantia, o veículo sai da lista no dia 31."], ["Como marcar a retirada", "Ao marcar o veículo como Entregue, o app guarda a data. Informe a garantia em dias na ficha do veículo."], ["Pesquisar", "Digite a placa para ver se o veículo ainda está na garantia, até quando vai e se já venceu."]]},
 "cadastro":{t:"Cadastro de veículo",s:[["O que é", "Aqui você registra um veículo e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O veículo aparece na lista e já pode ser usado nos orçamentos."]]},
-"historico":{t:"Histórico",s:[["O que é", "Histórico guarda os veículos já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo veículo e você quiser lembrar o serviço anterior."]]},
+"historico":{t:"Histórico",s:[["O que é", "Histórico guarda os veículos já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo veículo e você quiser lembrar o serviço anterior."], ["Data de retirada", "Quando o status muda para Entregue, o app guarda a data da retirada. Ela é usada para contar a garantia, que você informa em dias na ficha do veículo."]]},
 "agenda":{t:"Agenda",s:[["O que é", "A agenda mostra os serviços marcados e os vencimentos, dia a dia."], ["Como usar", "Escolha o dia no calendário para ver o que está programado."], ["Dica", "Use para organizar a semana e não perder um vencimento."]]},
 "orcamentos":{t:"Orçamentos",s:[["O que é", "Orçamento é a proposta de serviço para um veículo, com peças e mão de obra, antes de o cliente aprovar."], ["Criar", "Toque em Novo orçamento, escolha o veículo e adicione os itens."], ["Itens", "Cada linha tem tipo (peça ou mão de obra), quantidade e preço. O total é calculado sozinho."], ["Mecânico", "Escolha o mecânico responsável. Isso alimenta a aba Metas dos mecânicos."], ["Aprovação", "Quando o cliente aprovar, marque como Aprovado. Só os aprovados entram no faturamento."], ["Imprimir", "Use Imprimir ou gere o PDF para mandar ao cliente. A logo da oficina aparece no topo."]]},
 "financeiro":{t:"Financeiro",s:[["O que é", "Financeiro mostra o que entrou e o que saiu da oficina em um período."], ["Básico", "Mostra faturamento, despesas e resultado de forma simples."], ["Avançado", "Permite filtrar por mês, trimestre ou ano e ver gráficos."], ["Lançar despesa", "Toque em Novo lançamento. Informe descrição, categoria, valor e vencimento."], ["Despesa fixa", "Marque como despesa fixa para a conta se repetir todo mês, sozinha."]]},
@@ -4383,7 +4423,7 @@ const TRAIN={
 "fornecedores":{t:"Fornecedores",s:[["O que é", "Fornecedores são as lojas de onde a oficina compra peças e materiais."], ["Cadastrar", "Toque em Novo fornecedor e informe o nome e o contato."], ["Usar", "Escolha o fornecedor ao registrar uma compra de peças."]]},
 "mecanicos":{t:"Mecânicos",s:[["O que é", "Aqui fica a equipe de mecânicos da oficina."], ["Cadastrar", "Toque em Novo mecânico e informe o nome."], ["Usar", "Cada orçamento pode ter o mecânico responsável, e a produção aparece em Metas."]]},
 "usuarios":{t:"Perfil",s:[["O que é", "Perfil é a sua conta e o acesso de cada pessoa da equipe."], ["Papéis", "Dono, atendimento, mecânico e financeiro. Cada papel vê só as abas que precisa."], ["Convidar", "O dono convida pessoas da equipe pelo código de convite."], ["Senha", "Para trocar a sua senha, use Trocar minha senha."]]},
-"assinatura":{t:"Plano e cartão",s:[["O que é", "Aqui você vê o plano atual da oficina e os dados da assinatura."], ["Antes de mudar", "Veja o que está incluído no seu plano antes de pedir uma mudança."], ["Dúvidas", "Para mudar de plano ou alterar o cartão, fale com o responsável pelo sistema."]]},
+"assinatura":{t:"Plano e cartão",s:[["O que é", "Aqui você vê o plano atual da oficina e os dados da assinatura."], ["Antes de mudar", "Veja o que está incluído no seu plano antes de pedir uma mudança."], ["Dúvidas", "Para mudar de plano ou alterar o cartão, fale com o responsável pelo sistema."], ["Pagamento por Pix", "Quando a cobrança não é automática, aparecem a chave Pix em texto, o favorecido, a cidade e o QR Code. Pague pelo app do seu banco usando a chave ou o QR."]]},
 "configuracoes":{t:"Configurações",s:[["O que é", "Configurações guarda os dados da oficina usados em todo o app."], ["Dados", "Nome, telefone, endereço e CNPJ aparecem nos documentos."], ["Chave Pix", "A chave Pix aparece no orçamento para o cliente pagar."], ["Logo e banner", "Troque quando quiser. A logo sai no topo dos PDFs."]]},
 "editar":{t:"Editar",s:[["O que é", "Editar permite organizar as páginas do app do jeito que faz mais sentido para a oficina."], ["Como usar", "Mostre, esconda ou reordene os blocos de cada página."], ["Dica", "As mudanças valem só para o seu app."]]},
 "termos":{t:"Termos de uso",s:[["O que é","Aqui estão as regras de uso do ORBE: o que cada parte pode fazer, o que é proibido e como o serviço é cobrado."],["Como usar","Leia com calma. Dúvidas sobre o contrato você envia pela aba Suporte."]]},
@@ -4699,13 +4739,13 @@ const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_N
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
 const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
-const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
+const ROLE_PAGES={atendimento:['inicio','cadastro','garantia','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-const PLAN_PAGES={basico:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
+const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','mecanicos','gestao']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
 function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
