@@ -3171,7 +3171,6 @@ function companyDetail(id){
   return pageHead(esc(c.name),[c.contact,c.phone,c.doc].filter(Boolean).join(' · ')||'Empresa cliente','<button class="btn soft" onclick="showCompany(\'\')">← Empresas</button><button class="btn soft" onclick="openReg(\'clients\',\''+c.id+'\')">Editar empresa</button><button class="btn primary" onclick="companyNewTruck(\''+c.id+'\')">＋ Caminhão desta empresa</button>')+
     '<div class="panel"><div class="panel-head"><h2>Caminhões ('+list.length+')</h2></div>'+rows+'</div>';
 }
-NEWPAGE.empresas=function(){return empSel?companyDetail(empSel):regPage('clients')};
 const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics'};
 let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:''};
 function regExtra(kind,i){
@@ -3934,6 +3933,7 @@ const dayDiff=(a,b)=>Math.round((new Date(a+'T12:00:00')-new Date(b+'T12:00:00')
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
 const NEWPAGE={};
+NEWPAGE.empresas=function(){return empSel?companyDetail(empSel):regPage('clients')};
 const mcard=(c,v,h,go)=>'<div class="metric'+(go?' click" role="button" tabindex="0" onclick="'+go+'"':'"')+'><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
 
 /* ---------- Mensagens de cobrança e agenda ---------- */
