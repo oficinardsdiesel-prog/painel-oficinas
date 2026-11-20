@@ -161,7 +161,8 @@ body.editing #edbar{display:flex}body.editing .content{padding-bottom:110px}
 #vfab{display:none;position:fixed;right:16px;bottom:20px;width:58px;height:36px;border-radius:12px;border:1px solid #d3d8df;background:linear-gradient(180deg,#ffffff,#e4e8ee);color:#101216;font-size:17px;line-height:1;z-index:35;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 #b9bfc8,0 4px 10px #10182833;cursor:pointer;align-items:center;justify-content:center;padding:0}
 body.editing #vfab{bottom:86px}
 #vfab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .2s,box-shadow .2s}
-#vfab.vf-hold{transform:scale(1.08);transition:transform 1s linear}
+#vfab.vf-hold{transform:scale(1.08);transition:transform .8s linear}
+#vfab.vf-scroll{opacity:.25;pointer-events:none;transition:opacity .3s}
 #vfab.vf-drag{transform:scale(1.12);box-shadow:0 14px 34px #0008;outline:3px dashed #2563eb;outline-offset:4px;transition:none}
 .vcard{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;background:#f7f9fc}.vcard h4{margin:0 0 6px;font-size:14px}.vcard ul{margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.6}.vcard .warn{color:#a96b08;font-size:12px;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;color:var(--navy)}.chips button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.chips button.sug::after{content:" ★";color:#e6a700}
@@ -3929,9 +3930,9 @@ NEWPAGE.receber=function(){
   list=list.slice().sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
   const FL=[['open','Em aberto'],['late','Vencidos'],['today','Hoje'],['soon','A vencer'],['paid','Pagos'],['all','Todos']];
   return pageHead('A receber','Serviços vendidos para o cliente pagar depois. Cobre pelo WhatsApp na data certa.','<button class="btn primary" onclick="openRecv(\'\')">＋ Lançar a receber</button>')+
-   '<div class="cards">'+mcard('Total a receber',money(sumO(op)),op.length+' em aberto')+mcard('Vencidos',money(sumO(late)),late.length+' cobrança(s)',"rcSet('late')")+mcard('Vencem hoje',money(sumO(td)),td.length+' cobrança(s)',"rcSet('today')")+mcard('Próximos 7 dias',money(sumO(wk)),wk.length+' cobrança(s)')+'</div>'+
+   '<div class="cards">'+mcard('Total a receber',money(sumO(op)),op.length+' em aberto')+mcard('Vencidos',money(sumO(late)),late.length+' cobrança(s)',"rcSet('late');goLista()")+mcard('Vencem hoje',money(sumO(td)),td.length+' cobrança(s)',"rcSet('today');goLista()")+mcard('Próximos 7 dias',money(sumO(wk)),wk.length+' cobrança(s)')+'</div>'+
    '<div class="notice section-gap">O WhatsApp não deixa programas enviarem mensagem sozinhos de graça. Por isso o sistema avisa na tela inicial quando tem cobrança para hoje e você toca em <b>💬 Cobrar</b>: a mensagem já sai pronta, no tom certo (lembrete, vence hoje ou atrasado).</div>'+
-   '<div class="panel section-gap"><div class="chips" style="margin-bottom:12px">'+FL.map(f=>'<button class="'+(rcF===f[0]?'on':'')+'" onclick="rcSet(\''+f[0]+'\')">'+f[1]+'</button>').join('')+'</div>'+
+   '<div class="panel section-gap listaAlvo"><div class="chips" style="margin-bottom:12px">'+FL.map(f=>'<button class="'+(rcF===f[0]?'on':'')+'" onclick="rcSet(\''+f[0]+'\')">'+f[1]+'</button>').join('')+'</div>'+
    (list.length?'<div class="list-stack">'+list.map(r=>{
      const st=rcStat(r),pill=st==='paid'?'<span class="pill ok">Pago</span>':st==='late'?'<span class="pill late">Venceu há '+dayDiff(todayISO(),r.due)+' dia(s)</span>':st==='today'?'<span class="pill today">Vence hoje</span>':'<span class="pill s1">Vence em '+dayDiff(r.due,todayISO())+' dia(s)</span>';
      return '<div class="list-row"><div class="grow"><b>'+esc(r.client)+'</b> '+pill+'<small>'+esc([r.plate,r.desc].filter(Boolean).join(' · '))+'</small><small>Vencimento '+fmtDate(r.due)+' · '+(rcPaid(r)?'Restam '+money(rcOpen(r))+' de '+money(r.amount):money(r.amount))+'</small></div>'+
@@ -4190,8 +4191,8 @@ NEWPAGE.notas=function(){
   const pill={'Rascunho':'s5','Enviada ao contador':'s3','Emitida':'s1'};
   return pageHead('Notas fiscais','Prepare a nota só quando precisar. O app monta os dados e envia para o seu contador emitir.','<button class="btn primary" onclick="openNf(\'\')">＋ Nova nota</button><button class="btn soft" onclick="openFiscal()">⚙ Dados fiscais</button>')+
   (okFiscal?'':'<div class="notice" style="margin-bottom:12px">📋 <b>Antes da primeira nota</b>, preencha os dados fiscais da oficina (CNPJ, inscrição municipal, município e contador).<br><button class="btn soft" style="margin-top:8px" onclick="openFiscal()">Preencher agora</button></div>')+
-  '<div class="cards">'+mcard('Rascunhos',cnt('Rascunho'),'Ainda não enviadas',"setNfF('Rascunho')")+mcard('Com o contador',cnt('Enviada ao contador'),'Aguardando emissão',"setNfF('Enviada ao contador')")+mcard('Emitidas no mês',issuedMonth.length,money(issuedMonth.reduce((a,x)=>a+x.value,0)),"setNfF('Emitida')")+'</div>'+
-  '<div class="panel section-gap"><div class="panel-head"><h2>Notas '+(nfFilter==='todas'?'':'· '+esc(nfFilter))+'</h2>'+(nfFilter!=='todas'?'<button class="small-btn" onclick="setNfF(\'todas\')">Ver todas</button>':'')+'</div>'+
+  '<div class="cards">'+mcard('Rascunhos',cnt('Rascunho'),'Ainda não enviadas',"setNfF('Rascunho');goLista()")+mcard('Com o contador',cnt('Enviada ao contador'),'Aguardando emissão',"setNfF('Enviada ao contador');goLista()")+mcard('Emitidas no mês',issuedMonth.length,money(issuedMonth.reduce((a,x)=>a+x.value,0)),"setNfF('Emitida');goLista()")+'</div>'+
+  '<div class="panel section-gap listaAlvo"><div class="panel-head"><h2>Notas '+(nfFilter==='todas'?'':'· '+esc(nfFilter))+'</h2>'+(nfFilter!=='todas'?'<button class="small-btn" onclick="setNfF(\'todas\')">Ver todas</button>':'')+'</div>'+
   (list.length?'<div class="list-stack">'+list.map(function(n){return '<div class="list-row" style="flex-direction:column;align-items:stretch;gap:6px"><div style="display:flex;justify-content:space-between;gap:8px"><b>'+esc(n.name)+'</b><span class="pill '+(pill[n.status]||'s5')+'">'+esc(n.status)+'</span></div>'+
     '<small>'+esc(n.tipo)+' · '+fmtDate(n.date)+(n.num?' · nº '+esc(n.num):'')+'</small><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:#5b6b82">'+esc((n.desc||'').slice(0,70))+((n.desc||'').length>70?'…':'')+'</span><b>'+money(n.value)+'</b></div>'+
     '<div class="actions"><button class="small-btn" onclick="openNf(\''+n.id+'\')">Editar</button><button class="small-btn" onclick="nfSend(\''+n.id+'\')">Enviar ao contador</button><button class="small-btn" onclick="nfCopy(\''+n.id+'\')">Copiar dados</button>'+(n.status!=='Emitida'?'<button class="small-btn" onclick="nfIssued(\''+n.id+'\')">Marcar emitida</button>':'')+'</div></div>'}).join('')+'</div>':'<div class="empty">'+(invoices.length?'Nenhuma nota nesta situação.':'Nenhuma nota ainda. Toque em “＋ Nova nota” quando precisar emitir.')+'</div>')+'</div>'+
@@ -4329,7 +4330,8 @@ function gestGo(d){gestSlide=Math.max(0,Math.min(GEST_SLIDES.length-1,gestSlide+
 function gestSkip(){const g=gestCfg();g.tutorial=true;persist();gestCar=false;gestSlide=0;render()}
 function gestShowCar(){gestSlide=0;gestCar=true;render()}
 function gestSaveCaixa(){const g=gestCfg(),v=$('gCaixa').value.trim();g.caixaIni=v===''?null:pnum(v);persist();render()}
-function gestSaveMetas(){const g=gestCfg();g.metas={fix:pnum($('gMetaFix').value)||35,reserva:pnum($('gMetaRes').value)||3,margem:pnum($('gMetaMar').value)||10};persist();render()}
+function gestSaveMetas(){const g=gestCfg();g.metas={fix:pnum($('gMetaFix').value)||35,reserva:pnum($('gMetaRes').value)||3,margem:pnum($('gMetaMar').value)||10};persist();render();alert('Metas salvas.')}
+function goLista(){const e=document.querySelector('#page .listaAlvo');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 function gestImposto(){openExpense('');$('eCategory').value='Impostos e taxas'}
 function gestaoHTML(){
   if(!isRole('dono'))return '<div class="empty">A gestão financeira é liberada pelo dono da oficina.</div>';
@@ -4544,8 +4546,8 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
   }else if(currentPage==='orcamentos'){
     const appr=quotes.filter(q=>q.status==='Aprovado'),qlist=quoF?quotes.filter(q=>q.status===quoF):quotes;
     h=pageHead('Orçamentos','Monte orçamentos por veículo, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
-    '<div class="cards">'+metric('Total de orçamentos',quotes.length,'',"setQuoF('')")+metric('Aguardando aprovação',quotes.filter(q=>q.status==='Aguardando aprovação').length,'',"setQuoF('Aguardando aprovação')")+metric('Aprovados',appr.length,'',"setQuoF('Aprovado')")+metric('Valor aprovado',money(appr.reduce((s,q)=>s+qTotal(q),0)),'',"setQuoF('Aprovado')")+'</div>'+
-    '<div class="panel"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row click" onclick="openQuote(\''+q.id+'\',\'\')"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
+    '<div class="cards">'+metric('Total de orçamentos',quotes.length,'',"setQuoF('');goLista()")+metric('Aguardando aprovação',quotes.filter(q=>q.status==='Aguardando aprovação').length,'',"setQuoF('Aguardando aprovação');goLista()")+metric('Aprovados',appr.length,'',"setQuoF('Aprovado');goLista()")+metric('Valor aprovado',money(appr.reduce((s,q)=>s+qTotal(q),0)),'',"setQuoF('Aprovado');goLista()")+'</div>'+
+    '<div class="panel listaAlvo"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row click" onclick="openQuote(\''+q.id+'\',\'\')"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
   }else if(currentPage==='financeiro'){
     h=pageHead('Financeiro',finTab==='avancado'?'Dados, filtros e gráficos para entender o dinheiro da oficina.':'Resumo simples do que já foi lançado.','<button class="btn primary" onclick="openExpense(\'\')">＋ Novo lançamento</button><button class="btn soft" onclick="reportPDF()">📄 Relatório do período (PDF)</button>')+
     '<div class="ftabs"><button class="'+(finTab==='basico'?'on':'')+'" onclick="setFinTab(\'basico\')">Básico</button><button class="'+(finTab==='avancado'?'on':'')+'" onclick="setFinTab(\'avancado\')">Avançado</button>'+'</div>'+
@@ -4553,9 +4555,9 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
   }else if(currentPage==='pagamentos'){
     const D=finData(),fe=D.fe,fpaid=fe.filter(e=>e.status==='Pago'),fpend=fe.filter(e=>e.status==='Pendente'),late=fpend.filter(e=>e.due&&e.due<todayISO()).length;
     h=pageHead('Pagamentos','Tudo o que a oficina precisa pagar: fornecedores, parceiros, funcionários, aluguel, contas e compras.','<button class="btn primary" onclick="openExpense(\'\')">＋ Lançar pagamento</button>')+finFilterHTML()+
-    '<div class="cards">'+metric('A pagar',money(sum(fpend)),fpend.length+' pendente(s)',"setPagF('pend')")+metric('Já pagos',money(sum(fpaid)),fpaid.length+' pago(s)',"setPagF('paid')")+metric('Total no período',money(sum(fe)),'',"setPagF('')")+metric('Vencidos',late,'Pendentes com vencimento passado',"setPagF('late')")+'</div>'+
+    '<div class="cards">'+metric('A pagar',money(sum(fpend)),fpend.length+' pendente(s)',"setPagF('pend');goLista()")+metric('Já pagos',money(sum(fpaid)),fpaid.length+' pago(s)',"setPagF('paid');goLista()")+metric('Total no período',money(sum(fe)),'',"setPagF('');goLista()")+metric('Vencidos',late,'Pendentes com vencimento passado',"setPagF('late');goLista()")+'</div>'+
     (isRole('dono')?fxPanel():'')+semDataNote(D.semData).replace('class="notice"','class="notice" style="margin-bottom:14px"')+
-    '<div class="panel section-gap"><h2>Contas e pagamentos</h2>'+(pagF&&PAGF[pagF]?chip(PAGF[pagF],"setPagF('')"):'')+expenseList(pagF==='pend'?fpend:pagF==='paid'?fpaid:pagF==='late'?fpend.filter(e=>e.due&&e.due<todayISO()):fe)+'</div>';
+    '<div class="panel section-gap listaAlvo"><h2>Contas e pagamentos</h2>'+(pagF&&PAGF[pagF]?chip(PAGF[pagF],"setPagF('')"):'')+expenseList(pagF==='pend'?fpend:pagF==='paid'?fpaid:pagF==='late'?fpend.filter(e=>e.due&&e.due<todayISO()):fe)+'</div>';
   }else if(currentPage==='usuarios'){
     h=pageHead('Perfil','Sua conta'+(isRole('dono')?' e o acesso de cada pessoa.':'.'),'')+
     '<div class="panel"><h2>Minha conta</h2><div class="acct"><b>'+esc((prof&&prof.name)||'')+'</b><span class="subtle">'+esc((prof&&prof.email)||'')+'</span><span class="pill s5" style="align-self:flex-start;margin-top:4px">'+esc(roleName(prof&&prof.role))+'</span></div>'+
@@ -4595,6 +4597,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
 /* ---------- Microfone flutuante: segurar 1,5 segundo e arrastar para qualquer lugar; toque só abre o painel ---------- */
 (function(){
   const fab=$('vfab'),KEY='rds_vfab_pos_v1';
+  let vfTm=null;document.addEventListener('scroll',function(){fab.classList.add('vf-scroll');clearTimeout(vfTm);vfTm=setTimeout(function(){fab.classList.remove('vf-scroll')},1200)},true);
   let pos=null,tm=null,drag=null;
   try{pos=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){pos=null}
   function place(x,y){
