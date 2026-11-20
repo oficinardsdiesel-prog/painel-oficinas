@@ -3054,11 +3054,11 @@ function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'ini
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
 /* ---------- Veículos ---------- */
-function vehName(t){return [t.client||'Cliente sem nome',t.model,t.plate].filter(Boolean).join(' · ')}
+function vehName(t){return [t.client||'Cliente sem nome',t.plate,t.model].filter(Boolean).join(' · ')}
 function truckCard(t,withSelect){
   const wa=waLink(t.phone);
   return '<div class="tcard" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="info"><b style="font-size:16px">'+esc(t.client||'Cliente sem nome')+'</b> <span class="pill '+statusClass(t.status)+'">'+esc(t.status)+'</span>'+
-    '<div style="margin-top:3px;font-weight:600">'+(t.model?esc(t.model)+' · ':'')+esc(t.plate)+'</div>'+
+    '<div style="margin-top:3px;font-weight:600">'+esc(t.plate)+(t.model?' · '+esc(t.model):'')+'</div>'+
     '<small>'+(t.date?'Entrada '+esc(t.date)+' · ':'')+'Mecânico: '+esc(mechanicName(t.mechanicId))+'</small></div>'+
     '<div class="rowacts" onclick="event.stopPropagation()">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
     waBtn(t.phone,true,t.id)+
@@ -3325,7 +3325,7 @@ function printQuote(){
   const items=qClean(qState);
   if(!items.length){alert('Preencha pelo menos um item (descrição ou valor) antes de imprimir.');return}
   const sh=shop();$('printArea').innerHTML='<h1 style="margin:0">'+esc(sh.name||'RDS DIESEL')+'</h1><p style="margin:0;color:#444;font-size:13px">'+[sh.cnpj&&'CNPJ '+sh.cnpj,sh.phone,sh.addr].filter(Boolean).map(esc).join(' · ')+'</p><p style="margin:6px 0 18px;color:#444">Orçamento nº '+quoteNumber(qState)+' · '+esc(qState.date)+'</p>'+
-   '<p><b>Cliente:</b> '+esc(t.client||qState.client||'')+'<br><b>Veículo:</b> '+esc([t.model,t.plate||qState.plate].filter(Boolean).join(' · '))+'</p>'+
+   '<p><b>Cliente:</b> '+esc(t.client||qState.client||'')+'<br><b>Veículo:</b> '+esc([t.plate||qState.plate,t.model].filter(Boolean).join(' · '))+'</p>'+
    '<table style="width:100%;border-collapse:collapse;font-size:14px"><thead><tr><th style="text-align:left;border-bottom:2px solid #000;padding:6px">Descrição</th><th style="border-bottom:2px solid #000;padding:6px">Qtd</th><th style="text-align:right;border-bottom:2px solid #000;padding:6px">Valor un.</th><th style="text-align:right;border-bottom:2px solid #000;padding:6px">Subtotal</th></tr></thead><tbody>'+
    items.map(i=>'<tr><td style="padding:6px;border-bottom:1px solid #ccc">'+esc(i.desc)+' <span style="color:#666;font-size:12px">('+esc(i.type)+')</span></td><td style="padding:6px;border-bottom:1px solid #ccc;text-align:center">'+i.qty+'</td><td style="padding:6px;border-bottom:1px solid #ccc;text-align:right">'+money(i.price)+'</td><td style="padding:6px;border-bottom:1px solid #ccc;text-align:right">'+money(i.qty*i.price)+'</td></tr>').join('')+
    '</tbody></table><h2 style="text-align:right;margin:16px 0">Total: '+money(items.reduce((s,i)=>s+i.qty*i.price,0))+'</h2>'+
@@ -3407,7 +3407,7 @@ function buildQuotePDF(d){
 function quotePDFData(){
   qSync();const t=trucks.find(x=>x.id===qState.truckId)||{},items=qClean(qState),sh=shop();
   return {t:t,d:{shop:sh.name,cnpj:sh.cnpj,phone:sh.phone,addr:sh.addr,foot:sh.foot,number:quoteNumber(qState),date:qState.date,client:t.client||qState.client||'',
-    vehicle:[t.model,t.plate||qState.plate].filter(Boolean).join(' - '),notes:qState.notes,warranty:qState.warranty||'',
+    vehicle:[t.plate||qState.plate,t.model].filter(Boolean).join(' - '),notes:qState.notes,warranty:qState.warranty||'',
     items:items.map(i=>({desc:i.desc,type:i.type,qty:i.qty,unit:money(i.price),sub:money(i.qty*i.price)})),total:money(items.reduce((s,i)=>s+i.qty*i.price,0))}};
 }
 async function sendQuoteWA(){
@@ -3659,11 +3659,11 @@ function voiceRun(){
   const text=$('vText').value.trim(),box=$('vResult');if(!text){box.innerHTML='';return}
   const c=voiceParse(text);VCMD=c;let h='';
   const btn=(l,f,cls)=>'<button class="btn '+(cls||'primary')+'" onclick="'+f+'">'+l+'</button>',warn=w=>w&&w.length?'<div class="warn">⚠ '+w.map(esc).join(' · ')+'</div>':'';
-  if(c.type==='cadastrar'){const f=c.f;h='<div class="vcard"><h4>Cadastrar veículo</h4>'+vlis(['Placa: <b>'+esc(f.plate||'—')+'</b>','Cliente: <b>'+esc(f.client||'—')+'</b>',f.phone&&'Telefone: '+esc(f.phone),f.model&&'Modelo: '+esc(f.model),f.km&&'Km: '+esc(f.km),f.reason&&'Problema: '+esc(f.reason),f.mechName&&'Mecânico: '+esc(f.mechName)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
+  if(c.type==='cadastrar'){const f=c.f;h='<div class="vcard"><h4>Cadastrar veículo</h4>'+vlis(['Cliente: <b>'+esc(f.client||'—')+'</b>','Placa: <b>'+esc(f.plate||'—')+'</b>',f.model&&'Modelo: '+esc(f.model),f.phone&&'Telefone: '+esc(f.phone),f.km&&'Km: '+esc(f.km),f.reason&&'Problema: '+esc(f.reason),f.mechName&&'Mecânico: '+esc(f.mechName)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
   else if(c.type==='despesa'){const f=c.f;h='<div class="vcard"><h4>Lançar despesa'+(f.fixa?' fixa (todo mês)':'')+'</h4>'+vlis(['Descrição: <b>'+esc(f.desc)+'</b>','Valor: <b>'+(f.amount>0?money(f.amount):'—')+'</b>','Categoria: '+esc(f.cat),f.due&&'Vencimento: '+fmtDate(f.due),'Situação: '+(f.paid?'Paga':'Pendente')])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
-  else if(c.type==='orcamento'){h='<div class="vcard"><h4>Novo orçamento</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)].concat(c.items.map(i=>i.type+': '+esc(i.desc)+' — '+money(i.price))))+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir orçamento','voiceDo()'))+'</div></div>'}
-  else if(c.type==='status'){h='<div class="vcard"><h4>Mudar status</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client),c.truck&&esc(c.truck.status)+' → <b>'+esc(c.status)+'</b>'])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar','voiceDo()'))+'</div></div>'}
-  else if(c.type==='abrir'){h='<div class="vcard"><h4>Abrir veículo</h4>'+vlis([c.truck&&'<b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir','voiceDo()'))+'</div></div>'}
+  else if(c.type==='orcamento'){h='<div class="vcard"><h4>Novo orçamento</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate)].concat(c.items.map(i=>i.type+': '+esc(i.desc)+' — '+money(i.price))))+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir orçamento','voiceDo()'))+'</div></div>'}
+  else if(c.type==='status'){h='<div class="vcard"><h4>Mudar status</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate),c.truck&&esc(c.truck.status)+' → <b>'+esc(c.status)+'</b>'])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar','voiceDo()'))+'</div></div>'}
+  else if(c.type==='abrir'){h='<div class="vcard"><h4>Abrir veículo</h4>'+vlis([c.truck&&'<b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir','voiceDo()'))+'</div></div>'}
   else if(c.type==='pagina'){voiceDo();return}
   else if(c.type==='ajuda'){h='<div class="vcard"><h4>Veja os exemplos logo abaixo 👇</h4></div>'}
   else if(c.type==='negado'){h='<div class="vcard"><div class="warn">Seu perfil não tem permissão para isso.</div></div>'}
@@ -3798,7 +3798,7 @@ function buildOSPDF(t){
   const sh=shop(),K=pdfKit(),M=K.M,W=K.W;K.newPage();
   K.header(sh,'ORDEM DE SERVIÇO Nº '+String(osNoFor(t)).padStart(4,'0'),dateNow());
   K.h2('Cliente e veículo');
-  const L=[['Cliente',t.client],['Modelo',t.model],['Placa',t.plate],['Telefone',t.phone],['CPF/CNPJ',t.doc],['E-mail',t.email],['Endereço',t.addr],['Motorista',t.driver],['Km',t.km],['Entrada',t.date?fmtDate(t.date):''],['Mecânico',mechanicName(t.mechanicId)],['Situação',t.status]];
+  const L=[['Cliente',t.client],['Placa',t.plate],['Modelo',t.model],['Telefone',t.phone],['CPF/CNPJ',t.doc],['E-mail',t.email],['Endereço',t.addr],['Motorista',t.driver],['Km',t.km],['Entrada',t.date?fmtDate(t.date):''],['Mecânico',mechanicName(t.mechanicId)],['Situação',t.status]];
   for(let i=0;i<L.length;i+=2){K.need(18);const y=K.y;[L[i],L[i+1]].forEach((p,j)=>{if(!p)return;const x=j?M+(W-2*M)/2:M;K.txt(p[0]+': ',x,y,10,true);K.txt(String(p[1]||'-'),x+pdfW(p[0]+': ',10,true),y,10,false)});K.y-=15}
   K.y-=8;
   K.h2('Problema relatado / serviço solicitado');if(t.reason)K.para(t.reason);else K.blank(2);
@@ -4007,6 +4007,7 @@ let metaY=new Date().getFullYear(),metaM=new Date().getMonth()+1;
 function metaGo(d){metaM+=d;if(metaM>12){metaM=1;metaY++}if(metaM<1){metaM=12;metaY--}render()}
 let grQ='';
 function setDeliveryDate(t){if(t.status==='Entregue')t.deliveredAt=t.deliveredAt||todayISO();else t.deliveredAt=''}
+function evLabel(ev){const t=trucks.find(x=>x.plate===ev.plate);return t&&t.client?t.client+' · '+ev.plate:(ev.plate||'')}
 function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
 function garFmt(d){return d.toLocaleDateString('pt-BR')}
@@ -4020,18 +4021,18 @@ function garInfo(t){
   return {st:'off',end:end};
 }
 function garRow(t,info){
-  const veh=[t.model,t.plate].filter(Boolean).join(' · ');
+  const veh=[t.plate,t.model].filter(Boolean).join(' · ');
   let pill,txt;
   if(info.st==='on'){pill='<span class="pill green">Na garantia</span>';txt='Faltam '+info.left+(info.left===1?' dia':' dias')+' · até '+garFmt(info.end)}
   else if(info.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(info.end)}
   else if(info.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Marque o veículo como Entregue para começar a contar'}
   else {pill='<span class="pill s1">Sem prazo</span>';txt='Informe a garantia em dias na ficha do veículo'}
-  return '<div class="list-row"><div class="grow"><b>'+esc(veh||'Veículo sem placa')+'</b><small>'+esc(t.client||'Cliente sem nome')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
+  return '<div class="list-row"><div class="grow"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(veh||'Veículo sem placa')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
 }
 function garBody(q){
   const k=garKey(q);
   if(k){
-    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0).map(t=>({t:t,info:garInfo(t)}));
+    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0).map(t=>{const p=garKey(t.plate);return {t:t,info:garInfo(t),rank:p.indexOf(k)===0?0:1,plate:p}}).sort((a,b)=>a.rank-b.rank||a.plate.localeCompare(b.plate));
     return hits.length?'<div class="list-stack">'+hits.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo com a placa “'+esc(q)+'”.</div>';
   }
   const act=trucks.map(t=>({t:t,info:garInfo(t)})).filter(h=>h.info.st==='on').sort((a,b)=>a.info.end-b.info.end);
@@ -4626,7 +4627,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
   }else if(currentPage==='historico'){
     h=pageHead('Histórico de veículos','Consulte os veículos que já passaram pela oficina e as movimentações registradas.')+
     '<div class="panel"><h2>Veículos entregues</h2>'+truckList(trucks.filter(t=>t.status==='Entregue'),false)+'</div>'+
-    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>'<div class="list-row"><div><b>'+esc(ev.plate)+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>').join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
+    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>'<div class="list-row"><div><b>'+esc(evLabel(ev))+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>').join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
   }else if(currentPage==='orcamentos'){
     const appr=quotes.filter(q=>q.status==='Aprovado'),qlist=quoF?quotes.filter(q=>q.status===quoF):quotes;
     h=pageHead('Orçamentos','Monte orçamentos por veículo, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
