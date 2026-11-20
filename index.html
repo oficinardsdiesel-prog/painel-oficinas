@@ -262,6 +262,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Mecânico responsável</label><select id="dMech"></select></div>
     <div class="field"><label>Quilometragem</label><input id="dKm" inputmode="numeric"></div>
     <div class="field"><label>Garantia (dias)</label><input id="dGar" inputmode="numeric" placeholder="Ex.: 30"></div>
+    <div class="field"><label>Data de retirada</label><div id="dRet" class="subtle">—</div></div>
     <div class="field"><label>Entrada</label><input id="dDate" disabled></div>
     <div class="field full"><label>Problema relatado / serviço</label><textarea id="dReason"></textarea></div>
     <div class="field full"><label>Diagnóstico</label><textarea id="dDiag" placeholder="O que o mecânico encontrou"></textarea></div>
@@ -3095,7 +3096,7 @@ function openTruck(id){
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
   $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
-  $('dKm').value=t.km||'';$('dGar').value=t.warrantyDays||'';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
+  $('dKm').value=t.km||'';$('dGar').value=t.warrantyDays||'';$('dRet').textContent=t.deliveredAt?fmtDate(t.deliveredAt):'Ainda não marcado como Entregue';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
   ph={truckId:id,live:true,list:[],box:'phDet'};renderPhotos();
   dbOf(id).then(list=>{if(ph.truckId===id){ph.list=list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));renderPhotos()}}).catch(()=>{});
   $('truckModal').scrollTop=0;openModal('truckModal');
@@ -4027,13 +4028,13 @@ function garRow(t,info){
   else if(info.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(info.end)}
   else if(info.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Marque o veículo como Entregue para começar a contar'}
   else {pill='<span class="pill s1">Sem prazo</span>';txt='Informe a garantia em dias na ficha do veículo'}
-  return '<div class="list-row"><div class="grow"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(veh||'Veículo sem placa')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
+  return '<div class="list-row click" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="grow"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(veh||'Veículo sem placa')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
 }
 function garBody(q){
   const k=garKey(q);
   if(k){
-    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0).map(t=>{const p=garKey(t.plate);return {t:t,info:garInfo(t),rank:p.indexOf(k)===0?0:1,plate:p}}).sort((a,b)=>a.rank-b.rank||a.plate.localeCompare(b.plate));
-    return hits.length?'<div class="list-stack">'+hits.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo com a placa “'+esc(q)+'”.</div>';
+    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0&&garInfo(t).st==='on').map(t=>{const p=garKey(t.plate);return {t:t,info:garInfo(t),rank:p.indexOf(k)===0?0:1,plate:p}}).sort((a,b)=>a.rank-b.rank||a.plate.localeCompare(b.plate));
+    return hits.length?'<div class="list-stack">'+hits.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo na garantia com a placa “'+esc(q)+'”.</div>';
   }
   const act=trucks.map(t=>({t:t,info:garInfo(t)})).filter(h=>h.info.st==='on').sort((a,b)=>a.info.end-b.info.end);
   return act.length?'<div class="list-stack">'+act.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo na garantia no momento.</div>';
@@ -4408,7 +4409,7 @@ NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a 
 let trainKey=null;
 const TRAIN={
 "inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: veículos sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de veículos."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."], ["Pesquisar no menu", "Abra o menu (☰) e digite no campo Pesquisar. Aparecem as abas que combinam com o que você digitou, começando pelas que começam com essas letras. Toque em uma para abrir."], ["Microfone", "O botão do microfone fica sobre a tela. Um toque abre o comando por voz. Segure por cerca de 1 segundo para arrastar o botão para outro lugar; ele lembra a posição."], ["Cartões clicáveis", "Os quadrados coloridos são botões: cada um abre a lista certa. Se o filtro já estiver marcado, a tela desce até a lista."]]},
-"garantia":{t:"Garantia",s:[["O que é", "Garantia mostra os veículos que ainda estão dentro do prazo de garantia depois da retirada."], ["Como a contagem funciona", "A contagem começa no dia da retirada, que é o dia 1. Com 30 dias de garantia, o veículo sai da lista no dia 31."], ["Como marcar a retirada", "Ao marcar o veículo como Entregue, o app guarda a data. Informe a garantia em dias na ficha do veículo."], ["Pesquisar", "Digite a placa para ver se o veículo ainda está na garantia, até quando vai e se já venceu."]]},
+"garantia":{t:"Garantia",s:[["O que é", "Garantia mostra os veículos que ainda estão dentro do prazo de garantia depois da retirada."], ["Como a contagem funciona", "A contagem começa no dia da retirada, que é o dia 1. Com 30 dias de garantia, o veículo sai da lista no dia 31."], ["Como marcar a retirada", "Ao marcar o veículo como Entregue, o app guarda a data. Informe a garantia em dias na ficha do veículo."], ["Pesquisar", "Digite a placa para ver se o veículo ainda está na garantia e até quando vai. Toque no veículo para abrir a ficha com a data de retirada e o mecânico. Veículos fora da garantia não aparecem nesta aba."]]},
 "cadastro":{t:"Cadastro de veículo",s:[["O que é", "Aqui você registra um veículo e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O veículo aparece na lista e já pode ser usado nos orçamentos."]]},
 "historico":{t:"Histórico",s:[["O que é", "Histórico guarda os veículos já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo veículo e você quiser lembrar o serviço anterior."], ["Data de retirada", "Quando o status muda para Entregue, o app guarda a data da retirada. Ela é usada para contar a garantia, que você informa em dias na ficha do veículo."]]},
 "agenda":{t:"Agenda",s:[["O que é", "A agenda mostra os serviços marcados e os vencimentos, dia a dia."], ["Como usar", "Escolha o dia no calendário para ver o que está programado."], ["Dica", "Use para organizar a semana e não perder um vencimento."]]},
