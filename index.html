@@ -92,7 +92,7 @@ textarea{min-height:78px;resize:vertical}
 #userModal .msg{margin:10px 0 0;font-size:13px;color:#bd4545;min-height:18px}#userModal .msg.ok{color:#16865b}#auth .msg{margin:10px 0 0;font-size:13px;color:#bd4545;min-height:18px}#auth .msg.ok{color:#16865b}#auth .lnk{background:none;border:0;color:var(--blue);font-weight:700;cursor:pointer;margin-top:12px;font-size:13px;padding:6px 0}
 .syncb{font-size:11px;color:#9fb4d3;white-space:nowrap}.syncb.err{color:#ffb4b4}
 .urow{display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:10px}.urow select{max-width:230px}
-.metric.click{cursor:pointer;transition:transform .1s}.metric.click:active{transform:scale(.97)}.metric.click::after{content:"Toque para abrir ›";display:block;font-size:11px;font-weight:700;color:var(--blue);margin-top:8px}
+.metric.click{cursor:pointer;transition:transform .1s}.metric.click:active{transform:scale(.97)}.metric.click::after{content:none}
 .list-row.click{cursor:pointer}
 .chip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--blue2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:13px}
 .addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}.addph.cam{background:var(--blue);color:#fff}
@@ -222,9 +222,9 @@ window.addEventListener('error',function(e){
 
 <div id="auth" style="display:none"></div>
 
-<!-- Cadastro de caminhão -->
+<!-- Cadastro de veículo -->
 <div class="modal" id="newTruckModal"><div class="modal-box">
-  <h2>Cadastro de caminhão</h2><p class="modal-sub">Registre a entrada, os dados do cliente e as fotos do estado do caminhão.</p>
+  <h2>Cadastro de veículo</h2><p class="modal-sub">Registre a entrada, os dados do cliente e as fotos do estado do veículo.</p>
   <div class="form-grid">
     <div class="field"><label>Cliente *</label><input id="nClient" placeholder="Nome do cliente"></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
@@ -241,10 +241,10 @@ window.addEventListener('error',function(e){
     <div class="field full"><label>Avarias já existentes na entrada (vidro quebrado, amassados, faltando peça...)</label><textarea id="nDamage" placeholder="Anote tudo que já está quebrado ou com defeito."></textarea></div>
   </div>
   <div id="phNew"></div>
-  <div class="modal-actions"><button class="btn plain" onclick="closeModal('newTruckModal')">Cancelar</button><button class="btn primary" onclick="saveNewTruck()">Salvar caminhão</button></div>
+  <div class="modal-actions"><button class="btn plain" onclick="closeModal('newTruckModal')">Cancelar</button><button class="btn primary" onclick="saveNewTruck()">Salvar veículo</button></div>
 </div></div>
 
-<!-- Detalhe do caminhão -->
+<!-- Detalhe do veículo -->
 <div class="modal" id="truckModal"><div class="modal-box">
   <h2 id="dTitle"></h2><p class="modal-sub" id="dSub"></p>
   <div class="form-grid">
@@ -263,7 +263,7 @@ window.addEventListener('error',function(e){
     <div class="field full"><label>Problema relatado / serviço</label><textarea id="dReason"></textarea></div>
     <div class="field full"><label>Diagnóstico</label><textarea id="dDiag" placeholder="O que o mecânico encontrou"></textarea></div>
     <div class="field full"><label>Avarias já existentes na entrada</label><textarea id="dDamage"></textarea></div>
-    <div class="field full"><label>Orçamentos deste caminhão</label><div id="dQuotes"></div></div>
+    <div class="field full"><label>Orçamentos deste veículo</label><div id="dQuotes"></div></div>
     <div class="field full" id="dDocs"><label>Documentos e mensagens</label><div class="actions"><button class="btn soft" onclick="openOS()">📄 Ordem de serviço (PDF)</button><button class="btn soft" onclick="openWAMsg(curTruck)">💬 Mensagem pronta</button></div></div>
   </div>
   <div style="margin:4px 0 10px" id="dWa"></div>
@@ -290,7 +290,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="rcModal"><div class="modal-box">
   <h2 id="rcTitle">Lançar a receber</h2><p class="modal-sub">Serviço que o cliente vai pagar depois. Você cobra pelo WhatsApp na data certa.</p>
   <div class="form-grid">
-    <div class="field full"><label>Caminhão (opcional: preenche cliente e telefone)</label><select id="rcTruck" onchange="rcTruckPick()"></select></div>
+    <div class="field full"><label>Veículo (opcional: preenche cliente e telefone)</label><select id="rcTruck" onchange="rcTruckPick()"></select></div>
     <div class="field"><label>Cliente *</label><input id="rcClient"></div>
     <div class="field"><label>WhatsApp do cliente</label><input id="rcPhone" inputmode="tel"></div>
     <div class="field full"><label>Referente a *</label><input id="rcDesc" placeholder="Ex.: troca dos bicos injetores"></div>
@@ -317,7 +317,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Data *</label><input type="date" id="agDate"></div>
     <div class="field"><label>Hora</label><input type="time" id="agTime"></div>
     <div class="field full"><label>Serviço / assunto *</label><input id="agWhat" placeholder="Ex.: revisão, troca de bicos, avaliação"></div>
-    <div class="field full"><label>Caminhão já cadastrado (opcional)</label><select id="agTruck" onchange="agTruckPick()"></select></div>
+    <div class="field full"><label>Veículo já cadastrado (opcional)</label><select id="agTruck" onchange="agTruckPick()"></select></div>
     <div class="field"><label>Cliente</label><input id="agClient"></div>
     <div class="field"><label>WhatsApp</label><input id="agPhone" inputmode="tel"></div>
     <div class="field"><label>Placa</label><input id="agPlate" autocapitalize="characters"></div>
@@ -378,7 +378,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Data</label><input type="date" id="ptDate"></div>
     <div class="field"><label>Valor (R$) *</label><input id="ptAmount" inputmode="decimal" placeholder="0,00"></div>
     <div class="field full"><label id="ptDescL">Peça / nota *</label><input id="ptDesc"></div>
-    <div class="field full" id="ptTruckBox"><label>Caminhão (opcional)</label><select id="ptTruck"></select></div>
+    <div class="field full" id="ptTruckBox"><label>Veículo (opcional)</label><select id="ptTruck"></select></div>
   </div>
   <div class="modal-actions"><button class="btn danger" id="ptDel" onclick="ptDelete()">Excluir</button><button class="btn plain" onclick="closeModal('ptModal')">Cancelar</button><button class="btn primary" onclick="ptSave()">Salvar</button></div>
 </div></div>
@@ -386,7 +386,7 @@ window.addEventListener('error',function(e){
 <!-- Ordem de serviço -->
 <div class="modal" id="osModal"><div class="modal-box">
   <h2>📄 Ordem de serviço</h2><p class="modal-sub" id="osSub"></p>
-  <p class="subtle" style="font-size:13px;margin:0 0 12px">O PDF leva os dados do cliente e do caminhão, o problema, o diagnóstico, os serviços e peças do orçamento (ou linhas em branco para preencher), a lista de itens recebidos e as assinaturas. O custo e o lucro não aparecem.</p>
+  <p class="subtle" style="font-size:13px;margin:0 0 12px">O PDF leva os dados do cliente e do veículo, o problema, o diagnóstico, os serviços e peças do orçamento (ou linhas em branco para preencher), a lista de itens recebidos e as assinaturas. O custo e o lucro não aparecem.</p>
   <div class="actions"><button class="btn wa" onclick="osSend('share')">📲 Enviar no WhatsApp</button><button class="btn soft" onclick="osSend('download')">⬇ Baixar PDF</button></div>
   <div class="modal-actions"><button class="btn plain" onclick="closeModal('osModal')">Fechar</button></div>
 </div></div>
@@ -444,7 +444,7 @@ window.addEventListener('error',function(e){
 <div class="modal" id="quoteModal"><div class="modal-box">
   <h2 id="qTitle">Orçamento</h2><p class="modal-sub">Peças e mão de obra. O custo é só para você: não aparece na impressão para o cliente.</p>
   <div class="form-grid">
-    <div class="field"><label>Caminhão *</label><select id="qTruck" onchange="qTruckChanged()"></select></div>
+    <div class="field"><label>Veículo *</label><select id="qTruck" onchange="qTruckChanged()"></select></div>
     <div class="field"><label>Situação</label><select id="qStatus"></select></div>
     <div class="field full"><label>Mecânicos do serviço (toque para marcar; a mão de obra é dividida igualmente)</label><div class="chips" id="qMechBox"></div><small class="subtle" id="qMechInfo"></small></div>
   </div>
@@ -461,15 +461,15 @@ window.addEventListener('error',function(e){
 <div class="modal" id="voiceModal"><div class="modal-box">
   <h2>🎤 Assistente</h2><p class="modal-sub">Já estou ouvindo: é só falar. Quando você parar, eu mostro o que entendi para você confirmar.</p>
   <div class="actions"><button class="btn primary" id="vMic" onclick="voiceToggle()">🎤 Falar</button><span class="subtle" id="vState"></span></div>
-  <div class="field" style="margin-top:10px"><textarea id="vText" placeholder="Ex.: cadastrar caminhão placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450"></textarea></div>
+  <div class="field" style="margin-top:10px"><textarea id="vText" placeholder="Ex.: cadastrar veículo placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450"></textarea></div>
   <div class="actions" style="margin-top:8px"><button class="btn soft" onclick="voiceRun()">Entender</button></div>
   <div id="vResult"></div>
   <div class="ph-sec"><h3>O que você pode falar</h3><div class="subtle" style="font-size:12px;line-height:1.7">
-   <b>Cadastrar:</b> “cadastrar caminhão placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450 problema barulho no motor mecânico Roni”<br>
+   <b>Cadastrar:</b> “cadastrar veículo placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450 problema barulho no motor mecânico Roni”<br>
    <b>Orçamento:</b> “novo orçamento placa ABC1D23 peça bomba injetora 1500 mão de obra troca 300”<br>
    <b>Despesa:</b> “lançar despesa conta de luz valor 350 vence dia 20”<br>
    <b>Status:</b> “mudar status placa ABC1D23 para em manutenção”<br>
-   <b>Abrir:</b> “abrir caminhão placa ABC1D23” · “abrir financeiro”</div></div>
+   <b>Abrir:</b> “abrir veículo placa ABC1D23” · “abrir financeiro”</div></div>
   <div class="modal-actions"><button class="btn plain" onclick="closeModal('voiceModal')">Fechar</button></div>
 </div></div>
 <div id="trash" aria-label="Lixeira">🗑</div>
@@ -2843,8 +2843,8 @@ const QSTATUS=['Rascunho','Aguardando aprovação','Aprovado','Recusado'];
 const CATEGORIES=['Fornecedor / peças','Parceiros / serviços terceirizados','Funcionários','Aluguel','Água e luz','Internet / telefone','Ferramentas e materiais','Impostos e taxas','Outras despesas'];
 const SLOTS=[
  {k:'painel',t:'Painel (luzes acesas, injeção, avisos)'},
- {k:'frente',t:'Frente do caminhão'},
- {k:'traseira',t:'Traseira do caminhão'},
+ {k:'frente',t:'Frente do veículo'},
+ {k:'traseira',t:'Traseira do veículo'},
  {k:'vidros',t:'Vidros em geral'},
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
@@ -2853,14 +2853,14 @@ const ADMIN_MENU=[
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
- {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de caminhão'],['historico','◷','Histórico'],['agenda','▦','Agenda']]},
+ {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda']]},
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['treinamento','🎓','Treinamento']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, caminhão e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -2882,7 +2882,7 @@ function safeSnap(why,force){
 function safeList(){
   const l=read(SAFE,[]);if(!Array.isArray(l)||!l.length)return '<p class="subtle" style="font-size:12px;margin-top:12px">Cópia automática de segurança: ainda não há nenhuma neste aparelho.</p>';
   return '<div style="margin-top:14px"><b style="font-size:13px">Cópias automáticas deste aparelho</b><p class="subtle" style="font-size:12px;margin:4px 0 8px">O sistema guarda sozinho as últimas cópias. Se algo sumir, toque em Restaurar.</p>'+l.map(function(c,i){
-    const n=(c.trucks||[]).length+' caminhões, '+(c.mechanics||[]).length+' mecânicos, '+(c.quotes||[]).length+' orçamentos, '+(c.expenses||[]).length+' despesas';
+    const n=(c.trucks||[]).length+' veículos, '+(c.mechanics||[]).length+' mecânicos, '+(c.quotes||[]).length+' orçamentos, '+(c.expenses||[]).length+' despesas';
     return '<div class="list-row"><div><b>'+new Date(c.t).toLocaleString('pt-BR')+'</b><small>'+n+'</small></div><button class="small-btn" onclick="restoreSafe('+i+')">Restaurar</button></div>'}).join('')+'</div>';
 }
 function restoreSafe(i){
@@ -2996,7 +2996,7 @@ function closeLightbox(){if(!$('lightbox').classList.contains('open'))return;$('
 
 /* ---------- Filtros dos cartões clicáveis ---------- */
 let procF='',quoF='',pagF='';
-const PF={pat:['Caminhões no pátio',t=>t.status!=='Entregue'],manut:['Em manutenção',t=>t.status==='Em manutenção'],aprov:['Aguardando aprovação',t=>t.status==='Aguardando aprovação'],concl:['Concluídos / aguardando retirada',t=>['Serviço concluído','Aguardando retirada'].indexOf(t.status)>=0],ret:['Aguardando retirada',t=>t.status==='Aguardando retirada']};
+const PF={pat:['Veículos no pátio',t=>t.status!=='Entregue'],manut:['Em manutenção',t=>t.status==='Em manutenção'],aprov:['Aguardando aprovação',t=>t.status==='Aguardando aprovação'],concl:['Concluídos / aguardando retirada',t=>['Serviço concluído','Aguardando retirada'].indexOf(t.status)>=0],ret:['Aguardando retirada',t=>t.status==='Aguardando retirada']};
 const PAGF={pend:'Contas a pagar (pendentes)',paid:'Já pagos',late:'Vencidos'};
 const chip=(label,fn)=>'<div class="chip"><span>Mostrando: <b>'+esc(label)+'</b></span><button class="small-btn" onclick="'+fn+'">✕ Mostrar tudo</button></div>';
 function goTruck(k){procF=k;render();setTimeout(function(){const e=$('movPanel');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
@@ -3014,7 +3014,7 @@ function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell')
 function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
-/* ---------- Caminhões ---------- */
+/* ---------- Veículos ---------- */
 function vehName(t){return [t.client||'Cliente sem nome',t.model,t.plate].filter(Boolean).join(' · ')}
 function truckCard(t,withSelect){
   const wa=waLink(t.phone);
@@ -3025,7 +3025,7 @@ function truckCard(t,withSelect){
     waBtn(t.phone,true,t.id)+
     '</div></div>';
 }
-function truckList(items,withSelect){return items.length?'<div class="list-stack">'+items.map(t=>truckCard(t,withSelect)).join('')+'</div>':'<div class="empty">Nenhum caminhão encontrado.</div>'}
+function truckList(items,withSelect){return items.length?'<div class="list-stack">'+items.map(t=>truckCard(t,withSelect)).join('')+'</div>':'<div class="empty">Nenhum veículo encontrado.</div>'}
 function quickStatus(id,status){const t=trucks.find(x=>x.id===id);if(!t||t.status===status)return;logEvent(t.plate,'Status alterado: '+t.status+' → '+status);t.status=status;persist();render()}
 
 function fillTruckSelects(prefix,sel){
@@ -3041,9 +3041,9 @@ function openNewTruck(){
 async function saveNewTruck(){
   const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim();
   if(!plate||!client){alert('Informe a placa e o nome do cliente.');return}
-  if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um caminhão com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
+  if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
   const t={id:ph.truckId,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString()};
-  try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o caminhão sem as fotos?'))return}
+  try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
   trucks.unshift(t);logEvent(plate,'Entrada cadastrada · '+t.status+(ph.list.length?' · '+ph.list.length+' foto(s)':''));persist();
   closeModal('newTruckModal');ph={truckId:'',live:false,list:[],box:''};navigate('inicio');
 }
@@ -3051,7 +3051,7 @@ let curTruck='';
 function openTruck(id){
   const t=trucks.find(x=>x.id===id);if(!t)return;curTruck=id;
   $('dTitle').textContent='Editar · '+vehName(t);
-  $('dSub').textContent='Todas as informações deste caminhão. Altere e toque em “Salvar alterações”.';
+  $('dSub').textContent='Todas as informações deste veículo. Altere e toque em “Salvar alterações”.';
   $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
@@ -3062,7 +3062,7 @@ function openTruck(id){
   $('truckModal').scrollTop=0;openModal('truckModal');
 }
 function truckQuotesHTML(id){const qs=quotes.filter(q=>q.truckId===id);
-  return qs.length?'<div class="list-stack">'+qs.map(q=>'<div class="list-row"><div class="grow"><b>Nº '+quoteNumber(q)+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+money(qTotal(q))+'</small></div><button class="small-btn" onclick="openQuoteFromTruck(\''+q.id+'\')">✎ Editar</button></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Use “Novo orçamento”.</div>'}
+  return qs.length?'<div class="list-stack">'+qs.map(q=>'<div class="list-row click" onclick="openQuoteFromTruck(\''+q.id+'\')"><div class="grow"><b>Nº '+quoteNumber(q)+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+money(qTotal(q))+'</small></div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Use “Novo orçamento”.</div>'}
 function openQuoteFromTruck(qid){if(saveTruckEdit(true)===false)return;closeModal('truckModal');openQuote(qid)}
 function saveTruckEdit(keep){
   const t=trucks.find(x=>x.id===curTruck);if(!t)return false;
@@ -3079,10 +3079,10 @@ function saveTruckEdit(keep){
 }
 async function deleteTruck(){
   const t=trucks.find(x=>x.id===curTruck);if(!t)return;
-  if(!confirm('Excluir o caminhão '+t.plate+' e as fotos dele? Isso não pode ser desfeito.'))return;
+  if(!confirm('Excluir o veículo '+t.plate+' e as fotos dele? Isso não pode ser desfeito.'))return;
   trucks=trucks.filter(x=>x.id!==curTruck);try{await dbDelTruck(curTruck)}catch(e){}
   cloudPhotoRemove(photoMeta.filter(m=>m.truckId===t.id));
-  logEvent(t.plate,'Caminhão excluído do sistema');persist();closeModal('truckModal');render();
+  logEvent(t.plate,'Veículo excluído do sistema');persist();closeModal('truckModal');render();
 }
 function quoteForTruck(){const id=curTruck;closeModal('truckModal');openQuote('',id)}
 
@@ -3099,7 +3099,7 @@ const REG={
   fields:[{k:'name',l:'Nome do fornecedor *',req:1},{k:'category',l:'O que fornece',sel:['Peças','Óleo e lubrificantes','Ferramentas','Pneus','Materiais em geral','Outros']},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'email',l:'E-mail'},{k:'doc',l:'CNPJ / CPF'},{k:'city',l:'Cidade / endereço'},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.category,i.phone,i.email,i.city].filter(Boolean).join(' · ')},
  mechanics:{page:'mecanicos',title:'Mecânicos',one:'mecânico',btn:'＋ Cadastrar mecânico',
-  desc:'Cadastre a equipe e associe cada profissional aos caminhões em que trabalhou.',
+  desc:'Cadastre a equipe e associe cada profissional aos veículos em que trabalhou.',
   get:()=>mechanics,set:v=>{mechanics=v},
   fields:[{k:'name',l:'Nome *',req:1,ph:'Ex.: Mecânico A'},{k:'phone',l:'Telefone',tel:1},{k:'goal',l:'Meta de mão de obra por mês (R$)',num:1,dono:1,ph:'Ex.: 10000'},{k:'salary',l:'Salário / custo mensal do mecânico (R$)',num:1,dono:1,ph:'Ex.: 3500'},{k:'hours',l:'Horas de trabalho por mês',num:1,dono:1,ph:'176'},{k:'notes',l:'Especialidade / observações',area:1}],
   sub:i=>[i.phone].filter(Boolean).join(' · ')}
@@ -3107,7 +3107,7 @@ const REG={
 const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics'};
 let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:''};
 function regExtra(kind,i){
-  if(kind==='mechanics'){const n=trucks.filter(t=>t.mechanicId===i.id).length;return n+' caminhão(ões) associado(s)'}
+  if(kind==='mechanics'){const n=trucks.filter(t=>t.mechanicId===i.id).length;return n+' veículo(s) associado(s)'}
   const ex=expenses.filter(e=>e.linkKind===kind&&e.linkId===i.id);
   return ex.length?ex.length+' lançamento(s) · '+money(sum(ex))+' no total':'Nenhum lançamento financeiro ainda';
 }
@@ -3118,10 +3118,10 @@ function regListHTML(kind){
   if(!items.length)return '<div class="empty">Nada encontrado para essa busca.</div>';
   return '<div class="list-stack">'+items.map(i=>{
     const wa=waLink(i.phone);
-    return '<div class="list-row"><div class="grow"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small>'+(i.notes?'<small>Obs.: '+esc(i.notes)+'</small>':'')+'</div>'+
-      '<div class="rowacts">'+waBtn(i.phone,true)+
+    return '<div class="list-row click" onclick="openReg(\''+kind+'\',\''+i.id+'\')"><div class="grow"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small>'+(i.notes?'<small>Obs.: '+esc(i.notes)+'</small>':'')+'</div>'+
+      '<div class="rowacts" onclick="event.stopPropagation()">'+waBtn(i.phone,true)+
       (kind==='mechanics'?'<button class="small-btn" onclick="showMechanicJobs(\''+i.id+'\')">Ver serviços</button>':'')+
-      '<button class="small-btn" onclick="openReg(\''+kind+'\',\''+i.id+'\')">Editar</button><button class="small-btn red" onclick="deleteReg(\''+kind+'\',\''+i.id+'\')">Excluir</button></div></div>';
+      '<button class="small-btn red" onclick="deleteReg(\''+kind+'\',\''+i.id+'\')">Excluir</button></div></div>';
   }).join('')+'</div>';
 }
 function regPage(kind){
@@ -3161,7 +3161,7 @@ function deleteReg(kind,id){
 }
 function showMechanicJobs(id){
   const m=mechanics.find(x=>x.id===id);if(!m)return;const jobs=trucks.filter(t=>t.mechanicId===id);
-  alert('Serviços associados a '+m.name+':\n'+(jobs.length?jobs.map(t=>t.plate+' · '+t.client+' · '+t.status).join('\n'):'Nenhum caminhão associado.'));
+  alert('Serviços associados a '+m.name+':\n'+(jobs.length?jobs.map(t=>t.plate+' · '+t.client+' · '+t.status).join('\n'):'Nenhum veículo associado.'));
 }
 
 /* ---------- Financeiro / pagamentos ---------- */
@@ -3206,9 +3206,9 @@ function expenseList(items){
   const today=todayISO();
   return '<div class="list-stack">'+items.map(e=>{
     const late=e.status==='Pendente'&&e.due&&e.due<today;
-    return '<div class="list-row"><div class="grow"><b>'+esc(e.desc)+'</b> <span class="pill '+(late?'red':statusClass(e.status))+'">'+(late?'Vencida':esc(e.status))+'</span>'+
+    return '<div class="list-row click" onclick="openExpense(\''+e.id+'\')"><div class="grow"><b>'+esc(e.desc)+'</b> <span class="pill '+(late?'red':statusClass(e.status))+'">'+(late?'Vencida':esc(e.status))+'</span>'+
       '<small>'+esc(e.category)+(e.payee?' · '+esc(e.payee):'')+' · '+esc(e.method||'')+'<br>Vencimento: '+fmtDate(e.due)+(e.paidDate?' · Pago em '+fmtDate(e.paidDate):'')+'</small></div>'+
-      '<div class="money neg">'+money(e.amount)+'</div><div class="rowacts"><button class="small-btn" onclick="togglePaid(\''+e.id+'\')">'+(e.status==='Pago'?'Reabrir':'Marcar pago')+'</button><button class="small-btn" onclick="openExpense(\''+e.id+'\')">Editar</button></div></div>';
+      '<div class="money neg">'+money(e.amount)+'</div><div class="rowacts" onclick="event.stopPropagation()"><button class="small-btn" onclick="togglePaid(\''+e.id+'\')">'+(e.status==='Pago'?'Reabrir':'Marcar pago')+'</button></div></div>';
   }).join('')+'</div>';
 }
 
@@ -3224,7 +3224,7 @@ function openQuote(id,truckId){
   else qState={id:uid(),number:quotes.reduce((m,q)=>Math.max(m,q.number||0),0)+1,truckId:truckId||'',status:'Rascunho',items:[{type:'Peça',desc:'',qty:1,cost:0,price:0}],notes:'',date:dateNow(),iso:todayISO(),isNew:true};
   $('qTitle').textContent='Orçamento nº '+quoteNumber(qState);
   const opts=trucks.slice().sort((a,b)=>(a.status==='Entregue')-(b.status==='Entregue'));
-  $('qTruck').innerHTML='<option value="">Selecione o caminhão</option>'+opts.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===qState.truckId?' selected':'')+'>'+esc(vehName(t))+'</option>').join('');
+  $('qTruck').innerHTML='<option value="">Selecione o veículo</option>'+opts.map(t=>'<option value="'+esc(t.id)+'"'+(t.id===qState.truckId?' selected':'')+'>'+esc(vehName(t))+'</option>').join('');
   $('qStatus').innerHTML=optionsHTML(QSTATUS,qState.status);$('qNotes').value=qState.notes||'';$('qWarranty').value=qState.warranty||'';
   if(!Array.isArray(qState.mechIds)){const tt=trucks.find(x=>x.id===qState.truckId);qState.mechIds=qState.isNew?(tt&&tt.mechanicId?[tt.mechanicId]:[]):qMechIds(qState)}qMechRender();
   $('qDelBtn').style.display=qState.isNew?'none':'';
@@ -3263,7 +3263,7 @@ function qSync(){qState.warranty=$('qWarranty').value.trim();qState.truckId=$('q
 function qTruckChanged(){const t=trucks.find(x=>x.id===$('qTruck').value);if(t&&t.mechanicId&&!(qState.mechIds||[]).length){qState.mechIds=[t.mechanicId];qMechRender()}}
 function saveQuote(){
   qSync();
-  if(!qState.truckId){alert('Selecione o caminhão do orçamento.');return}
+  if(!qState.truckId){alert('Selecione o veículo do orçamento.');return}
   const items=qClean(qState);
   if(!items.length){alert('Preencha pelo menos um item (descrição ou valor).');return}
   qState.items=items;
@@ -3373,7 +3373,7 @@ function quotePDFData(){
 }
 async function sendQuoteWA(){
   qSync();
-  if(!qState.truckId){alert('Selecione o caminhão do orçamento.');return}
+  if(!qState.truckId){alert('Selecione o veículo do orçamento.');return}
   if(!qClean(qState).length){alert('Preencha pelo menos um item (descrição ou valor) antes de enviar.');return}
   const {t,d}=quotePDFData();
   const bytes=buildQuotePDF(d),name='Orcamento-'+d.number+'-'+String(t.plate||'').replace(/[^A-Za-z0-9]/g,'')+'.pdf';
@@ -3384,7 +3384,7 @@ async function sendQuoteWA(){
   }catch(e){if(e&&e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
   const l=waLink(t.phone);
-  setTimeout(()=>{if(l){alert('O PDF foi baixado. Vou abrir a conversa do cliente no WhatsApp: toque no clipe (📎) e anexe o PDF.');window.open(l+'?text='+encodeURIComponent(msg),'_blank')}else alert('O PDF foi baixado. Esse caminhão não tem telefone do cliente cadastrado: abra o WhatsApp e anexe o PDF manualmente.')},600);
+  setTimeout(()=>{if(l){alert('O PDF foi baixado. Vou abrir a conversa do cliente no WhatsApp: toque no clipe (📎) e anexe o PDF.');window.open(l+'?text='+encodeURIComponent(msg),'_blank')}else alert('O PDF foi baixado. Esse veículo não tem telefone do cliente cadastrado: abra o WhatsApp e anexe o PDF manualmente.')},600);
 }
 
 
@@ -3399,7 +3399,7 @@ function layContainers(){const out=[];LAYC.forEach(c=>{const els=c[1]==='#page'?
 function layLabel(el){const q=el.querySelector('h1,h2,h3,.cap,b')||el;return (q.textContent||'').replace(/[×✕↩⠿]/g,'').replace(/\s+/g,' ').replace(/^[^A-Za-zÀ-ú0-9]+/,'').trim().slice(0,40)}
 function layBlocks(cs){const seen={},list=[];cs.forEach(c=>{[].slice.call(c.el.children).forEach((el,i)=>{if(el.tagName==='SCRIPT'||el.matches(LAYWRAP))return;const lb=layLabel(el);const base=el.dataset.ck?'c:'+el.dataset.ck:c.ck+':'+(lb.toLowerCase().replace(/[^a-z0-9à-ú]+/g,'-')||'n'+i);seen[base]=(seen[base]||0)+1;list.push({k:seen[base]>1?base+'~'+seen[base]:base,el:el,c:c,label:lb||'Bloco'})})});return list}
 function layWrap(cls){const root=$('page');let w=root.querySelector('.'+cls);if(w)return w;w=document.createElement('div');w.className=cls;const prev=(cls==='qa'?['page-head']:['qa','page-head']).map(c=>root.querySelector(':scope > .'+c)).find(Boolean);if(prev)prev.after(w);else root.insertBefore(w,root.firstChild);return w}
-const NUMSRC=[['pat','Caminhões no pátio'],['manut','Em manutenção'],['aprov','Aguardando aprovação'],['concl','Concluídos / retirada'],['entr','Entregues (total)'],['cam','Caminhões cadastrados'],['orc','Orçamentos feitos'],['pend','Contas pendentes (R$)'],['paid','Pagamentos realizados (R$)'],['mec','Mecânicos cadastrados']];
+const NUMSRC=[['pat','Veículos no pátio'],['manut','Em manutenção'],['aprov','Aguardando aprovação'],['concl','Concluídos / retirada'],['entr','Entregues (total)'],['cam','Veículos cadastrados'],['orc','Orçamentos feitos'],['pend','Contas pendentes (R$)'],['paid','Pagamentos realizados (R$)'],['mec','Mecânicos cadastrados']];
 function layNum(src){const n=st=>trucks.filter(t=>t.status===st).length;
   switch(src){case 'pat':return trucks.filter(t=>t.status!=='Entregue').length;case 'manut':return n('Em manutenção');case 'aprov':return n('Aguardando aprovação');
    case 'concl':return trucks.filter(t=>['Serviço concluído','Aguardando retirada'].includes(t.status)).length;case 'entr':return n('Entregue');case 'cam':return trucks.length;case 'orc':return quotes.length;
@@ -3560,7 +3560,7 @@ function voiceParse(text){
   const dono=isRole('dono'),aten=isRole('dono','atendimento');
   const verbCad=/\b(cadastr\w*|registr\w*|adicion\w*|inclu\w*|nova entrada|dar entrada|entrada)\b/.test(n),nounTr=/\b(caminhao|veiculo|carreta|cavalo|truck|carro|bongo)\b/.test(n);
   if(/\b(ajuda|o que (voce )?(faz|posso)|comandos)\b/.test(n))return {type:'ajuda'};
-  // cadastrar caminhão
+  // cadastrar veículo
   if((verbCad&&(nounTr||VKEYS.placa.test(n)))&&!/\b(despesa|conta|pagamento|orcamento)\b/.test(n)){
     if(!aten)return {type:'negado'};
     const f={};f.plate=vplate(vgrab(text,n,'placa'));f.client=vtitle(vgrab(text,n,'cliente'));f.phone=vphone(vgrab(text,n,'tel'));
@@ -3593,18 +3593,18 @@ function voiceParse(text){
     const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),items=[];
     const re=/(pe[cç]a|m[aã]o de obra|servi[cç]o)\s+(.+?)\s+(?:(?:por|de|valor)\s+)?(?:r\$\s*)?(\d[\d.,]*)\s*(?:reais|real)?(?=\s+(?:pe[cç]a|m[aã]o de obra|servi[cç]o)\b|\s*$)/gi;let m;
     while((m=re.exec(text))){const ty=/pe/i.test(m[1])?'Peça':'Mão de obra',d=m[2].replace(/\s+(por|de|valor)$/i,'').trim();items.push({type:ty,desc:d.charAt(0).toUpperCase()+d.slice(1),qty:1,cost:0,price:vnum(m[3])})}
-    const warns=[];if(!t)warns.push(plate?'Não achei caminhão com a placa '+plate+'.':'Diga a placa do caminhão.');
+    const warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa do veículo.');
     return {type:'orcamento',truck:t,items:items,warns:warns,blocked:!t};
   }
   // mudar status
   const sm=VSTAT.find(x=>n.indexOf(x[0])>=0);
   if(sm&&/\b(mud\w+|alter\w+|troc\w+|colo\w+|pass\w+|marc\w+|status|entreg\w+)\b/.test(n)){
-    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei caminhão com a placa '+plate+'.':'Diga a placa do caminhão.');
+    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa do veículo.');
     return {type:'status',truck:t,status:sm[1],warns:warns,blocked:!t};
   }
-  // abrir caminhão
+  // abrir veículo
   if(/\b(abr\w+|mostr\w+|busc\w+|procur\w+|ver|localiz\w+)\b/.test(n)&&(VKEYS.placa.test(n)||VKEYS.cliente.test(n)||nounTr)){
-    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei caminhão com a placa '+plate+'.':'Diga a placa ou o nome do cliente.');
+    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa ou o nome do cliente.');
     return {type:'abrir',truck:t,warns:warns,blocked:!t};
   }
   // abrir página
@@ -3620,15 +3620,15 @@ function voiceRun(){
   const text=$('vText').value.trim(),box=$('vResult');if(!text){box.innerHTML='';return}
   const c=voiceParse(text);VCMD=c;let h='';
   const btn=(l,f,cls)=>'<button class="btn '+(cls||'primary')+'" onclick="'+f+'">'+l+'</button>',warn=w=>w&&w.length?'<div class="warn">⚠ '+w.map(esc).join(' · ')+'</div>':'';
-  if(c.type==='cadastrar'){const f=c.f;h='<div class="vcard"><h4>Cadastrar caminhão</h4>'+vlis(['Placa: <b>'+esc(f.plate||'—')+'</b>','Cliente: <b>'+esc(f.client||'—')+'</b>',f.phone&&'Telefone: '+esc(f.phone),f.model&&'Modelo: '+esc(f.model),f.km&&'Km: '+esc(f.km),f.reason&&'Problema: '+esc(f.reason),f.mechName&&'Mecânico: '+esc(f.mechName)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
+  if(c.type==='cadastrar'){const f=c.f;h='<div class="vcard"><h4>Cadastrar veículo</h4>'+vlis(['Placa: <b>'+esc(f.plate||'—')+'</b>','Cliente: <b>'+esc(f.client||'—')+'</b>',f.phone&&'Telefone: '+esc(f.phone),f.model&&'Modelo: '+esc(f.model),f.km&&'Km: '+esc(f.km),f.reason&&'Problema: '+esc(f.reason),f.mechName&&'Mecânico: '+esc(f.mechName)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
   else if(c.type==='despesa'){const f=c.f;h='<div class="vcard"><h4>Lançar despesa'+(f.fixa?' fixa (todo mês)':'')+'</h4>'+vlis(['Descrição: <b>'+esc(f.desc)+'</b>','Valor: <b>'+(f.amount>0?money(f.amount):'—')+'</b>','Categoria: '+esc(f.cat),f.due&&'Vencimento: '+fmtDate(f.due),'Situação: '+(f.paid?'Paga':'Pendente')])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
-  else if(c.type==='orcamento'){h='<div class="vcard"><h4>Novo orçamento</h4>'+vlis([c.truck&&'Caminhão: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)].concat(c.items.map(i=>i.type+': '+esc(i.desc)+' — '+money(i.price))))+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir orçamento','voiceDo()'))+'</div></div>'}
-  else if(c.type==='status'){h='<div class="vcard"><h4>Mudar status</h4>'+vlis([c.truck&&'Caminhão: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client),c.truck&&esc(c.truck.status)+' → <b>'+esc(c.status)+'</b>'])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar','voiceDo()'))+'</div></div>'}
-  else if(c.type==='abrir'){h='<div class="vcard"><h4>Abrir caminhão</h4>'+vlis([c.truck&&'<b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir','voiceDo()'))+'</div></div>'}
+  else if(c.type==='orcamento'){h='<div class="vcard"><h4>Novo orçamento</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)].concat(c.items.map(i=>i.type+': '+esc(i.desc)+' — '+money(i.price))))+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir orçamento','voiceDo()'))+'</div></div>'}
+  else if(c.type==='status'){h='<div class="vcard"><h4>Mudar status</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client),c.truck&&esc(c.truck.status)+' → <b>'+esc(c.status)+'</b>'])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar','voiceDo()'))+'</div></div>'}
+  else if(c.type==='abrir'){h='<div class="vcard"><h4>Abrir veículo</h4>'+vlis([c.truck&&'<b>'+esc(c.truck.plate)+'</b> · '+esc(c.truck.client)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir','voiceDo()'))+'</div></div>'}
   else if(c.type==='pagina'){voiceDo();return}
   else if(c.type==='ajuda'){h='<div class="vcard"><h4>Veja os exemplos logo abaixo 👇</h4></div>'}
   else if(c.type==='negado'){h='<div class="vcard"><div class="warn">Seu perfil não tem permissão para isso.</div></div>'}
-  else h='<div class="vcard"><div class="warn">Não entendi. Tente algo como “cadastrar caminhão placa ABC1D23 cliente João” ou veja os exemplos abaixo.</div></div>';
+  else h='<div class="vcard"><div class="warn">Não entendi. Tente algo como “cadastrar veículo placa ABC1D23 cliente João” ou veja os exemplos abaixo.</div></div>';
   box.innerHTML=h;
 }
 async function voiceDo(review){
@@ -3789,11 +3789,11 @@ async function osSend(mode){
 }
 /* ---------- Mensagens prontas de WhatsApp ---------- */
 const WATPL=[
- ['entrada','📥 Caminhão recebido','Olá {cliente}! Recebemos o seu {modelo} (placa {placa}) aqui na {oficina}. Assim que o diagnóstico ficar pronto avisamos você por aqui. 🚛'],
+ ['entrada','📥 Veículo recebido','Olá {cliente}! Recebemos o seu {modelo} (placa {placa}) aqui na {oficina}. Assim que o diagnóstico ficar pronto avisamos você por aqui. 🚛'],
  ['orcamento','💰 Orçamento pronto','Olá {cliente}! O orçamento do seu {modelo} (placa {placa}) está pronto. Valor total: {valor}. Posso enviar o PDF para você aprovar?'],
  ['aprovacao','⏳ Lembrar de aprovar','Olá {cliente}, tudo bem? Passando para lembrar do orçamento do seu {modelo} (placa {placa}), no valor de {valor}, que aguarda a sua aprovação para começarmos o serviço.'],
  ['andamento','🔧 Serviço em andamento','Olá {cliente}! O serviço no seu {modelo} (placa {placa}) já está em andamento. Qualquer novidade avisamos por aqui.'],
- ['liberado','✅ Caminhão liberado','Olá {cliente}! O serviço no seu {modelo} (placa {placa}) foi concluído e o caminhão já está liberado para retirada. A {oficina} agradece a confiança! 🚛'],
+ ['liberado','✅ Veículo liberado','Olá {cliente}! O serviço no seu {modelo} (placa {placa}) foi concluído e o veículo já está liberado para retirada. A {oficina} agradece a confiança! 🚛'],
  ['garantia','🛡 Garantia do serviço','Olá {cliente}! Passando para informar que a garantia do serviço no seu {modelo} (placa {placa}) é de {garantia}. Qualquer dúvida é só chamar por aqui. A {oficina} agradece a confiança! 🚛'],
  ['obrigado','🙏 Agradecimento','Olá {cliente}! Obrigado por confiar na {oficina}. Qualquer problema com o seu {modelo} é só chamar por aqui.']
 ];
@@ -3955,7 +3955,7 @@ function rcCharge(id,force){
   r.lastCharge=todayISO();
 }
 function quoteToRecv(){
-  qSync();if(!qState.truckId){alert('Selecione o caminhão do orçamento.');return}
+  qSync();if(!qState.truckId){alert('Selecione o veículo do orçamento.');return}
   const items=qClean(qState);if(!items.length){alert('Preencha pelo menos um item.');return}
   const t=trucks.find(x=>x.id===qState.truckId)||{},tot=items.reduce((x,i)=>x+i.qty*i.price,0);
   openRecv('',{truckId:t.id,client:t.client,phone:t.phone,plate:t.plate,desc:'orçamento nº '+quoteNumber(qState)+(t.model?' · '+t.model:''),amount:tot,quoteId:qState.id});
@@ -4328,11 +4328,11 @@ function gestaoHTML(){
 NEWPAGE.gestao=function(){return pageHead('Gestão financeira','Caixa, contas a receber, despesas fixas e metas da oficina.','')+gestaoHTML()};
 let trainKey=null;
 const TRAIN={
-"inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: caminhões sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de caminhões."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."]]},
-"cadastro":{t:"Cadastro de caminhão",s:[["O que é", "Aqui você registra um caminhão e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O caminhão aparece na lista e já pode ser usado nos orçamentos."]]},
-"historico":{t:"Histórico",s:[["O que é", "Histórico guarda os caminhões já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo caminhão e você quiser lembrar o serviço anterior."]]},
+"inicio":{t:"Início",s:[["O que é", "Início é a tela de resumo da oficina. Aqui você vê o que está acontecendo agora, sem entrar em cada aba."], ["Os cartões", "• Em andamento: veículos sendo consertados\n• Aguardando aprovação: orçamentos esperando o cliente\n• Entregues: serviços já finalizados"], ["Rotina do dia", "Comece por aqui toda manhã. Toque em um cartão para abrir a lista daquele grupo de veículos."], ["Atalhos", "Use o menu (☰) no topo para ir a qualquer aba. Tudo que aparece aqui também está lá."]]},
+"cadastro":{t:"Cadastro de veículo",s:[["O que é", "Aqui você registra um veículo e o cliente dono dele. Faça isso antes de abrir um orçamento ou uma ordem de serviço."], ["Ordem dos campos", "Preencha sempre nessa ordem: Cliente, Modelo e Placa. Assim a lista e os documentos ficam padronizados."], ["Contato", "Digite o telefone do cliente. O botão do WhatsApp abre a conversa já com o número."], ["Dados extras", "CPF/CNPJ, e-mail, endereço e motorista são opcionais. Eles aparecem na OS impressa e ajudam nos contatos."], ["Salvar", "Toque em Salvar. O veículo aparece na lista e já pode ser usado nos orçamentos."]]},
+"historico":{t:"Histórico",s:[["O que é", "Histórico guarda os veículos já entregues e as movimentações de cada um."], ["Como consultar", "Toque em um veículo para ver o que foi feito nele, com datas e valores."], ["Quando usar", "Use quando um cliente voltar com o mesmo veículo e você quiser lembrar o serviço anterior."]]},
 "agenda":{t:"Agenda",s:[["O que é", "A agenda mostra os serviços marcados e os vencimentos, dia a dia."], ["Como usar", "Escolha o dia no calendário para ver o que está programado."], ["Dica", "Use para organizar a semana e não perder um vencimento."]]},
-"orcamentos":{t:"Orçamentos",s:[["O que é", "Orçamento é a proposta de serviço para um caminhão, com peças e mão de obra, antes de o cliente aprovar."], ["Criar", "Toque em Novo orçamento, escolha o caminhão e adicione os itens."], ["Itens", "Cada linha tem tipo (peça ou mão de obra), quantidade e preço. O total é calculado sozinho."], ["Mecânico", "Escolha o mecânico responsável. Isso alimenta a aba Metas dos mecânicos."], ["Aprovação", "Quando o cliente aprovar, marque como Aprovado. Só os aprovados entram no faturamento."], ["Imprimir", "Use Imprimir ou gere o PDF para mandar ao cliente. A logo da oficina aparece no topo."]]},
+"orcamentos":{t:"Orçamentos",s:[["O que é", "Orçamento é a proposta de serviço para um veículo, com peças e mão de obra, antes de o cliente aprovar."], ["Criar", "Toque em Novo orçamento, escolha o veículo e adicione os itens."], ["Itens", "Cada linha tem tipo (peça ou mão de obra), quantidade e preço. O total é calculado sozinho."], ["Mecânico", "Escolha o mecânico responsável. Isso alimenta a aba Metas dos mecânicos."], ["Aprovação", "Quando o cliente aprovar, marque como Aprovado. Só os aprovados entram no faturamento."], ["Imprimir", "Use Imprimir ou gere o PDF para mandar ao cliente. A logo da oficina aparece no topo."]]},
 "financeiro":{t:"Financeiro",s:[["O que é", "Financeiro mostra o que entrou e o que saiu da oficina em um período."], ["Básico", "Mostra faturamento, despesas e resultado de forma simples."], ["Avançado", "Permite filtrar por mês, trimestre ou ano e ver gráficos."], ["Lançar despesa", "Toque em Novo lançamento. Informe descrição, categoria, valor e vencimento."], ["Despesa fixa", "Marque como despesa fixa para a conta se repetir todo mês, sozinha."]]},
 "gestao":{t:"Gestão financeira",s:[["O que é", "A Gestão financeira mostra a saúde do caixa e o que ainda precisa ser recebido ou pago. Só o dono vê."], ["Caixa", "Caixa = saldo inicial + recebimentos − pagamentos. Informe o saldo inicial em Caixa e metas; sem ele, o caixa começa em zero."], ["A receber", "Confirme o recebimento quando o dinheiro entrar. O valor fica neutro até o vencimento e vira vermelho a partir dele."], ["Despesas fixas", "Aluguel e outras contas fixas aparecem todo mês. Se passar do vencimento sem lançar, aparece como déficit."], ["Metas", "Ajuste as metas: despesas fixas até 35% do faturamento, reserva de 1 a 3 meses e margem de 5% a 15%."], ["Projeção", "O ponto de equilíbrio e os gráficos liberam depois de 3 meses com lançamentos. Até lá, acompanhe o caixa e as contas."]]},
 "pagamentos":{t:"Pagamentos",s:[["O que é", "Pagamentos reúne as contas a pagar e as que já foram pagas."], ["Filtrar", "Use os filtros para ver só o que está pendente ou vencido."], ["Pagar", "Ao pagar uma conta, marque como paga e informe a data. Isso atualiza o caixa."]]},
@@ -4397,7 +4397,7 @@ function finAvancadoHTML(){
   acc('contas','Contas pagas e a pagar',money(des),rowsHTML([['Contas pagas',money(paid),G],['Contas pendentes',money(pend),R],['Total lançado',money(des)]])+chart('contas_g',hbars([['Pagas',paid],['Pendentes',pend]],'#bd4545')))+
   acc('lucro','Lucro',money(lucL),rowsHTML([['Faturamento aprovado',money(fat)],['(-) Custo dos serviços (peças e mão de obra)',money(cus)],['(=) Lucro bruto',money(lucB),G],['− Despesas (fixas + operacional)',money(des)],['(=) Lucro líquido',money(lucL),lucL<0?R:G],['Margem líquida',pct(lucL,fat)]])+chart('lucro_g',cols(ms)))+
   acc('caixa','Caixa',money(caixa),rowsHTML([['Entradas (orçamentos aprovados)',money(fat)],['Saídas (despesas já pagas)',money(paid)],['Saldo de caixa',money(caixa),caixa<0?R:G],['Contas ainda a pagar',money(pend)],['Saldo depois de pagar tudo',money(caixa-pend),caixa-pend<0?R:G]])+'<p class="subtle">Estimativa: considera que o orçamento aprovado já foi recebido.</p>'+chart('caixa_g',cashLine(ms)))+
-  acc('ticket','Ticket médio e indicadores',money(ticket),rowsHTML([['Ticket médio por orçamento',money(ticket)],['Ticket médio por caminhão',money(nTr?fat/nTr:0)],['Caminhões atendidos',String(nTr)],['Maior orçamento',money(big)],['Taxa de aprovação',pct(nq,nq+recN)+' ('+nq+' aprovados, '+recN+' recusados)'],['Mão de obra',money(labor)+' · '+pct(labor,fat)],['Peças e outros',money(parts)+' · '+pct(parts,fat)]])+chart('ticket_g',hbars([['Mão de obra',labor],['Peças e outros',parts]],'#16865b')))+
+  acc('ticket','Ticket médio e indicadores',money(ticket),rowsHTML([['Ticket médio por orçamento',money(ticket)],['Ticket médio por veículo',money(nTr?fat/nTr:0)],['Veículos atendidos',String(nTr)],['Maior orçamento',money(big)],['Taxa de aprovação',pct(nq,nq+recN)+' ('+nq+' aprovados, '+recN+' recusados)'],['Mão de obra',money(labor)+' · '+pct(labor,fat)],['Peças e outros',money(parts)+' · '+pct(parts,fat)]])+chart('ticket_g',hbars([['Mão de obra',labor],['Peças e outros',parts]],'#16865b')))+
   acc('mec','Produção por mecânico',money(labor),mechCardsHTML(fq)+chart('mec_g',hbars(mechStats(fq).map(x=>[x.name,x.labor]),'#16865b')))+
   acc('geral','📈 Gráfico geral do painel financeiro','Tudo junto',
     '<h3 style="font-size:13px;margin:4px 0 8px">Faturamento, despesas e lucro mês a mês</h3>'+cols(ms)+
@@ -4483,28 +4483,28 @@ function render(){
   let h='';
   if(currentPage==='inicio'){
     if(myBill===undefined&&!myBillBusy&&isRole('dono'))loadMyBill();
-    h=billNote()+trialNote()+setupNote()+homeAlerts()+'<div class="qa">'+'<button class="qa-b main" onclick="openNewTruck()"><span>＋</span>Cadastrar caminhão</button>'+(isRole('dono','atendimento')?'<button class="qa-b" onclick="openQuote(\'\',\'\')"><span>＋</span>Novo orçamento</button>':'')+(isRole('dono')?'<button class="qa-b" onclick="openExpense(\'\')"><span>＋</span>Lançar despesa</button>':'')+'</div>'+
+    h=billNote()+trialNote()+setupNote()+homeAlerts()+'<div class="qa">'+'<button class="qa-b main" onclick="openNewTruck()"><span>＋</span>Cadastrar veículo</button>'+(isRole('dono','atendimento')?'<button class="qa-b" onclick="openQuote(\'\',\'\')"><span>＋</span>Novo orçamento</button>':'')+(isRole('dono')?'<button class="qa-b" onclick="openExpense(\'\')"><span>＋</span>Lançar despesa</button>':'')+'</div>'+
     
-    '<div class="layout2"><div class="panel" id="movPanel"><div class="panel-head"><h2>'+(procF&&PF[procF]?esc(PF[procF][0]):'Movimentação dos caminhões')+'</h2>'+(procF?'<button class="small-btn" onclick="setProcF(\'\')">✕ Mostrar tudo</button>':(open.length>6?'<button class="small-btn" onclick="goTruck(\'pat\')">Ver todos ('+open.length+')</button>':''))+'</div>'+(procF&&PF[procF]?'<p class="subtle" style="font-size:12px;margin:0 0 10px">'+trucks.filter(PF[procF][1]).length+' caminhão(ões) neste status</p>':'')+truckList(procF&&PF[procF]?trucks.filter(PF[procF][1]):open.slice(0,6),false)+'</div>'+
+    '<div class="layout2"><div class="panel" id="movPanel"><div class="panel-head"><h2>'+(procF&&PF[procF]?esc(PF[procF][0]):'Movimentação dos veículos')+'</h2>'+(procF?'<button class="small-btn" onclick="setProcF(\'\')">✕ Mostrar tudo</button>':(open.length>6?'<button class="small-btn" onclick="goTruck(\'pat\')">Ver todos ('+open.length+')</button>':''))+'</div>'+(procF&&PF[procF]?'<p class="subtle" style="font-size:12px;margin:0 0 10px">'+trucks.filter(PF[procF][1]).length+' veículo(s) neste status</p>':'')+truckList(procF&&PF[procF]?trucks.filter(PF[procF][1]):open.slice(0,6),false)+'</div>'+
     (!isRole('dono')?'':'<div class="panel"><div class="panel-head"><h2>Contas da oficina</h2><button class="small-btn" onclick="navigate(\'pagamentos\')">Ver pagamentos</button></div><div class="list-stack">'+
       '<div class="list-row click" onclick="goPag(\'pend\')"><div><b>Contas pendentes</b><small>Pagamentos ainda não realizados</small></div><div class="money neg">'+money(sum(pending))+'</div></div>'+
       '<div class="list-row click" onclick="goPag(\'paid\')"><div><b>Pagamentos realizados</b><small>Marcados como pagos</small></div><div class="money neg">'+money(sum(paid))+'</div></div>'+
       '<div class="list-row click" onclick="navigate(\'parceiros\')"><div><b>Parceiros / fornecedores</b><small>Cadastrados</small></div><div class="money">'+partners.length+' / '+suppliers.length+'</div></div></div></div>')+'</div>'+
     '<div class="panel section-gap"><h2>Acesso rápido</h2><div class="quick-grid">'+menuFor().flatMap(g=>g.items).filter(i=>i[0]!=='inicio').map(i=>'<button class="quick" onclick="navigate(\''+i[0]+'\')"><b>'+i[1]+' '+i[2]+'</b><span>'+QUICK[i[0]]+'</span></button>').join('')+'</div></div>'+
-    (!isRole('dono')?'':'<div class="panel section-gap"><h2>Backup dos dados</h2><p class="subtle" style="font-size:12px">Baixe um arquivo com tudo (caminhões, financeiro, cadastros, orçamentos, despesas fixas e configurações). Guarde no Drive ou mande para o seu WhatsApp. Os dados também ficam salvos na nuvem; o backup é a sua cópia extra.</p><p style="font-size:13px;margin:0 0 10px"><b>Último backup:</b> '+(lastBackup()?fmtDate(lastBackup()):'ainda não fez')+'</p><div class="actions"><button class="btn primary" onclick="exportAll()">⬇ Baixar backup</button><label class="btn soft" style="cursor:pointer">⬆ Importar backup<input type="file" accept="application/json,.json" style="display:none" onchange="importAll(this)"></label></div>'+safeList()+'</div>');
+    (!isRole('dono')?'':'<div class="panel section-gap"><h2>Backup dos dados</h2><p class="subtle" style="font-size:12px">Baixe um arquivo com tudo (veículos, financeiro, cadastros, orçamentos, despesas fixas e configurações). Guarde no Drive ou mande para o seu WhatsApp. Os dados também ficam salvos na nuvem; o backup é a sua cópia extra.</p><p style="font-size:13px;margin:0 0 10px"><b>Último backup:</b> '+(lastBackup()?fmtDate(lastBackup()):'ainda não fez')+'</p><div class="actions"><button class="btn primary" onclick="exportAll()">⬇ Baixar backup</button><label class="btn soft" style="cursor:pointer">⬆ Importar backup<input type="file" accept="application/json,.json" style="display:none" onchange="importAll(this)"></label></div>'+safeList()+'</div>');
   }else if(currentPage==='cadastro'){
-    h=pageHead('Cadastro de caminhões','Registre a chegada do veículo, os dados do cliente, o problema informado e as fotos do estado em que ele chegou.','<button class="btn primary" onclick="openNewTruck()">＋ Novo cadastro</button>')+
-    '<div class="panel"><h2>Como funciona</h2><p class="subtle" style="font-size:12px">Ao salvar, o caminhão entra na lista de Processos e a entrada fica no histórico. Tire fotos do painel (luzes de injeção e avisos), da frente, da traseira e dos vidros para constar o que já estava quebrado.</p><button class="btn primary" onclick="openNewTruck()">＋ Cadastrar caminhão</button></div>'+
+    h=pageHead('Cadastro de veículos','Registre a chegada do veículo, os dados do cliente, o problema informado e as fotos do estado em que ele chegou.','<button class="btn primary" onclick="openNewTruck()">＋ Novo cadastro</button>')+
+    '<div class="panel"><h2>Como funciona</h2><p class="subtle" style="font-size:12px">Ao salvar, o veículo entra na lista de Processos e a entrada fica no histórico. Tire fotos do painel (luzes de injeção e avisos), da frente, da traseira e dos vidros para constar o que já estava quebrado.</p><button class="btn primary" onclick="openNewTruck()">＋ Cadastrar veículo</button></div>'+
     '<div class="panel section-gap"><h2>Últimos cadastros</h2>'+truckList(trucks.slice(0,10),false)+'</div>';
   }else if(currentPage==='historico'){
-    h=pageHead('Histórico de caminhões','Consulte os veículos que já passaram pela oficina e as movimentações registradas.')+
+    h=pageHead('Histórico de veículos','Consulte os veículos que já passaram pela oficina e as movimentações registradas.')+
     '<div class="panel"><h2>Veículos entregues</h2>'+truckList(trucks.filter(t=>t.status==='Entregue'),false)+'</div>'+
-    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>'<div class="list-row"><div><b>'+esc(ev.plate)+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>').join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra caminhões e altera status.</div>')+'</div>';
+    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>'<div class="list-row"><div><b>'+esc(ev.plate)+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>').join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
   }else if(currentPage==='orcamentos'){
     const appr=quotes.filter(q=>q.status==='Aprovado'),qlist=quoF?quotes.filter(q=>q.status===quoF):quotes;
-    h=pageHead('Orçamentos','Monte orçamentos por caminhão, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
+    h=pageHead('Orçamentos','Monte orçamentos por veículo, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
     '<div class="cards">'+metric('Total de orçamentos',quotes.length,'',"setQuoF('')")+metric('Aguardando aprovação',quotes.filter(q=>q.status==='Aguardando aprovação').length,'',"setQuoF('Aguardando aprovação')")+metric('Aprovados',appr.length,'',"setQuoF('Aprovado')")+metric('Valor aprovado',money(appr.reduce((s,q)=>s+qTotal(q),0)),'',"setQuoF('Aprovado')")+'</div>'+
-    '<div class="panel"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div><div class="rowacts"><button class="small-btn" onclick="openQuote(\''+q.id+'\',\'\')">Abrir</button></div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
+    '<div class="panel"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row click" onclick="openQuote(\''+q.id+'\',\'\')"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
   }else if(currentPage==='financeiro'){
     h=pageHead('Financeiro',finTab==='avancado'?'Dados, filtros e gráficos para entender o dinheiro da oficina.':'Resumo simples do que já foi lançado.','<button class="btn primary" onclick="openExpense(\'\')">＋ Novo lançamento</button><button class="btn soft" onclick="reportPDF()">📄 Relatório do período (PDF)</button>')+
     '<div class="ftabs"><button class="'+(finTab==='basico'?'on':'')+'" onclick="setFinTab(\'basico\')">Básico</button><button class="'+(finTab==='avancado'?'on':'')+'" onclick="setFinTab(\'avancado\')">Avançado</button>'+'</div>'+
@@ -4521,7 +4521,7 @@ function render(){
     '<div class="actions" style="margin-top:14px"><button class="btn soft" onclick="changePass()">🔒 Trocar minha senha</button><button class="btn danger" onclick="logout()">⎋ Sair</button></div></div>'+wsPanel()+
     (isRole('dono')?
     '<div class="panel section-gap"><h2>Criar novo perfil</h2><p class="subtle" style="margin:0 0 12px">Toque no tipo de perfil que você quer criar. Você digita nome, e-mail e uma senha, e a pessoa já pode entrar.</p><div class="list-stack">'+
-    [['atendimento','Atendimento','Caminhões, orçamentos e cadastros. Sem Financeiro e Pagamentos','📋'],['mecanico','Mecânico','Só Processos, Histórico e fotos/diagnóstico dos caminhões','🔧'],['dono','Dono','Vê e faz tudo, inclusive Financeiro, Perfis e Configurações da oficina','👑']].map(p=>'<div class="list-row click" onclick="openUser(\''+p[0]+'\')"><div class="grow"><b>'+p[3]+' Criar perfil de '+p[1]+'</b><small>'+p[2]+'</small></div><span class="pill s5">＋ Criar</span></div>').join('')+'</div></div>'+
+    [['atendimento','Atendimento','Veículos, orçamentos e cadastros. Sem Financeiro e Pagamentos','📋'],['mecanico','Mecânico','Só Processos, Histórico e fotos/diagnóstico dos veículos','🔧'],['dono','Dono','Vê e faz tudo, inclusive Financeiro, Perfis e Configurações da oficina','👑']].map(p=>'<div class="list-row click" onclick="openUser(\''+p[0]+'\')"><div class="grow"><b>'+p[3]+' Criar perfil de '+p[1]+'</b><small>'+p[2]+'</small></div><span class="pill s5">＋ Criar</span></div>').join('')+'</div></div>'+
     '<div class="panel section-gap"><div class="panel-head"><h2>Gerenciar perfis</h2><button class="small-btn" onclick="loadUsers()">↻ Atualizar</button></div>'+(userList===null?'<div class="empty">Carregando…</div>':userList.length?userList.map(u=>'<div class="urow"><input value="'+esc(u.name||'')+'" placeholder="Nome da pessoa" onchange="setName(\''+u.id+'\',this.value)" style="font-weight:700"><small>'+esc(u.email||'')+'</small><select '+(prof&&u.id===prof.id?'disabled':'')+' onchange="setRole(\''+u.id+'\',this.value)">'+[['dono','Dono'],['atendimento','Atendimento'],['mecanico','Mecânico'],['pendente','Aguardando liberação'],['inativo','Sem acesso (bloqueado)']].map(r=>'<option value="'+r[0]+'"'+(u.role===r[0]?' selected':'')+'>'+r[1]+'</option>').join('')+'</select></div>').join(''):'<div class="empty">Nenhum usuário.</div>')+'</div>':'');
   }else if(currentPage==='configuracoes'){
     const sh=shop(),pf=PREF,ed=isRole('dono');
@@ -4532,7 +4532,7 @@ function render(){
     '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div>'+(ed?ownWAHelp('sPhone'):'')+'<div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
     '<div class="field"><label>CNPJ</label><input id="sCnpj" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
     '<div class="field" style="margin-top:12px"><label>Texto no rodapé do orçamento (ex.: validade, garantia)</label><textarea id="sFoot" '+(ed?'':'disabled')+'>'+esc(sh.foot||'')+'</textarea></div>'+(ed?'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="saveShop()">Salvar dados da oficina</button></div>':'')+'</div>'+
-    (ed?'<div class="panel section-gap"><h2>Mensagens prontas do WhatsApp</h2><p class="subtle" style="margin:-6px 0 12px;font-size:12px">Use <b>{cliente}</b> (primeiro nome), <b>{placa}</b>, <b>{modelo}</b>, <b>{valor}</b>, <b>{oficina}</b>; na cobrança também <b>{vencimento}</b>, <b>{descricao}</b> e <b>{pix}</b>; na agenda <b>{data}</b>, <b>{hora}</b>, <b>{servico}</b> e <b>{endereco}</b>. Elas aparecem no botão verde de WhatsApp do caminhão.</p>'+ALLT().map(t=>'<div class="field" style="margin-bottom:10px"><label>'+t[1]+'</label><textarea id="wm_'+t[0]+'" rows="3">'+esc(waTpl(t[0]))+'</textarea></div>').join('')+'<div class="actions"><button class="btn primary" onclick="saveMsgs()">Salvar mensagens</button><button class="btn soft" onclick="resetMsgs()">Voltar ao padrão</button></div></div>':'')+
+    (ed?'<div class="panel section-gap"><h2>Mensagens prontas do WhatsApp</h2><p class="subtle" style="margin:-6px 0 12px;font-size:12px">Use <b>{cliente}</b> (primeiro nome), <b>{placa}</b>, <b>{modelo}</b>, <b>{valor}</b>, <b>{oficina}</b>; na cobrança também <b>{vencimento}</b>, <b>{descricao}</b> e <b>{pix}</b>; na agenda <b>{data}</b>, <b>{hora}</b>, <b>{servico}</b> e <b>{endereco}</b>. Elas aparecem no botão verde de WhatsApp do veículo.</p>'+ALLT().map(t=>'<div class="field" style="margin-bottom:10px"><label>'+t[1]+'</label><textarea id="wm_'+t[0]+'" rows="3">'+esc(waTpl(t[0]))+'</textarea></div>').join('')+'<div class="actions"><button class="btn primary" onclick="saveMsgs()">Salvar mensagens</button><button class="btn soft" onclick="resetMsgs()">Voltar ao padrão</button></div></div>':'')+
     '<div class="panel section-gap"><h2>Sistema</h2><div class="list-stack"><div class="list-row"><div><b>Sincronizar agora</b><small>Envia e busca os dados na nuvem</small></div><button class="small-btn" onclick="syncAll()">☁ Sincronizar</button></div><div class="list-row"><div><b>Versão</b><small>ORBE · gestão de oficinas</small></div><span class="money">V3</span></div></div></div>';
   }else if(currentPage==='editar'){
     const R=shopSet.find(x=>x.id==='layout'),pgs=[];MENU.forEach(g=>g.items.forEach(i=>{if(i[0]!=='editar')pgs.push(i)}));
@@ -4840,7 +4840,7 @@ function wzRender(msg){
   else if(st===4)b='<h1>Aparência</h1><p class="subtle" style="font-size:13px;margin:4px 0 12px">Escolha o que fica mais confortável para os seus olhos. Vale só para este aparelho.</p><div class="field"><label>Cor do fundo</label>'+optb('bg',[['claro','Claro'],['medio','Médio'],['escuro','Escuro']])+'</div><div class="field" style="margin-top:14px"><label>Tamanho das letras</label>'+optb('size',[['normal','Normal'],['grande','Grande']])+'</div>';
   else if(st===5){skip='Pular';b='<div class="wz-hero">💳</div><h1>Cartão e plano</h1><p class="subtle" style="font-size:13px;margin:4px 0 12px">Escolha seu plano e cadastre o cartão para o <b>débito automático</b>. Se preferir, faça depois pelo banner da tela inicial.</p>'+wzCardHtml()}
   else if(st===6)b='<h1>Sua equipe</h1><p class="subtle" style="font-size:13px;margin:4px 0 12px">Mecânicos e atendentes têm acesso só ao que precisam. Você tem duas formas de colocar cada um no sistema:</p><p style="font-size:13px;margin:0 0 8px"><b>1.</b> Em <b>Perfil → Criar novo perfil</b>, você digita nome, e-mail e senha da pessoa.</p><p style="font-size:13px;margin:0 0 8px"><b>2.</b> Ou passe o código abaixo: a pessoa cria a conta, escolhe “Entrar nessa oficina” e espera a sua liberação.</p>'+(ws&&ws.invite_code?'<div style="text-align:center;margin:14px 0"><b style="font-size:26px;letter-spacing:3px">'+esc(ws.invite_code)+'</b></div>':'');
-  else b='<h1>Tudo pronto! 🎉</h1><p class="subtle" style="font-size:14px;margin:6px 0 0">Sua oficina está configurada. O próximo passo é <b>cadastrar o primeiro caminhão</b> pelo botão da tela inicial.</p><p class="subtle" style="font-size:13px;margin:12px 0 0">Lembre: você tem '+(ws&&ws.trial_ends?Math.max(0,Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5)):30)+' dias de teste grátis. Se quiser mudar algo, vá em <b>Configurações</b>.</p>';
+  else b='<h1>Tudo pronto! 🎉</h1><p class="subtle" style="font-size:14px;margin:6px 0 0">Sua oficina está configurada. O próximo passo é <b>cadastrar o primeiro veículo</b> pelo botão da tela inicial.</p><p class="subtle" style="font-size:13px;margin:12px 0 0">Lembre: você tem '+(ws&&ws.trial_ends?Math.max(0,Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5)):30)+' dias de teste grátis. Se quiser mudar algo, vá em <b>Configurações</b>.</p>';
   const nav='<div style="display:flex;gap:8px;margin-top:18px">'+(st>0?'<button type="button" class="btn soft" style="flex:1" onclick="wzGo(-1)">Voltar</button>':'<button type="button" class="btn soft" style="flex:1" onclick="wzClose()">Fazer depois</button>')+
     (st<7?'<button type="button" class="btn primary" style="flex:2" onclick="wzGo(1)">'+(skip&&!(st===2&&wz.logo)&&!(st===3&&wz.banner)?'Pular':'Continuar')+'</button>':'<button type="button" class="btn primary" style="flex:2" onclick="wzFinish()">Concluir</button>')+'</div>';
   a.innerHTML='<div class="box" style="max-width:420px;border-radius:22px;background:linear-gradient(180deg,#fff,#f3f6fb);box-shadow:0 30px 60px -20px rgba(15,23,42,.5)">'+dots+b+'<div class="msg" id="wMsg">'+esc(msg||'')+'</div>'+nav+'</div>';if(st===5)setTimeout(wzCardMount,0)}
@@ -5074,12 +5074,12 @@ function admOficinasPanel(S){
   const list=S.rows.filter(admMatch).sort((a,b)=>a.i.left-b.i.left);
   const rowsHTML=list.length?'<div class="list-stack">'+list.map(r=>{
     const t=r.t,i=r.i,last=i.last?fmtDate(String(i.last.paid_at).slice(0,10))+' ('+money(i.last.amount)+')':'nenhum';
-    return '<div class="list-row" style="flex-direction:column;align-items:stretch;gap:6px">'+
+    return '<div class="list-row click" onclick="admEditOpen(\''+t.id+'\')" style="flex-direction:column;align-items:stretch;gap:6px">'+
       '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>'+esc(t.name)+'</b><span class="pill '+i.cls+'">'+esc(i.label)+'</span></div>'+
       '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
-      '<div class="actions"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">👁 Visualizar loja</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button><button class="small-btn" onclick="admEditOpen(\''+t.id+'\')">✎ Editar</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
+      '<div class="actions" onclick="event.stopPropagation()"><button class="small-btn" onclick="admPersonOpen(\''+t.id+'\')">👁 Visualizar loja</button><button class="small-btn" onclick="admPayOpen(\''+t.id+'\')">💰 Pagamento</button>'+(t.plan==='proprio'?'':'<button class="small-btn red" onclick="admDeleteRow(\''+t.id+'\')">🗑 Excluir</button>')+'<button class="small-btn" onclick="admSet(\''+t.id+'\',\'active\')">Ativar</button>'+
       (t.status==='blocked'?'':'<button class="small-btn'+(billOf(t.id).lifetime?' life-on':'')+'" onclick="admLifeToggle(\''+t.id+'\')">'+(billOf(t.id).lifetime?'✓ Vitalício':'Vitalício')+'</button><button class="small-btn" onclick="admTrialOpen(\''+t.id+'\')">Teste grátis</button><button class="small-btn red" onclick="admSet(\''+t.id+'\',\'blocked\')">Bloquear</button>')+'</div></div>';
   }).join('')+'</div>':'<div class="empty">Nenhuma oficina neste filtro.</div>';
   return '<div class="panel section-gap"><div class="panel-head"><h2>Oficinas ('+list.length+' de '+S.rows.length+')</h2></div>'+filters+rowsHTML+'</div>';
