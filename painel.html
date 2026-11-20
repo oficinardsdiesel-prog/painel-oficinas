@@ -2914,12 +2914,37 @@ const fmtDate=iso=>iso?new Date(iso+'T12:00:00').toLocaleDateString('pt-BR'):'�
 const STCLS={'Aguardando avaliação':'s1','Em diagnóstico':'s2','Orçamento em elaboração':'s3','Aguardando aprovação':'s4','Em manutenção':'s5','Serviço concluído':'s6','Aguardando retirada':'s7','Entregue':'s8','Rascunho':'s9','Aprovado':'s10','Recusado':'s11','Pago':'s12','Pendente':'s13','Atrasado':'s14','Vencida':'s14'};
 function statusClass(s){return STCLS[s]||''}
 const WA_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.200zm4.5-6.1c-.2-.1-1.500-.7-1.700-.8s-.4-.1-.6.100-.6.8-.8 1-.3.200-.5.100a6.700 6.700 0 0 1-3.300-2.900c-.3-.4.300-.4.800-1.400.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.300 3 3 0 0 0-.9 2.200 5.200 5.200 0 0 0 1.100 2.800 11.900 11.900 0 0 0 4.600 4.100c1.700.7 2.400.8 3.200.7a2.700 2.700 0 0 0 1.800-1.300 2.200 2.200 0 0 0 .2-1.300c-.1-.1-.3-.2-.5-.3z"/></svg>';
-function waBtn(phone,label,tid){const l=waLink(phone);if(l&&tid)return '<button class="wabtn'+(label?'':' icon')+'" onclick="openWAMsg(\''+tid+'\')" title="Mensagem pronta no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</button>';return l?'<a class="wabtn'+(label?'':' icon')+'" target="_blank" rel="noopener" href="'+l+'" title="Chamar no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</a>':''}
+function waBtn(phone,label,tid){const l=waLink(phone);if(l&&tid)return '<button class="wabtn'+(label?'':' icon')+'" onclick="openWAMsg(\''+tid+'\')" title="Mensagem pronta no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</button>';return l?'<button type="button" class="wabtn'+(label?'':' icon')+'" onclick="waChoose(\''+waDigits(phone)+'\')" title="Chamar no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</button>':''}
 function logEvent(plate,text){events.unshift({id:uid(),plate,text,date:new Date().toLocaleString('pt-BR')});if(events.length>500)events.length=500}
 function mechanicName(id){const m=mechanics.find(m=>m.id===id);return m?m.name:'Não definido'}
 function waLink(phone){const d=String(phone||'').replace(/\D/g,'');if(d.length<10)return '';return 'https://wa.me/'+(d.length<=11?'55'+d:d)}
 function ownWAHelp(id){return '<div style="margin-top:6px"><button type="button" class="wabtn" onclick="ownWA(\''+id+'\')">'+WA_SVG+'Abrir meu WhatsApp</button><small class="subtle" style="display:block;margin-top:6px">Este número recebe os contatos dos clientes e aparece nos orçamentos. Toque para testar se abre o seu WhatsApp.</small></div>'}
-function ownWA(id){const el=$(id);const l=waLink(el?el.value:'');if(!l){alert('Digite o número com DDD para abrir o WhatsApp.');return}window.open(l,'_blank','noopener')}
+function waDigits(phone){const d=String(phone||'').replace(/\D/g,'');return d.length<=11?'55'+d:d}
+function waChoose(phone,text){
+  const d=waDigits(phone);
+  if(d.length<12){alert('Digite o número com DDD para abrir o WhatsApp.');return}
+  const old=document.getElementById('waPick');if(old)old.remove();
+  const box=document.createElement('div');box.id='waPick';
+  box.style.cssText='position:fixed;inset:0;background:#0008;z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:16px';
+  box.innerHTML='<div style="background:#fff;border-radius:16px;padding:18px;width:100%;max-width:420px;color:#101216">'+
+    '<h3 style="margin:0 0 6px">Qual WhatsApp usar?</h3>'+
+    '<p style="margin:0 0 14px;font-size:13px;color:#475569">Escolha o aplicativo para abrir a conversa com este número.</p>'+
+    '<button type="button" class="btn primary" style="width:100%;margin-bottom:8px" data-app="com.whatsapp">WhatsApp</button>'+
+    '<button type="button" class="btn primary" style="width:100%;margin-bottom:8px" data-app="com.whatsapp.w4b">WhatsApp Business</button>'+
+    '<button type="button" class="btn plain" style="width:100%" data-cancel="1">Cancelar</button></div>';
+  document.body.appendChild(box);
+  const enc=encodeURIComponent(text||'');
+  box.addEventListener('click',function(e){
+    if(e.target===box||e.target.closest('[data-cancel]')){box.remove();return}
+    const b=e.target.closest('[data-app]');if(!b)return;
+    const pkg=b.dataset.app,biz=pkg==='com.whatsapp.w4b';
+    const q='phone='+d+(text?'&text='+enc:'');
+    const ua=navigator.userAgent||'';
+    const url=/Android/i.test(ua)?'intent://send?'+q+'#Intent;scheme=whatsapp;package='+pkg+';end':(biz?'whatsapp-business://send?':'whatsapp://send?')+q;
+    box.remove();window.location.href=url;
+  });
+}
+function ownWA(id){const el=$(id);waChoose(el?el.value:'')}
 function optionsHTML(list,sel){return list.map(v=>'<option'+(v===sel?' selected':'')+'>'+esc(v)+'</option>').join('')}
 function openModal(id){const m=$(id);if(m.classList.contains('open'))return;m.classList.add('open');ovPush(id)}
 function closeModal(id){const m=$(id);if(!m.classList.contains('open'))return;m.classList.remove('open');ovPop(id)}
@@ -3821,7 +3846,7 @@ function openWAMsg(id){
   waStart('💬 Mensagem pronta',vehName(t),t.phone,WATPL,sug,k=>{const q=quotes.filter(x=>x.truckId===t.id&&x.status!=='Recusado').sort((a,b)=>(b.number||0)-(a.number||0))[0];return waFillAny(waTpl(k),{client:t.client,plate:t.plate,model:t.model,valor:q?money(qTotal(q)):'',garantia:q&&q.warranty?q.warranty:''})});
 }
 function waPick(k){if(!waCtx.mk)return;waKey=k;(waCtx.list||[]).forEach(x=>{const b=$('wc_'+x[0]);if(b)b.classList.toggle('on',x[0]===k)});$('waText').value=waCtx.mk(k)}
-function waOpen(){const l=waLink(waCtx.phone);if(!l){alert('Não há telefone cadastrado para essa pessoa. Preencha o telefone e tente de novo.');return}window.open(l+'?text='+encodeURIComponent($('waText').value),'_blank')}
+function waOpen(){if(!waLink(waCtx.phone)){alert('Não há telefone cadastrado para essa pessoa. Preencha o telefone e tente de novo.');return}waChoose(waCtx.phone,$('waText').value)}
 function waCopy(){const v=$('waText').value;try{navigator.clipboard.writeText(v).then(()=>alert('Texto copiado.'),()=>{$('waText').select();document.execCommand('copy');alert('Texto copiado.')})}catch(e){$('waText').select();try{document.execCommand('copy')}catch(x){}alert('Texto copiado.')}}
 function saveMsgs(){const sh=Object.assign({},shop()),m={};ALLT().forEach(t=>{const v=($('wm_'+t[0])||{}).value;if(v!=null&&v.trim()&&v.trim()!==t[2])m[t[0]]=v.trim()});sh.id='shop';sh.msgs=m;shopSet=shopSet.filter(x=>x.id!=='shop').concat([sh]);persist();alert('Mensagens salvas.')}
 function resetMsgs(){if(!confirm('Voltar todas as mensagens ao texto padrão?'))return;const sh=Object.assign({},shop());sh.id='shop';sh.msgs={};shopSet=shopSet.filter(x=>x.id!=='shop').concat([sh]);persist();render()}
