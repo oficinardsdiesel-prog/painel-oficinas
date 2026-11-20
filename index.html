@@ -2857,7 +2857,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento']]}
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -4347,6 +4347,7 @@ const TRAIN={
 "assinatura":{t:"Plano e cartão",s:[["O que é", "Aqui você vê o plano atual da oficina e os dados da assinatura."], ["Antes de mudar", "Veja o que está incluído no seu plano antes de pedir uma mudança."], ["Dúvidas", "Para mudar de plano ou alterar o cartão, fale com o responsável pelo sistema."]]},
 "configuracoes":{t:"Configurações",s:[["O que é", "Configurações guarda os dados da oficina usados em todo o app."], ["Dados", "Nome, telefone, endereço e CNPJ aparecem nos documentos."], ["Chave Pix", "A chave Pix aparece no orçamento para o cliente pagar."], ["Logo e banner", "Troque quando quiser. A logo sai no topo dos PDFs."]]},
 "editar":{t:"Editar",s:[["O que é", "Editar permite organizar as páginas do app do jeito que faz mais sentido para a oficina."], ["Como usar", "Mostre, esconda ou reordene os blocos de cada página."], ["Dica", "As mudanças valem só para o seu app."]]},
+"suporte":{t:"Suporte",s:[["O que é","Aqui você fala com a equipe oficial da ORBE. A sua mensagem chega para nós pelo WhatsApp oficial."],["Como usar","Escreva o que precisa no campo, toque em Enviar pelo WhatsApp e a conversa abre com o nome da sua oficina já escrito."],["Horário","[confirmar] horário de atendimento."]]},
 "treinamento":{t:"Treinamento",s:[["O que é", "Esta aba repete o menu. Cada item tem explicações em slides."], ["Como usar", "Toque em uma aba e passe os slides com as setas."], ["Voltar", "Use Voltar ao treinamento para escolher outra aba."]]}
 };
 let trainIdx=0;
@@ -4360,6 +4361,21 @@ function trainSlideHTML(){
     '<div style="display:flex;justify-content:space-between;align-items:center;min-height:34px;margin-bottom:4px"><div>'+(i>0?arrow(-1):'')+'</div><small class="subtle">'+(i+1)+' de '+n+'</small><div>'+(!last?arrow(1):'')+'</div></div>'+
     ORBE_SVG+'<h2 style="font-size:18px;margin:4px 0 8px">'+esc(sl[0])+'</h2><p class="subtle" style="max-width:520px;margin:0 auto 16px;font-size:14px;text-align:left;line-height:1.5">'+esc(sl[1]).replace(/\n/g,'<br>')+'</p>'+
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="small-btn" onclick="trainBack()">‹ Voltar ao treinamento</button>'+(last?'<button class="btn primary" onclick="navigate(\''+trainKey+'\')">Abrir esta aba</button>':'')+'</div></div>';
+}
+const ORBE_SUPORTE_FONE='5511993659000';
+NEWPAGE.suporte=function(){
+  return pageHead('Suporte','Fale com a equipe oficial da ORBE.','')+
+    '<div class="panel section-gap"><h2>Mande sua mensagem</h2>'+
+    '<div class="field"><label>O que você precisa?</label><textarea id="supMsg" rows="4" placeholder="Escreva aqui o problema ou a dúvida."></textarea></div>'+
+    '<div class="actions" style="margin-top:10px"><button class="btn primary" onclick="supEnviar()">Enviar pelo WhatsApp</button></div>'+
+    (ORBE_SUPORTE_FONE?'':'<p class="subtle" style="font-size:12px;margin-top:10px">Canal de suporte em configuração.</p>')+'</div>';
+};
+function supEnviar(){
+  const m=((document.getElementById('supMsg')||{}).value||'').trim();
+  if(!m){alert('Escreva a sua mensagem antes de enviar.');return}
+  if(!ORBE_SUPORTE_FONE){alert('O suporte ainda não está configurado.');return}
+  const txt='Oficina: '+((ws&&ws.name)||'-')+'\n'+m;
+  window.open('https://wa.me/'+ORBE_SUPORTE_FONE+'?text='+encodeURIComponent(txt),'_blank');
 }
 NEWPAGE.treinamento=function(){
   if(trainKey&&TRAIN[trainKey])return pageHead('Treinamento','Explicação rápida de cada aba.','')+trainSlideHTML();
@@ -4610,7 +4626,7 @@ const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_N
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
 const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
-const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento']};
+const ROLE_PAGES={atendimento:['inicio','cadastro','historico','agenda','receber','orcamentos','parceiros','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
