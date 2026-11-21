@@ -2863,7 +2863,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos e privacidade']]}
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -3039,7 +3039,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
   $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
-  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'');
+  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'privacidade\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Política de privacidade</a></div>';
 }
 function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function msSearch(v){
@@ -4483,34 +4483,73 @@ function trainSlideHTML(){
 }
 const ORBE_SUPORTE_FONE='5511993659000';
 NEWPAGE.termos=function(){
-  return pageHead('Termos e privacidade','Versão 1.0 · Rascunho para revisão jurídica antes de publicar.','')+
+  return pageHead('Termos de uso','Versão 2.0 · Atualizada em 21/11/2026.','')+
   '<div class="panel section-gap legal">'+
-  '<h2>1. Quem somos</h2><p>O ORBE é um sistema de gestão para oficinas mecânicas, de motos e de caminhões diesel, operado por [razão social], CNPJ 45.223.240/0001-93.</p>'+
-  '<h2>2. O que o sistema faz</h2><p>O ORBE ajuda a oficina a cadastrar veículos, orçamentos, serviços, contas a pagar e a receber, equipe e clientes. Você usa o sistema para organizar o seu trabalho.</p>'+
-  '<h2>3. Conta e acesso</h2><p>Você é responsável pela senha e por quem usa a sua conta. Não compartilhe seu acesso com pessoas fora da oficina. Avise o ORBE imediatamente se perceber uso indevido.</p>'+
-  '<h2>4. Planos e pagamento</h2><p>O uso é cobrado conforme o plano escolhido. A mensalidade vence no dia combinado. Se houver atraso, o acesso pode ser suspenso até a regularização, sem apagar os seus dados.</p>'+
-  '<h2>5. Seus dados e os dados dos seus clientes</h2><p>Os dados de clientes, veículos e serviços que você lança pertencem à sua oficina. O ORBE guarda esses dados para prestar o serviço. Veja a página Privacidade.</p>'+
-  '<h2>6. Uso permitido</h2><p>É proibido usar o sistema para fraude, enviar mensagens em massa não solicitadas, tentar invadir ou copiar o sistema, ou inserir dados que você não tem direito de usar.</p>'+
-  '<h2>7. Disponibilidade</h2><p>Trabalhamos para manter o sistema no ar o tempo todo, mas podem ocorrer interrupções para manutenção ou por falhas de internet e de terceiros.</p>'+
-  '<h2>8. Cancelamento</h2><p>Você pode cancelar a qualquer momento pela área Plano e cartão. Após o cancelamento, você pode pedir a exportação dos seus dados pelo Suporte.</p>'+
-  '<h2>9. Mudanças nestes termos</h2><p>Podemos atualizar estes termos. Avisaremos no sistema antes de as mudanças valerem.</p>'+
-  '<h2>10. Foro</h2><p>Fica eleito o foro da comarca de Embu das Artes, SP, para resolver qualquer disputa, com renúncia a qualquer outro.</p>'+
-  '<h2>Contato</h2><p>Dúvidas e pedidos: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
+  '<h2>1. Quem somos e quem opera o sistema</h2>'+
+  '<p>O ORBE é um sistema de gestão para oficinas mecânicas, de motos e de caminhões diesel. Quem opera o serviço é Guilherme Vinícius Thomé, inscrito no CNPJ 45.223.240/0001-93, com contato em <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
+  '<h2>2. Aceitação</h2>'+
+  '<p>Ao criar uma conta ou usar o sistema, você declara que leu e concorda com estes termos e com a Política de privacidade. Se não concordar, não use o sistema.</p>'+
+  '<h2>3. O que o sistema faz</h2>'+
+  '<p>O ORBE ajuda a oficina a cadastrar veículos, orçamentos, serviços, contas a pagar e a receber, equipe e clientes. As funções disponíveis dependem do plano contratado, e o plano é mostrado antes da contratação.</p>'+
+  '<h2>4. Conta e acesso</h2>'+
+  '<ul><li>Você deve informar dados verdadeiros no cadastro e mantê-los atualizados.</li><li>Você é responsável pela sua senha e por quem usa a sua conta.</li><li>Não compartilhe o acesso com pessoas de fora da oficina. Avise imediatamente se perceber uso indevido.</li></ul>'+
+  '<h2>5. Planos, preços e pagamento</h2>'+
+  '<ul><li>O preço, a periodicidade e a forma de pagamento de cada plano são mostrados antes da contratação.</li><li>A cobrança é recorrente e vence na data combinada. Você recebe o comprovante de cada cobrança.</li><li>Reajustes serão comunicados com pelo menos 30 dias de antecedência e só valem a partir do período seguinte.</li></ul>'+
+  '<h2>6. Atraso e suspensão</h2>'+
+  '<ul><li>Em caso de atraso, avisamos por e-mail ou pelo sistema antes de qualquer suspensão.</li><li>Se a cobrança não for regularizada, o acesso pode ser suspenso. Durante a suspensão, seus dados não são apagados.</li><li>Com a regularização, o acesso volta na hora.</li></ul>'+
+  '<h2>7. Direito de arrependimento</h2>'+
+  '<p>Se você contratar pela internet ou por telefone, pode desistir em até 7 dias corridos após a contratação, com reembolso integral do valor pago, conforme o art. 49 do Código de Defesa do Consumidor.</p>'+
+  '<h2>8. Cancelamento</h2>'+
+  '<ul><li>Você pode cancelar a qualquer momento pela área Plano e cartão ou pelo Suporte.</li><li>O cancelamento não tem multa. O acesso continua até o fim do período já pago.</li><li>Não há reembolso proporcional de período já iniciado, exceto no direito de arrependimento (item 7) ou quando a lei exigir.</li><li>Antes do fim do acesso, você pode exportar seus dados. Depois disso, a exclusão segue a Política de privacidade.</li></ul>'+
+  '<h2>9. Dados da oficina e dos seus clientes</h2>'+
+  '<p>Os dados que você lança (clientes, veículos, serviços e finanças) são da sua oficina. Você pode exportá-los a qualquer momento pelo Suporte. O ORBE usa esses dados apenas para prestar o serviço, conforme a Política de privacidade.</p>'+
+  '<h2>10. Uso permitido</h2>'+
+  '<p>É proibido: usar o sistema para fraude; enviar mensagens em massa não solicitadas; tentar acessar, copiar ou danificar o sistema ou os dados de outras oficinas; inserir dados que você não tem direito de usar.</p>'+
+  '<h2>11. Disponibilidade e manutenção</h2>'+
+  '<p>Trabalhamos para manter o sistema disponível. Manutenções programadas serão avisadas com antecedência sempre que possível. Podem ocorrer interrupções por falhas de internet ou de fornecedores externos.</p>'+
+  '<h2>12. Atendimento</h2>'+
+  '<p>O atendimento é de segunda a sexta-feira, das 8h às 19h, pelo canal de Suporte do sistema.</p>'+
+  '<h2>13. Propriedade intelectual</h2>'+
+  '<p>O sistema, a marca e o código pertencem ao operador. Enquanto a assinatura estiver ativa, você tem direito de uso pessoal e não transferível.</p>'+
+  '<h2>14. Responsabilidade</h2>'+
+  '<p>Respondemos pelos danos causados por falha do nosso serviço, nos termos da lei. Não respondemos por decisões técnicas, financeiras ou comerciais tomadas pela oficina com base nas informações do sistema, nem por dados inseridos incorretamente por usuários.</p>'+
+  '<h2>15. Alterações destes termos</h2>'+
+  '<p>Podemos atualizar estes termos. Mudanças relevantes serão avisadas por e-mail e no sistema com pelo menos 30 dias de antecedência. Se você não concordar, pode cancelar sem multa antes da entrada em vigor.</p>'+
+  '<h2>16. Lei e foro</h2>'+
+  '<p>Estes termos seguem a lei brasileira. Nas relações de consumo, vale o foro do seu domicílio, conforme o Código de Defesa do Consumidor. Nas demais, fica eleito o foro da comarca de Embu das Artes, SP.</p>'+
+  '<h2>17. Contato</h2>'+
+  '<p>Dúvidas e pedidos: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
   '<p class="subtle" style="margin-top:14px">Leia também: <a href="#" onclick="navigate(\'privacidade\');return false" style="color:#3b82f6;text-decoration:underline">Política de privacidade</a></p>'+
   '</div>';
 };
+
 NEWPAGE.privacidade=function(){
-  return pageHead('Privacidade','Versão 1.0 · Rascunho para revisão jurídica antes de publicar. Segue a Lei Geral de Proteção de Dados (LGPD).','')+
+  return pageHead('Privacidade','Versão 2.0 · Atualizada em 21/11/2026. Segue a Lei Geral de Proteção de Dados (LGPD).','')+
   '<div class="panel section-gap legal">'+
-  '<h2>1. Quem é o responsável</h2><p>Para os dados da sua oficina e da sua conta, o ORBE é o responsável. Para os dados de clientes finais que você cadastra, a sua oficina é a responsável e o ORBE trata esses dados em seu nome.</p>'+
-  '<h2>2. Quais dados guardamos</h2><ul><li>Dados da oficina e da conta: nome, e-mail, telefone, endereço e CNPJ.</li><li>Dados de clientes e veículos que você lança: nome, telefone, placa, modelo e histórico de serviços.</li><li>Dados financeiros: orçamentos, pagamentos, contas e cobranças.</li><li>Dados de uso: quanto tempo cada pessoa usa o sistema, por dia, para medir o uso do plano.</li></ul>'+
-  '<h2>3. Para que usamos</h2><p>Para prestar o serviço, emitir cobranças, dar suporte e melhorar o sistema. Não vendemos dados e não usamos os dados dos seus clientes para outra finalidade.</p>'+
-  '<h2>4. Por quanto tempo guardamos</h2><p>Os dados da oficina e os dados de serviço ficam guardados enquanto a conta estiver ativa. Depois do cancelamento, eles são apagados em até 90 dias, salvo o que a lei exigir guardar. Os dados de tempo de uso ficam guardados por 12 meses e depois são apagados. [Confirmar prazos antes de publicar.]</p>'+
-  '<h2>5. Com quem compartilhamos</h2><p>Compartilhamos apenas o necessário com fornecedores que fazem o sistema funcionar: hospedagem e banco de dados em nuvem, serviço de cobrança e envio de mensagens. Eles só usam os dados para o serviço contratado.</p>'+
-  '<h2>6. Seus direitos</h2><p>Você pode pedir: confirmação de que tratamos seus dados, acesso, correção, exportação, exclusão e informação sobre com quem compartilhamos. Faça o pedido pelo Suporte.</p>'+
-  '<h2>7. Segurança</h2><p>Usamos conexão segura, senhas protegidas e controle de acesso por tipo de usuário. Nenhum sistema é totalmente livre de risco, por isso também recomendamos senhas fortes e acesso restrito.</p>'+
-  '<h2>8. Encarregado de dados</h2><p>Contato do encarregado: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
-  '<h2>9. Alterações</h2><p>Avisaremos no sistema quando esta política mudar.</p>'+
+  '<h2>1. Quem cuida dos seus dados</h2>'+
+  '<p>Para os dados da sua conta e da sua oficina, o responsável é Guilherme Vinícius Thomé (CNPJ 45.223.240/0001-93). Para os dados de clientes finais que a oficina cadastra, a responsável é a própria oficina, e o ORBE trata esses dados em nome dela, como operador, conforme o art. 39 da LGPD.</p>'+
+  '<h2>2. Quais dados guardamos e para quê</h2>'+
+  '<ul><li>Conta e oficina: nome, e-mail, telefone, endereço e CNPJ. Para criar e manter a conta, prestar o serviço e emitir a cobrança do plano.</li><li>Clientes e veículos lançados pela oficina: nome, telefone, placa, modelo, documento e histórico de serviços. Para executar o serviço que a oficina contratou.</li><li>Financeiro: orçamentos, pagamentos, contas e cobranças. Para o controle da oficina e a cobrança do plano.</li><li>Uso do sistema: tempo de uso por dia e por pessoa. Para medir o uso do plano e resolver dúvidas de cobrança. Não usamos esses dados para publicidade.</li><li>Registros de segurança: data, horário e ações de acesso. Para proteger a conta e prevenir fraudes.</li></ul>'+
+  '<h2>3. Base legal</h2>'+
+  '<p>Tratamos os dados para executar o contrato (art. 7º, V da LGPD), para cumprir obrigações legais (art. 7º, II) e para proteger a segurança e prevenir fraudes (art. 7º, IX). Não usamos os seus dados para marketing.</p>'+
+  '<h2>4. Com quem compartilhamos</h2>'+
+  '<ul><li>Supabase: banco de dados e autenticação do sistema.</li><li>Vercel: hospedagem do aplicativo.</li><li>Asaas: cobrança do plano, quando a cobrança estiver ativa.</li><li>WhatsApp: quando você toca no botão de contato, a conversa abre no próprio WhatsApp, e o tratamento passa a seguir as regras do WhatsApp.</li></ul>'+
+  '<h2>5. Onde ficam os dados e vendas</h2>'+
+  '<p>Esses fornecedores só usam os dados para prestar o serviço contratado. Eles podem ter servidores fora do Brasil; nesse caso, a transferência segue o art. 33 da LGPD. Não vendemos dados e não os cedemos para publicidade de terceiros.</p>'+
+  '<h2>6. Por quanto tempo guardamos</h2>'+
+  '<ul><li>Enquanto a conta estiver ativa, os dados ficam guardados para prestar o serviço.</li><li>Depois do cancelamento, a oficina pode exportar os dados em até 30 dias. Em seguida, os dados são apagados em até 90 dias, salvo o que a lei exige guardar, como documentos fiscais.</li><li>Os registros de uso do plano ficam guardados por 12 meses, para comprovar cobranças e resolver disputas, e depois são apagados.</li></ul>'+
+  '<h2>7. Seus direitos</h2>'+
+  '<p>Você pode pedir a confirmação de que tratamos seus dados, o acesso, a correção, a anonimização, a portabilidade, a exclusão, a informação sobre compartilhamentos e a revogação do consentimento, conforme o art. 18 da LGPD. Respondemos em até 15 dias. Se o dado for de um cliente final da oficina, o pedido pode ser feito à oficina, e nós ajudamos. Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados (ANPD).</p>'+
+  '<h2>8. Segurança e incidentes</h2>'+
+  '<p>Usamos conexão segura, senhas protegidas, controle de acesso por tipo de usuário e registro de acessos. Nenhum sistema é totalmente livre de riscos. Se houver incidente que possa causar risco ou dano relevante, avisaremos a oficina e a ANPD em prazo razoável, conforme o art. 48 da LGPD.</p>'+
+  '<h2>9. Armazenamento no navegador</h2>'+
+  '<p>O aplicativo guarda no navegador informações necessárias para manter você conectado.</p>'+
+  '<h2>10. Menores de idade</h2>'+
+  '<p>O sistema é voltado a empresas e profissionais. Não coletamos intencionalmente dados de crianças e adolescentes.</p>'+
+  '<h2>11. Encarregado pelos dados</h2>'+
+  '<p>Contato do encarregado: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
+  '<h2>12. Alterações</h2>'+
+  '<p>Avisaremos no sistema e por e-mail quando esta política mudar de forma relevante.</p>'+
   '<p class="subtle" style="margin-top:14px">Leia também: <a href="#" onclick="navigate(\'termos\');return false" style="color:#3b82f6;text-decoration:underline">Termos de uso</a></p>'+
   '</div>';
 };
