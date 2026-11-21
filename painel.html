@@ -230,7 +230,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Endereço</label><input id="nAddr"></div>
     <div class="field"><label>Motorista / contato na entrada</label><input id="nDriver"></div>
     <div class="field"><label>Quilometragem</label><input id="nKm" inputmode="numeric" placeholder="Km atual"></div>
-    <div class="field"><label>Garantia (dias, vazio = 30)</label><input id="nGar" inputmode="numeric" placeholder="Ex.: 30"></div>
+    <div class="field"><label>Garantia (dias, vazio = sem garantia)</label><input id="nGar" inputmode="numeric" placeholder="Ex.: 30"></div>
     <div class="field"><label>Status inicial</label><select id="nStatus"></select></div>
     <div class="field full"><label>Problema relatado / serviço solicitado</label><textarea id="nReason" placeholder="Descreva o que o cliente informou..."></textarea></div>
     <div class="field full"><label>Mecânico responsável (opcional)</label><select id="nMech"></select></div>
@@ -3063,7 +3063,7 @@ async function saveNewTruck(){
   const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim()||companyName('n');
   if(!plate||!client){alert('Informe a placa e o nome do cliente ou escolha a empresa.');return}
   if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
-  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString(),warrantyDays:parseInt($('nGar').value,10)||GAR_PADRAO};
+  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString(),warrantyDays:parseInt($('nGar').value,10)||0};
   setDeliveryDate(t);
   try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
   trucks.unshift(t);logEvent(plate,'Entrada cadastrada · '+t.status+(ph.list.length?' · '+ph.list.length+' foto(s)':''));persist();
@@ -3098,7 +3098,7 @@ function saveTruckEdit(keep){
   if(ns!==t.status){logEvent(t.plate,'Status alterado: '+t.status+' → '+ns);t.status=ns;setDeliveryDate(t)}
   if(nm!==t.mechanicId){t.mechanicId=nm;logEvent(t.plate,'Mecânico responsável: '+mechanicName(nm))}
   if(t.status==='Entregue'&&!t.deliveredAt)t.deliveredAt=todayISO();
-  t.km=$('dKm').value.trim();t.warrantyDays=parseInt($('dGar').value,10)||null;t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
+  t.km=$('dKm').value.trim();if(!isNaN(parseInt($('dGar').value,10)))t.warrantyDays=parseInt($('dGar').value,10);t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
   persist();if(!keep)closeModal('truckModal');render();return true;
 }
 async function deleteTruck(){
@@ -3888,7 +3888,8 @@ const GAR_PADRAO=30;
 function garInfo(t){
   const s=garIso(t.deliveredAt);
   if(!s)return {st:'nodate'};
-  const days=Number(t.warrantyDays)||GAR_PADRAO;
+  const days=(t.warrantyDays==null)?GAR_PADRAO:(Number(t.warrantyDays)||0);
+  if(days<=0)return {st:'none'};
   const end=new Date(s.getFullYear(),s.getMonth(),s.getDate()+days-1);
   const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   if(today<=end)return {st:'on',end:end,left:Math.round((end-today)/86400000)+1,days:days};
@@ -3900,6 +3901,7 @@ function garRow(t,info){
   if(info.st==='on'){pill='<span class="pill green">Na garantia</span>';txt='Faltam '+info.left+(info.left===1?' dia':' dias')+' · até '+garFmt(info.end)}
   else if(info.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(info.end)}
   else if(info.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Marque o veículo como Entregue para começar a contar'}
+  else if(info.st==='none'){pill='<span class="pill late">Sem garantia</span>';txt='Cadastrado sem garantia'}
   else {pill='<span class="pill s1">Sem prazo</span>';txt='Informe a garantia em dias na ficha do veículo'}
   return '<div class="list-row click" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="grow"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(veh||'Veículo sem placa')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
 }
@@ -3907,7 +3909,7 @@ function garList(q){
   const k=garKey(q),w=msNorm(q).trim(),rows=[];
   for(const t of trucks){
     const info=garInfo(t);
-    if(info.st!=='on'&&!(info.st==='off'&&(k||w)))continue;
+    if(info.st!=='on'&&!((info.st==='off'||info.st==='none')&&(k||w)))continue;
     const p=garKey(t.plate);let rank=0;
     if(k||w){
       const hitPlate=!!k&&p.indexOf(k)>=0;
@@ -3922,7 +3924,7 @@ function garList(q){
 function garBody(q){
   const rows=garList(q);
   if(!rows.length)return '<div class="empty">'+(q?'Nenhum veículo com “'+esc(q)+'” (placa, cliente ou modelo).':'Nenhum veículo na garantia no momento.')+'</div>';
-  return '<div class="list-stack">'+rows.map(r=>(r.info.st==='off'?'<div style="color:#dc2626;font-weight:700;font-size:13px;margin:4px 0 2px">VENCIDO</div>':'')+garRow(r.t,r.info)).join('')+'</div>';
+  return '<div class="list-stack">'+rows.map(r=>(r.info.st==='off'||r.info.st==='none'?'<div style="color:#dc2626;font-weight:700;font-size:13px;margin:4px 0 2px">'+(r.info.st==='off'?'VENCIDO':'SEM GARANTIA')+'</div>':'')+garRow(r.t,r.info)).join('')+'</div>';
 }
 function grSearch(v){grQ=v;const r=$('grRes');if(r)r.innerHTML=garBody(v)}
 NEWPAGE.garantia=function(){
