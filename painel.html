@@ -2863,7 +2863,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso'],['privacidade','🔒','Privacidade']]}
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos e privacidade']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -4483,9 +4483,9 @@ function trainSlideHTML(){
 }
 const ORBE_SUPORTE_FONE='5511993659000';
 NEWPAGE.termos=function(){
-  return pageHead('Termos de uso','Versão 1.0 · Rascunho para revisão jurídica antes de publicar.','')+
+  return pageHead('Termos e privacidade','Versão 1.0 · Rascunho para revisão jurídica antes de publicar.','')+
   '<div class="panel section-gap legal">'+
-  '<h2>1. Quem somos</h2><p>O ORBE é um sistema de gestão para oficinas mecânicas, de motos e de caminhões diesel, operado por [razão social e CNPJ da empresa ORBE].</p>'+
+  '<h2>1. Quem somos</h2><p>O ORBE é um sistema de gestão para oficinas mecânicas, de motos e de caminhões diesel, operado por [razão social], CNPJ 45.223.240/0001-93.</p>'+
   '<h2>2. O que o sistema faz</h2><p>O ORBE ajuda a oficina a cadastrar veículos, orçamentos, serviços, contas a pagar e a receber, equipe e clientes. Você usa o sistema para organizar o seu trabalho.</p>'+
   '<h2>3. Conta e acesso</h2><p>Você é responsável pela senha e por quem usa a sua conta. Não compartilhe seu acesso com pessoas fora da oficina. Avise o ORBE imediatamente se perceber uso indevido.</p>'+
   '<h2>4. Planos e pagamento</h2><p>O uso é cobrado conforme o plano escolhido. A mensalidade vence no dia combinado. Se houver atraso, o acesso pode ser suspenso até a regularização, sem apagar os seus dados.</p>'+
@@ -4494,7 +4494,9 @@ NEWPAGE.termos=function(){
   '<h2>7. Disponibilidade</h2><p>Trabalhamos para manter o sistema no ar o tempo todo, mas podem ocorrer interrupções para manutenção ou por falhas de internet e de terceiros.</p>'+
   '<h2>8. Cancelamento</h2><p>Você pode cancelar a qualquer momento pela área Plano e cartão. Após o cancelamento, você pode pedir a exportação dos seus dados pelo Suporte.</p>'+
   '<h2>9. Mudanças nestes termos</h2><p>Podemos atualizar estes termos. Avisaremos no sistema antes de as mudanças valerem.</p>'+
-  '<h2>10. Foro</h2><p>Fica eleito o foro da comarca de [cidade e estado da empresa] para resolver qualquer disputa, com renúncia a qualquer outro.</p>'+
+  '<h2>10. Foro</h2><p>Fica eleito o foro da comarca de Embu das Artes, SP, para resolver qualquer disputa, com renúncia a qualquer outro.</p>'+
+  '<h2>Contato</h2><p>Dúvidas e pedidos: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
+  '<p class="subtle" style="margin-top:14px">Leia também: <a href="#" onclick="navigate(\'privacidade\');return false" style="color:#3b82f6;text-decoration:underline">Política de privacidade</a></p>'+
   '</div>';
 };
 NEWPAGE.privacidade=function(){
@@ -4507,8 +4509,9 @@ NEWPAGE.privacidade=function(){
   '<h2>5. Com quem compartilhamos</h2><p>Compartilhamos apenas o necessário com fornecedores que fazem o sistema funcionar: hospedagem e banco de dados em nuvem, serviço de cobrança e envio de mensagens. Eles só usam os dados para o serviço contratado.</p>'+
   '<h2>6. Seus direitos</h2><p>Você pode pedir: confirmação de que tratamos seus dados, acesso, correção, exportação, exclusão e informação sobre com quem compartilhamos. Faça o pedido pelo Suporte.</p>'+
   '<h2>7. Segurança</h2><p>Usamos conexão segura, senhas protegidas e controle de acesso por tipo de usuário. Nenhum sistema é totalmente livre de risco, por isso também recomendamos senhas fortes e acesso restrito.</p>'+
-  '<h2>8. Encarregado de dados</h2><p>Contato do encarregado: [nome e e-mail do encarregado, a definir].</p>'+
+  '<h2>8. Encarregado de dados</h2><p>Contato do encarregado: <a href="mailto:oficinardsdiesel@gmail.com" style="color:#3b82f6;text-decoration:underline">oficinardsdiesel@gmail.com</a>.</p>'+
   '<h2>9. Alterações</h2><p>Avisaremos no sistema quando esta política mudar.</p>'+
+  '<p class="subtle" style="margin-top:14px">Leia também: <a href="#" onclick="navigate(\'termos\');return false" style="color:#3b82f6;text-decoration:underline">Termos de uso</a></p>'+
   '</div>';
 };
 
