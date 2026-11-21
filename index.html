@@ -158,13 +158,6 @@ body.editing #edbar{display:flex}body.editing .content{padding-bottom:110px}
 #edbar span{font-size:13px;font-weight:700;flex:1}
 #edbar button{border:0;border-radius:10px;padding:10px 12px;font-weight:800;font-size:13px;cursor:pointer}
 #toast{display:none;position:fixed;left:12px;right:12px;bottom:100px;z-index:80;background:#14243b;color:#fff;border-radius:12px;padding:12px 14px;font-size:13px;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 10px 30px #0006}#toast.show{display:flex}#toast button{background:#2563eb;color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:800}
-#vfab{display:none;position:fixed;right:16px;bottom:20px;width:58px;height:36px;border-radius:12px;border:1px solid #d3d8df;background:linear-gradient(180deg,#ffffff,#e4e8ee);color:#101216;font-size:17px;line-height:1;z-index:35;box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 #b9bfc8,0 4px 10px #10182833;cursor:pointer;align-items:center;justify-content:center;padding:0}
-body.editing #vfab{bottom:86px}
-#vfab{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .2s,box-shadow .2s}
-#vfab.vf-hold{transform:scale(1.08);transition:transform .8s linear}
-#vfab.vf-scroll{opacity:.25;pointer-events:none;transition:opacity .3s}
-#vfab.vf-drag{transform:scale(1.12);box-shadow:0 14px 34px #0008;outline:3px dashed #2563eb;outline-offset:4px;transition:none}
-.vcard{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:12px;background:#f7f9fc}.vcard h4{margin:0 0 6px;font-size:14px}.vcard ul{margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.6}.vcard .warn{color:#a96b08;font-size:12px;margin-bottom:8px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}.chips button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;color:var(--navy)}.chips button.on{background:var(--blue);color:#fff;border-color:var(--blue)}.chips button.sug::after{content:" ★";color:#e6a700}
 button.wabtn{border:0;cursor:pointer;font-family:inherit}
 .primary,.qa-b.main,.chips button.on,.addph.cam,.tabs button.active{background:linear-gradient(180deg,#f4f6f9,#b7bfc9 55%,#8a93a0)!important;color:#101216!important;border-color:#8f98a4!important;text-shadow:0 1px 0 #ffffff80}
@@ -204,8 +197,7 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
 </head>
 <body>
-<aside class="drawer" id="drawer"></aside><button id="vfab" aria-label="Assistente de voz">🎤</button>
-<script>
+<aside class="drawer" id="drawer"></aside><script>
 window.addEventListener('error',function(e){
   var b=document.getElementById('errBanner');
   if(!b){b=document.createElement('div');b.id='errBanner';b.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#7a1f1f;color:#fff;padding:12px;border-radius:10px;font:12px/1.4 Arial,sans-serif;white-space:pre-wrap';document.body.appendChild(b)}
@@ -465,20 +457,6 @@ window.addEventListener('error',function(e){
 
 <div class="lightbox" id="lightbox" onclick="closeLightbox()"><button onclick="closeLightbox()">✕</button><img id="lbImg" alt="Foto ampliada"></div>
 
-<div class="modal" id="voiceModal"><div class="modal-box">
-  <h2>🎤 Assistente</h2><p class="modal-sub">Já estou ouvindo: é só falar. Quando você parar, eu mostro o que entendi para você confirmar.</p>
-  <div class="actions"><button class="btn primary" id="vMic" onclick="voiceToggle()">🎤 Falar</button><span class="subtle" id="vState"></span></div>
-  <div class="field" style="margin-top:10px"><textarea id="vText" placeholder="Ex.: cadastrar veículo placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450"></textarea></div>
-  <div class="actions" style="margin-top:8px"><button class="btn soft" onclick="voiceRun()">Entender</button></div>
-  <div id="vResult"></div>
-  <div class="ph-sec"><h3>O que você pode falar</h3><div class="subtle" style="font-size:12px;line-height:1.7">
-   <b>Cadastrar:</b> “cadastrar veículo placa ABC1D23 cliente João Silva telefone 11 98888 7777 modelo Scania R450 problema barulho no motor mecânico Roni”<br>
-   <b>Orçamento:</b> “novo orçamento placa ABC1D23 peça bomba injetora 1500 mão de obra troca 300”<br>
-   <b>Despesa:</b> “lançar despesa conta de luz valor 350 vence dia 20”<br>
-   <b>Status:</b> “mudar status placa ABC1D23 para em manutenção”<br>
-   <b>Abrir:</b> “abrir veículo placa ABC1D23” · “abrir financeiro”</div></div>
-  <div class="modal-actions"><button class="btn plain" onclick="closeModal('voiceModal')">Fechar</button></div>
-</div></div>
 <div id="trash" aria-label="Lixeira">🗑</div>
 <div id="edbar"><span id="edtxt"></span><button style="background:#2563eb;color:#fff" onclick="openAdd()">＋ Adicionar</button><button style="background:#fff;color:#14243b" onclick="endEdit()">✓ Concluir</button></div>
 <div id="toast"><span id="toastTxt"></span><button id="toastBtn" onclick="toastUndo()">Desfazer</button></div>
@@ -3604,151 +3582,6 @@ document.addEventListener('click',function(e){
 },true);
 
 
-/* ---------- Assistente de voz (grátis, sem IA externa) ---------- */
-const VKEYS={veic:/\b(carro|caminhao|veiculo|carreta|cavalo|bongo)\b/,placa:/\bplaca\b/,cliente:/\b(cliente|proprietario|dono do caminhao)\b/,tel:/\b(telefone|celular|whatsapp|zap|numero)\b/,modelo:/\b(modelo|marca)\b/,prob:/\b(problema|defeito|reclamacao|queixa|motivo|relato)\b/,mec:/\bmecanico\b/,km:/\b(quilometragem|quilometros|km)\b/};
-const NUMW={zero:'0',um:'1',uma:'1',dois:'2',duas:'2',tres:'3',quatro:'4',cinco:'5',seis:'6',meia:'6',sete:'7',oito:'8',nove:'9'};
-const LETW={be:'B',ce:'C',de:'D',efe:'F',ge:'G',aga:'H',jota:'J',ka:'K',ca:'K',ele:'L',eme:'M',ene:'N',pe:'P',que:'Q',erre:'R',esse:'S',te:'T',ve:'V',xis:'X',ze:'Z',ipsilon:'Y',dablio:'W'};
-function vnorm(s){return String(s||'').normalize('NFC').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
-function vgrab(text,n,key,keys){
-  const m=VKEYS[key].exec(n);if(!m)return '';const st=m.index+m[0].length;let en=text.length;
-  (keys||Object.keys(VKEYS)).forEach(k=>{if(k===key)return;const r=new RegExp(VKEYS[k].source,'g');let x;while((x=r.exec(n))){if(x.index>=st&&x.index<en){en=x.index;break}}});
-  return text.slice(st,en).replace(/^[\s:,\-–]+|[\s,.;]+$/g,'').replace(/^(e|é|eh|se chama|chamado|chamada|de|do|da)\s+/i,'').trim();
-}
-function vplate(seg){let out='';norm0(seg).split(/[\s,.\-]+/).filter(Boolean).forEach(t=>{if(out.length>=7)return;if(NUMW[t]!==undefined)out+=NUMW[t];else if(LETW[t])out+=LETW[t];else if(/^[a-z0-9]+$/.test(t))out+=t.toUpperCase()});return out.slice(0,7)}
-function norm0(s){return vnorm(s)}
-function vplateOK(p){return /^[A-Z]{3}\d[A-Z0-9]\d{2}$/.test(p)}
-function vphone(seg){let d='';norm0(seg).split(/[\s,.\-()]+/).filter(Boolean).forEach(t=>{if(NUMW[t]!==undefined)d+=NUMW[t];else if(/^\d+$/.test(t))d+=t});if(d.length>11&&d.indexOf('55')===0)d=d.slice(2);
-  return d.length===11?'('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7):d.length===10?'('+d.slice(0,2)+') '+d.slice(2,6)+'-'+d.slice(6):d}
-function vtitle(s){return s.toLowerCase().split(/\s+/).map((w,i)=>(i&&['da','de','do','dos','das','e'].indexOf(w)>=0)?w:w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}
-function vmodel(s){return s.split(/\s+/).map(w=>(/\d/.test(w)||w.length<=2)?w.toUpperCase():w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ')}
-function vnum(s){let m=String(s).match(/\d[\d.]*(?:,\d+)?/);if(!m)return 0;let t=m[0];if(/,\d{1,2}$/.test(t))t=t.replace(/\./g,'').replace(',','.');else t=t.replace(/\./g,'').replace(',','.');return Number(t)||0}
-function vfindTruck(plate,text,n){
-  const open=trucks.slice().sort((a,b)=>(a.status==='Entregue')-(b.status==='Entregue'));
-  if(plate){const t=open.find(x=>(x.plate||'').toUpperCase().replace(/[^A-Z0-9]/g,'')===plate);if(t)return t}
-  const c=vgrab(text,n,'cliente');if(c){const nc=vnorm(c);return open.find(x=>vnorm(x.client).indexOf(nc)>=0)||null}
-  return null}
-const VSTAT=[['manutencao','Em manutenção'],['diagnostico','Em diagnóstico'],['elaboracao','Orçamento em elaboração'],['aprovacao','Aguardando aprovação'],['avaliacao','Aguardando avaliação'],['concluido','Serviço concluído'],['pronto','Serviço concluído'],['retirada','Aguardando retirada'],['entregue','Entregue'],['entregar','Entregue']];
-const VPAGES=[['inicio','inicio'],['cadastro','cadastro'],['historico','historico'],['orcamentos','orcamentos'],['financeiro','financeiro'],['pagamentos','pagamentos'],['parceiros','parceiros'],['fornecedores','fornecedores'],['mecanicos','mecanicos'],['agenda','agenda'],['receber','fiado'],['receber','receber'],['metas','metas'],['pecas','pecas'],['usuarios','perfil'],['configuracoes','configuracoes'],['editar','editar']];
-function voiceParse(text){
-  text=String(text||'').normalize('NFC').trim();const n=vnorm(text);if(!text)return {type:'vazio'};
-  const dono=isRole('dono'),aten=isRole('dono','atendimento');
-  const verbCad=/\b(cadastr\w*|registr\w*|adicion\w*|inclu\w*|nova entrada|dar entrada|entrada|chegou|trouxe|entrou)\b/.test(n),nounTr=/\b(caminhao|veiculo|carreta|cavalo|truck|carro|bongo)\b/.test(n);
-  if(/\b(ajuda|o que (voce )?(faz|posso)|comandos)\b/.test(n))return {type:'ajuda'};
-  // cadastrar veículo
-  const plateG=vplate(vgrab(text,n,'placa')),knownT=!!plateG&&trucks.some(x=>garKey(x.plate)===plateG),implicitCad=!verbCad&&!!plateG&&!knownT&&(nounTr||VKEYS.cliente.test(n)||VKEYS.modelo.test(n)||VKEYS.prob.test(n))&&!/\b(abr\w*|mostr\w*|busc\w*|procur\w*|orcament\w*|despesa|status|mud\w*|troc\w*|entreg\w*|marc\w*)\b/.test(n);
-  if(((verbCad&&(nounTr||VKEYS.placa.test(n)))||implicitCad)&&!/\b(despesa|conta|pagamento|orcamento)\b/.test(n)){
-    if(!aten)return {type:'negado'};
-    const f={};f.plate=vplate(vgrab(text,n,'placa'));f.client=vtitle(vgrab(text,n,'cliente'));f.phone=vphone(vgrab(text,n,'tel'));
-    let md=vgrab(text,n,'modelo');if(!md){const mm=/\b(?:caminhao|veiculo|carreta|cavalo|carro|bongo)\s+(?=\S)/.exec(n);if(mm){const st=mm.index+mm[0].length;let en=text.length;Object.keys(VKEYS).forEach(k=>{const r=new RegExp(VKEYS[k].source,'g');let x;while((x=r.exec(n))){if(x.index>=st&&x.index<en){en=x.index;break}}});const sg=text.slice(st,en).trim();if(sg&&sg.length<40)md=sg}}
-    f.model=md?vmodel(md):'';f.reason=vgrab(text,n,'prob');if(f.reason)f.reason=f.reason.charAt(0).toUpperCase()+f.reason.slice(1);f.km=(vgrab(text,n,'km').match(/\d[\d.]*/)||[''])[0].replace(/\./g,'');
-    const mc=vgrab(text,n,'mec'),warns=[];let mech=null;if(mc){const nm=vnorm(mc);mech=mechanics.find(m=>vnorm(m.name).indexOf(nm)>=0||nm.indexOf(vnorm(m.name))>=0);if(!mech)warns.push('Mecânico “'+mc+'” não está cadastrado.')}
-    f.mechId=mech?mech.id:'';f.mechName=mech?mech.name:'';
-    if(!f.plate)warns.push('Não entendi a placa.');else if(!vplateOK(f.plate))warns.push('A placa “'+f.plate+'” parece incompleta. Confira.');
-    if(!f.client)warns.push('Não entendi o nome do cliente.');if(f.phone&&f.phone.replace(/\D/g,'').length<10)warns.push('Telefone incompleto.');
-    return {type:'cadastrar',f:f,warns:warns,blocked:!f.plate||!f.client};
-  }
-  // despesa
-  if(/\b(despesa|conta|pagamento|gasto|boleto)\b/.test(n)&&/\b(lanc\w*|registr\w*|anot\w*|adicion\w*|nova|novo|criar|cri\w+)\b/.test(n)){
-    if(!dono)return {type:'negado'};
-    const vm=/\b(?:no\s+)?valor\s+(?:de\s+)?(?:r\$\s*)?(\d[\d.,]*)/.exec(n)||/(?:r\$\s*)(\d[\d.,]*)/.exec(n)||/(\d[\d.,]*)\s*(?:reais|real)/.exec(n)||/(?:^|\s)(\d[\d.,]*)(?=\s|$)/.exec(n.replace(/\b(?:dia|venc\w*)\s+\d+/g,' '));
-    const amount=vm?vnum(vm[1]):0;
-    let dm=/\b(?:despesa|conta|pagamento|gasto|boleto)\s+(?:de\s+|da\s+|do\s+|com\s+)?(.+?)(?=\s+(?:no\s+)?valor\b|\s+(?:r\$|\d)|\s+vence\b|\s+vencimento\b|\s+(?:pago|paga)\b|\s+dia\s+\d|$)/i.exec(text);
-    let desc=dm?dm[1].trim():'';desc=desc.replace(/^(pago|paga)\s+/i,'');if(!desc)desc='Despesa';desc=desc.charAt(0).toUpperCase()+desc.slice(1);
-    const fixa=/\b(fixa|fixo|mensal|recorrente|perpetua|todo mes|todos os meses)\b/.test(n);let noName=false;if(fixa){desc=desc.replace(/^(fixa|fixo)(\s+|$)/i,'').replace(/^(de|do|da)(\s+|$)/i,'').trim();if(!desc||/^(mensal|recorrente|r\$|\d)/i.test(desc)){desc='Despesa fixa';noName=true}desc=desc.charAt(0).toUpperCase()+desc.slice(1)}
-    const paid=/\b(pago|paga|ja paguei|paguei)\b/.test(n);let due='';const dd=/\bvenc\w*\s+(?:dia\s+)?(\d{1,2})\b/.exec(n)||/\bdia\s+(\d{1,2})\b/.exec(n);
-    if(dd){const d=new Date(),day=Math.min(31,Number(dd[1]));let y=d.getFullYear(),mo=d.getMonth();if(day<d.getDate()&&!fixa)mo++;const dt=new Date(y,mo,day);due=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
-    let cat='Outras despesas';[[/luz|energia|agua|enel|copel|cemig/,'Água e luz'],[/aluguel/,'Aluguel'],[/internet|telefone|celular|claro|vivo|tim/,'Internet / telefone'],[/salario|funcionario|pagamento de|vale/,'Funcionários'],[/imposto|taxa|das\b|simples|iptu/,'Impostos e taxas'],[/ferramenta|material|parafuso|oleo|graxa/,'Ferramentas e materiais'],[/peca|fornecedor/,'Fornecedor / peças']].some(r=>{if(r[0].test(vnorm(desc))){cat=r[1];return true}});
-    const warns=[];if(!(amount>0))warns.push('Não entendi o valor.');if(noName)warns.push('Não entendi o nome da despesa (ex.: aluguel, internet). Toque em “Revisar no formulário” para escrever.');
-    if(fixa&&!due)warns.push('Diga o dia do vencimento (ex.: “dia 10”). Se não, uso o dia de hoje.');
-    return {type:'despesa',f:{desc:desc,amount:amount,paid:paid,due:due,cat:cat,fixa:fixa},warns:warns,blocked:!(amount>0)};
-  }
-  // orçamento
-  if(/\borcamento\b/.test(n)&&/\b(novo|nova|fazer|faca|criar|cri\w+|abrir|abra|gerar|montar)\b/.test(n)){
-    if(!aten)return {type:'negado'};
-    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),items=[];
-    const re=/(pe[cç]a|m[aã]o de obra|servi[cç]o)\s+(.+?)\s+(?:(?:por|de|valor)\s+)?(?:r\$\s*)?(\d[\d.,]*)\s*(?:reais|real)?(?=\s+(?:pe[cç]a|m[aã]o de obra|servi[cç]o)\b|\s*$)/gi;let m;
-    while((m=re.exec(text))){const ty=/pe/i.test(m[1])?'Peça':'Mão de obra',d=m[2].replace(/\s+(por|de|valor)$/i,'').trim();items.push({type:ty,desc:d.charAt(0).toUpperCase()+d.slice(1),qty:1,cost:0,price:vnum(m[3])})}
-    const warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa do veículo.');
-    return {type:'orcamento',truck:t,items:items,warns:warns,blocked:!t};
-  }
-  // mudar status
-  const sm=VSTAT.find(x=>n.indexOf(x[0])>=0);
-  if(sm&&/\b(mud\w+|alter\w+|troc\w+|colo\w+|pass\w+|marc\w+|status|entreg\w+)\b/.test(n)){
-    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa do veículo.');
-    return {type:'status',truck:t,status:sm[1],warns:warns,blocked:!t};
-  }
-  // abrir veículo
-  if(/\b(abr\w+|mostr\w+|busc\w+|procur\w+|ver|localiz\w+)\b/.test(n)&&(VKEYS.placa.test(n)||VKEYS.cliente.test(n)||nounTr)){
-    const plate=vplate(vgrab(text,n,'placa')),t=vfindTruck(plate,text,n),warns=[];if(!t)warns.push(plate?'Não achei veículo com a placa '+plate+'.':'Diga a placa ou o nome do cliente.');
-    return {type:'abrir',truck:t,warns:warns,blocked:!t};
-  }
-  // abrir página
-  if(/\b(abr\w+|ir|va|vai|leve|mostr\w+|ver|entrar|acessar)\b/.test(n)){
-    const pg=VPAGES.find(x=>new RegExp('\\b'+x[1]).test(n));
-    if(pg&&allowed(pg[0])&&(pg[0]!=='editar'||dono))return {type:'pagina',page:pg[0]};
-  }
-  return {type:'nao'};
-}
-function vlis(arr){return '<ul>'+arr.filter(Boolean).map(x=>'<li>'+x+'</li>').join('')+'</ul>'}
-let VCMD=null;
-function voiceRun(){
-  const text=$('vText').value.trim(),box=$('vResult');if(!text){box.innerHTML='';return}
-  const c=voiceParse(text);VCMD=c;let h='';
-  const btn=(l,f,cls)=>'<button class="btn '+(cls||'primary')+'" onclick="'+f+'">'+l+'</button>',warn=w=>w&&w.length?'<div class="warn">⚠ '+w.map(esc).join(' · ')+'</div>':'';
-  if(c.type==='cadastrar'){const f=c.f;h='<div class="vcard"><h4>Cadastrar veículo</h4>'+vlis(['Cliente: <b>'+esc(f.client||'—')+'</b>','Placa: <b>'+esc(f.plate||'—')+'</b>',f.model&&'Modelo: '+esc(f.model),f.phone&&'Telefone: '+esc(f.phone),f.km&&'Km: '+esc(f.km),f.reason&&'Problema: '+esc(f.reason),f.mechName&&'Mecânico: '+esc(f.mechName)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
-  else if(c.type==='despesa'){const f=c.f;h='<div class="vcard"><h4>Lançar despesa'+(f.fixa?' fixa (todo mês)':'')+'</h4>'+vlis(['Descrição: <b>'+esc(f.desc)+'</b>','Valor: <b>'+(f.amount>0?money(f.amount):'—')+'</b>','Categoria: '+esc(f.cat),f.due&&'Vencimento: '+fmtDate(f.due),'Situação: '+(f.paid?'Paga':'Pendente')])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar e salvar','voiceDo()'))+btn('✎ Revisar no formulário','voiceDo(true)','soft')+'</div></div>'}
-  else if(c.type==='orcamento'){h='<div class="vcard"><h4>Novo orçamento</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate)].concat(c.items.map(i=>i.type+': '+esc(i.desc)+' — '+money(i.price))))+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir orçamento','voiceDo()'))+'</div></div>'}
-  else if(c.type==='status'){h='<div class="vcard"><h4>Mudar status</h4>'+vlis([c.truck&&'Veículo: <b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate),c.truck&&esc(c.truck.status)+' → <b>'+esc(c.status)+'</b>'])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Confirmar','voiceDo()'))+'</div></div>'}
-  else if(c.type==='abrir'){h='<div class="vcard"><h4>Abrir veículo</h4>'+vlis([c.truck&&'<b>'+esc(c.truck.client)+'</b> · '+esc(c.truck.plate)])+warn(c.warns)+'<div class="actions">'+(c.blocked?'':btn('✔ Abrir','voiceDo()'))+'</div></div>'}
-  else if(c.type==='pagina'){voiceDo();return}
-  else if(c.type==='ajuda'){h='<div class="vcard"><h4>Veja os exemplos logo abaixo 👇</h4></div>'}
-  else if(c.type==='negado'){h='<div class="vcard"><div class="warn">Seu perfil não tem permissão para isso.</div></div>'}
-  else h='<div class="vcard"><div class="warn">Não entendi. Tente algo como “cadastrar veículo placa ABC1D23 cliente João” ou veja os exemplos abaixo.</div></div>';
-  box.innerHTML=h;
-}
-async function voiceDo(review){
-  const c=VCMD;if(!c)return;closeModal('voiceModal');
-  if(c.type==='pagina'){navigate(c.page);return}
-  if(c.type==='abrir'){navigate('inicio');openTruck(c.truck.id);return}
-  if(c.type==='status'){quickStatus(c.truck.id,c.status);navigate('inicio');return}
-  if(c.type==='orcamento'){openQuote('',c.truck.id);if(c.items.length){qState.items=c.items.map(i=>Object.assign({},i));renderQItems()}return}
-  if(c.type==='cadastrar'){const f=c.f;openNewTruck();$('nPlate').value=f.plate;$('nClient').value=f.client;$('nPhone').value=f.phone;$('nModel').value=f.model;$('nKm').value=f.km;$('nReason').value=f.reason;$('nMech').value=f.mechId;if(!review)await saveNewTruck();return}
-  if(c.type==='despesa'){const f=c.f;openExpense('');$('eDesc').value=f.desc;$('eAmount').value=mstr(f.amount);$('eCategory').value=f.cat;$('eDue').value=f.due;$('eStatus').value=f.paid?'Pago':'Pendente';if(f.fixa&&$('eFixa'))$('eFixa').checked=true;if(!review)saveExpense();return}
-}
-function openVoice(auto){$('vText').value='';$('vResult').innerHTML='';$('vState').textContent='';openModal('voiceModal');if(auto!==false&&(window.SpeechRecognition||window.webkitSpeechRecognition)){if(!recOn)voiceToggle()}}
-let REC=null,recOn=false,vStop=false,vBase='',vLast=0,vTick=null,vDone=0;
-const VSIL=5000;
-function vSessionStart(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  vDone=0;REC=new SR();REC.lang='pt-BR';REC.interimResults=true;REC.continuous=true;REC.maxAlternatives=1;
-  REC.onresult=e=>{let it='';for(let i=e.resultIndex||0;i<e.results.length;i++){const r=e.results[i];if(r.isFinal){if(i>=vDone){vBase=(vBase+' '+r[0].transcript).trim();vDone=i+1}}else it+=r[0].transcript};$('vText').value=(vBase+(it?' '+it:'')).trim();vLast=Date.now()};
-  REC.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){vStop=true;$('vState').textContent='Permita o microfone quando o celular perguntar.'}else if(e.error==='network'){vStop=true;$('vState').textContent='Sem internet para reconhecer a voz.'}};
-  REC.onend=()=>{
-    if(!vStop&&recOn){setTimeout(()=>{if(recOn&&!vStop){try{vSessionStart()}catch(e){vFinish()}}},120);return}
-    vFinish();
-  };
-  REC.onstart=()=>{};
-  REC.start();
-}
-function vFinish(){
-  clearInterval(vTick);vTick=null;recOn=false;vStop=false;$('vMic').textContent='🎤 Falar';
-  const st=$('vState').textContent;if(st.indexOf('Ouvindo')>=0||st.indexOf('Fale')>=0)$('vState').textContent='';
-  if($('vText').value.trim())voiceRun();else if(!$('vState').textContent)$('vState').textContent='Não ouvi nada. Toque em Falar para tentar de novo.';
-}
-function voiceToggle(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){$('vState').textContent='Este navegador não tem voz. Use o Chrome ou escreva no campo (o microfone do teclado também serve).';return}
-  if(recOn){vStop=true;try{REC.stop()}catch(e){vFinish()}return}
-  recOn=true;vStop=false;vBase='';$('vText').value='';$('vResult').innerHTML='';$('vMic').textContent='⏹ Parar';$('vState').textContent='🔴 Ouvindo… fale agora';
-  vLast=Date.now()+4000;let spoke=false;
-  clearInterval(vTick);vTick=setInterval(()=>{
-    if(!recOn)return;const hasText=!!$('vText').value.trim(),idle=Date.now()-vLast;
-    if(hasText){const left=Math.ceil((VSIL-idle)/1000);$('vState').textContent='🔴 Ouvindo… termino em '+Math.max(left,0)+'s se você ficar quieto';if(idle>=VSIL){vStop=true;try{REC.stop()}catch(e){vFinish()}}}
-    else if(idle>=VSIL){vStop=true;try{REC.stop()}catch(e){vFinish()}}
-  },300);
-  try{vSessionStart()}catch(e){vFinish()}
-}
-
 /* ---------- Despesas fixas (repetem todo mês) ---------- */
 const ymNow=()=>todayISO().slice(0,7);
 function nextYM(m){let a=m.split('-').map(Number),y=a[0],mo=a[1]+1;if(mo>12){mo=1;y++}return y+'-'+String(mo).padStart(2,'0')}
@@ -4073,7 +3906,8 @@ function garRow(t,info){
 function garList(q){
   const k=garKey(q),w=msNorm(q).trim(),rows=[];
   for(const t of trucks){
-    const info=garInfo(t);if(info.st!=='on')continue;
+    const info=garInfo(t);
+    if(info.st!=='on'&&!(info.st==='off'&&(k||w)))continue;
     const p=garKey(t.plate);let rank=0;
     if(k||w){
       const hitPlate=!!k&&p.indexOf(k)>=0;
@@ -4083,12 +3917,12 @@ function garList(q){
     }
     rows.push({t:t,info:info,rank:rank,p:p});
   }
-  return rows.sort((a,b)=>a.rank-b.rank||a.info.end-b.info.end||a.p.localeCompare(b.p));
+  return rows.sort((a,b)=>(a.info.st==='on'?0:1)-(b.info.st==='on'?0:1)||a.rank-b.rank||a.p.localeCompare(b.p));
 }
 function garBody(q){
   const rows=garList(q);
-  if(!rows.length)return '<div class="empty">'+(q?'Nenhum veículo na garantia com “'+esc(q)+'” (placa, cliente ou modelo).':'Nenhum veículo na garantia no momento.')+'</div>';
-  return '<div class="list-stack">'+rows.map(r=>garRow(r.t,r.info)).join('')+'</div>';
+  if(!rows.length)return '<div class="empty">'+(q?'Nenhum veículo com “'+esc(q)+'” (placa, cliente ou modelo).':'Nenhum veículo na garantia no momento.')+'</div>';
+  return '<div class="list-stack">'+rows.map(r=>(r.info.st==='off'?'<div style="color:#dc2626;font-weight:700;font-size:13px;margin:4px 0 2px">VENCIDO</div>':'')+garRow(r.t,r.info)).join('')+'</div>';
 }
 function grSearch(v){grQ=v;const r=$('grRes');if(r)r.innerHTML=garBody(v)}
 NEWPAGE.garantia=function(){
@@ -4691,7 +4525,7 @@ NEWPAGE.orbe_tempo=function(){
     (nAl?'<div class="notice"><b>'+nAl+' oficina(s)</b> com o uso abaixo da média. Toque na oficina e chame no WhatsApp.</div>':'')+
     '<div class="panel"><div class="list-stack">'+lista+'</div></div>';
 };
-function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl.style.display=(ws&&ws.id&&isRole('dono','atendimento','mecanico'))?'flex':'none'}catch(e){}
+function render(){
   if(ws&&ws.is_admin){if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin'}else if(/^(admin|orbe_)/.test(currentPage))currentPage='inicio';
   try{applyTheme()}catch(e){}
   updateBillBanner();
@@ -4771,65 +4605,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
   }
   p.innerHTML=h;
   applyLayout();
-  $('vfab').style.display=(prof&&isRole('dono','atendimento','mecanico'))?'flex':'none';
-  if(window.vfabRestore)vfabRestore();
 }
-/* ---------- Microfone flutuante: segurar 1,5 segundo e arrastar para qualquer lugar; toque só abre o painel ---------- */
-(function(){
-  const fab=$('vfab'),KEY='rds_vfab_pos_v1';
-  let vfTm=null;document.addEventListener('scroll',function(){fab.classList.add('vf-scroll');clearTimeout(vfTm);vfTm=setTimeout(function(){fab.classList.remove('vf-scroll')},1200)},true);
-  let pos=null,tm=null,drag=null;
-  try{pos=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){pos=null}
-  function place(x,y){
-    const w=fab.offsetWidth||58,h=fab.offsetHeight||58;
-    x=Math.max(6,Math.min(window.innerWidth-w-6,x));
-    y=Math.max(6,Math.min(window.innerHeight-h-6,y));
-    fab.style.left=x+'px';fab.style.top=y+'px';fab.style.right='auto';fab.style.bottom='auto';
-    return {x:x,y:y};
-  }
-  window.vfabRestore=function(){if(pos&&fab.style.display!=='none')pos=place(pos.x,pos.y)};
-  window.addEventListener('resize',function(){if(pos)pos=place(pos.x,pos.y)});
-  fab.addEventListener('contextmenu',function(e){e.preventDefault()});
-  fab.addEventListener('pointerdown',function(e){
-    if(e.button!==undefined&&e.button!==0)return;
-    const r=fab.getBoundingClientRect();
-    drag={sx:e.clientX,sy:e.clientY,ox:e.clientX-r.left,oy:e.clientY-r.top,on:false,p:null};
-    fab.classList.add('vf-hold');
-    clearTimeout(tm);
-    tm=setTimeout(function(){
-      if(!drag)return;
-      if(window.__btnEditing){drag=null;fab.classList.remove('vf-hold');return}
-      drag.on=true;fab.classList.remove('vf-hold');fab.classList.add('vf-drag');
-      try{navigator.vibrate&&navigator.vibrate(60)}catch(_){}
-    },1000);
-  });
-  window.addEventListener('pointermove',function(e){
-    if(!drag)return;
-    if(!drag.on){
-      if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>10){clearTimeout(tm);drag=null;fab.classList.remove('vf-hold')}
-      return;
-    }
-    if(e.cancelable)e.preventDefault();
-    drag.p=place(e.clientX-drag.ox,e.clientY-drag.oy);
-  },{passive:false});
-  function endDrag(){
-    if(!drag)return;
-    clearTimeout(tm);
-    const was=drag.on,last=drag.p;
-    drag=null;fab.classList.remove('vf-hold','vf-drag');
-    if(was&&last){
-      pos=last;try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}
-      fab.dataset.dragged='1';setTimeout(function(){delete fab.dataset.dragged},300);
-    }
-  }
-  window.addEventListener('pointerup',endDrag);
-  window.addEventListener('pointercancel',endDrag);
-  fab.addEventListener('click',function(e){
-    if(fab.dataset.dragged){e.preventDefault();e.stopImmediatePropagation()}
-  },true);
-  fab.addEventListener('click',function(){openVoice()});
-})();
-
 /* ---------- Nuvem (Supabase): login e sincronização ---------- */
 const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_NdF93TvnmX_b_DFlniwFQg_ZtgP-cJZ';
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
@@ -5580,7 +5356,7 @@ function btnEditCancel(){closeModal('btnEditModal');window.__btnEditing=false}
   document.addEventListener('pointerdown',e=>{
     if(!(ws&&ws.is_admin))return;
     const b=e.target.closest&&e.target.closest('button');
-    if(!b||b.id==='vfab'||b.closest('.modal')||b.closest('#billFloat'))return;
+    if(!b||b.closest('.modal')||b.closest('#billFloat'))return;
     btn=b;sx=e.clientX;sy=e.clientY;fired=false;
     tm=setTimeout(()=>{fired=true;window.__btnEditing=true;clear();btnEditOpen(b)},1500);
   },true);
