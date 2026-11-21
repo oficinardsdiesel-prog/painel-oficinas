@@ -238,6 +238,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Endereço</label><input id="nAddr"></div>
     <div class="field"><label>Motorista / contato na entrada</label><input id="nDriver"></div>
     <div class="field"><label>Quilometragem</label><input id="nKm" inputmode="numeric" placeholder="Km atual"></div>
+    <div class="field"><label>Garantia (dias, vazio = 30)</label><input id="nGar" inputmode="numeric" placeholder="Ex.: 30"></div>
     <div class="field"><label>Status inicial</label><select id="nStatus"></select></div>
     <div class="field full"><label>Problema relatado / serviço solicitado</label><textarea id="nReason" placeholder="Descreva o que o cliente informou..."></textarea></div>
     <div class="field full"><label>Mecânico responsável (opcional)</label><select id="nMech"></select></div>
@@ -351,7 +352,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Data</label><input type="date" id="nfDate"></div>
     <div class="field full" id="nfWarnBox" style="display:none"><div class="notice" id="nfWarn"></div></div>
     <div class="field"><label>Situação</label><select id="nfStatus" onchange="nfStat()"><option>Rascunho</option><option>Enviada ao contador</option><option>Emitida</option></select></div>
-    <div class="field" id="nfNumBox" style="display:none"><label>Número da nota</label><input id="nfNum"></div>
+    <div class="field" id="nfNumBox" style="display:none"><label>Número da nota</label><input id="nfNum" inputmode="numeric"></div>
     <div class="field full"><label>Observações</label><textarea id="nfNotes"></textarea></div>
   </div>
   <div class="modal-actions"><button class="btn danger" id="nfDel" onclick="nfDelete()">Excluir</button><button class="btn plain" onclick="closeModal('nfModal')">Cancelar</button><button class="btn primary" onclick="nfSave()">Salvar</button></div>
@@ -361,12 +362,12 @@ window.addEventListener('error',function(e){
   <div class="form-grid">
     <div class="field full"><label>Razão social</label><input id="fRazao"></div>
     <div class="field"><label>CNPJ</label><input id="fCnpj" inputmode="numeric"></div>
-    <div class="field"><label>Inscrição municipal</label><input id="fIm"></div>
-    <div class="field"><label>Inscrição estadual</label><input id="fIe"></div>
+    <div class="field"><label>Inscrição municipal</label><input id="fIm" inputmode="numeric"></div>
+    <div class="field"><label>Inscrição estadual</label><input id="fIe" inputmode="numeric"></div>
     <div class="field"><label>Regime</label><select id="fReg"><option>Simples Nacional</option><option>MEI</option><option>Lucro presumido</option><option>Lucro real</option></select></div>
     <div class="field full"><label>Município / UF</label><input id="fMun"></div>
-    <div class="field"><label>Código do serviço (ex.: 14.01)</label><input id="fServ"></div>
-    <div class="field"><label>CNAE</label><input id="fCnae"></div>
+    <div class="field"><label>Código do serviço (ex.: 14.01)</label><input id="fServ" inputmode="decimal"></div>
+    <div class="field"><label>CNAE</label><input id="fCnae" inputmode="numeric"></div>
     <div class="field"><label>ISS (%)</label><input id="fIss" inputmode="decimal"></div>
     <div class="field full"><label>Contador (nome)</label><input id="fCtN"></div>
     <div class="field"><label>WhatsApp do contador</label><input id="fCtP" inputmode="tel"></div>
@@ -2863,7 +2864,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte'],['termos','📜','Termos de uso']]}
+ {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -3039,7 +3040,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
   $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
-  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'privacidade\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Política de privacidade</a></div>';
+  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'termos\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Termos de uso e privacidade</a></div>';
 }
 function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function msSearch(v){
@@ -3075,7 +3076,7 @@ function fillTruckSelects(prefix,sel){
 }
 function mechOptions(sel){return '<option value="">Não definido</option>'+mechanics.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===sel?' selected':'')+'>'+esc(m.name)+'</option>').join('')}
 function openNewTruck(){
-  ['nPlate','nClient','nPhone','nModel','nDoc','nEmail','nAddr','nDriver','nKm','nReason','nDamage'].forEach(i=>$(i).value='');
+  ['nPlate','nClient','nPhone','nModel','nDoc','nEmail','nAddr','nDriver','nKm','nGar','nReason','nDamage'].forEach(i=>$(i).value='');
   fillTruckSelects('n');$('nMech').innerHTML=mechOptions('');fillCompanySel('n','');
   ph={truckId:uid(),live:false,list:[],box:'phNew'};renderPhotos();
   $('newTruckModal').scrollTop=0;openModal('newTruckModal');
@@ -3084,7 +3085,8 @@ async function saveNewTruck(){
   const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim()||companyName('n');
   if(!plate||!client){alert('Informe a placa e o nome do cliente ou escolha a empresa.');return}
   if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
-  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString()};
+  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString(),warrantyDays:parseInt($('nGar').value,10)||GAR_PADRAO};
+  setDeliveryDate(t);
   try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
   trucks.unshift(t);logEvent(plate,'Entrada cadastrada · '+t.status+(ph.list.length?' · '+ph.list.length+' foto(s)':''));persist();
   closeModal('newTruckModal');ph={truckId:'',live:false,list:[],box:''};navigate('inicio');
@@ -3117,6 +3119,7 @@ function saveTruckEdit(keep){
   const ns=$('dStatus').value,nm=$('dMech').value;
   if(ns!==t.status){logEvent(t.plate,'Status alterado: '+t.status+' → '+ns);t.status=ns;setDeliveryDate(t)}
   if(nm!==t.mechanicId){t.mechanicId=nm;logEvent(t.plate,'Mecânico responsável: '+mechanicName(nm))}
+  if(t.status==='Entregue'&&!t.deliveredAt)t.deliveredAt=todayISO();
   t.km=$('dKm').value.trim();t.warrantyDays=parseInt($('dGar').value,10)||null;t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
   persist();if(!keep)closeModal('truckModal');render();return true;
 }
@@ -3602,7 +3605,7 @@ document.addEventListener('click',function(e){
 
 
 /* ---------- Assistente de voz (grátis, sem IA externa) ---------- */
-const VKEYS={placa:/\bplaca\b/,cliente:/\b(cliente|proprietario|dono do caminhao)\b/,tel:/\b(telefone|celular|whatsapp|zap|numero)\b/,modelo:/\b(modelo|marca)\b/,prob:/\b(problema|defeito|reclamacao|queixa|motivo|relato)\b/,mec:/\bmecanico\b/,km:/\b(quilometragem|quilometros|km)\b/};
+const VKEYS={veic:/\b(carro|caminhao|veiculo|carreta|cavalo|bongo)\b/,placa:/\bplaca\b/,cliente:/\b(cliente|proprietario|dono do caminhao)\b/,tel:/\b(telefone|celular|whatsapp|zap|numero)\b/,modelo:/\b(modelo|marca)\b/,prob:/\b(problema|defeito|reclamacao|queixa|motivo|relato)\b/,mec:/\bmecanico\b/,km:/\b(quilometragem|quilometros|km)\b/};
 const NUMW={zero:'0',um:'1',uma:'1',dois:'2',duas:'2',tres:'3',quatro:'4',cinco:'5',seis:'6',meia:'6',sete:'7',oito:'8',nove:'9'};
 const LETW={be:'B',ce:'C',de:'D',efe:'F',ge:'G',aga:'H',jota:'J',ka:'K',ca:'K',ele:'L',eme:'M',ene:'N',pe:'P',que:'Q',erre:'R',esse:'S',te:'T',ve:'V',xis:'X',ze:'Z',ipsilon:'Y',dablio:'W'};
 function vnorm(s){return String(s||'').normalize('NFC').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
@@ -3629,10 +3632,11 @@ const VPAGES=[['inicio','inicio'],['cadastro','cadastro'],['historico','historic
 function voiceParse(text){
   text=String(text||'').normalize('NFC').trim();const n=vnorm(text);if(!text)return {type:'vazio'};
   const dono=isRole('dono'),aten=isRole('dono','atendimento');
-  const verbCad=/\b(cadastr\w*|registr\w*|adicion\w*|inclu\w*|nova entrada|dar entrada|entrada)\b/.test(n),nounTr=/\b(caminhao|veiculo|carreta|cavalo|truck|carro|bongo)\b/.test(n);
+  const verbCad=/\b(cadastr\w*|registr\w*|adicion\w*|inclu\w*|nova entrada|dar entrada|entrada|chegou|trouxe|entrou)\b/.test(n),nounTr=/\b(caminhao|veiculo|carreta|cavalo|truck|carro|bongo)\b/.test(n);
   if(/\b(ajuda|o que (voce )?(faz|posso)|comandos)\b/.test(n))return {type:'ajuda'};
   // cadastrar veículo
-  if((verbCad&&(nounTr||VKEYS.placa.test(n)))&&!/\b(despesa|conta|pagamento|orcamento)\b/.test(n)){
+  const plateG=vplate(vgrab(text,n,'placa')),knownT=!!plateG&&trucks.some(x=>garKey(x.plate)===plateG),implicitCad=!verbCad&&!!plateG&&!knownT&&(nounTr||VKEYS.cliente.test(n)||VKEYS.modelo.test(n)||VKEYS.prob.test(n))&&!/\b(abr\w*|mostr\w*|busc\w*|procur\w*|orcament\w*|despesa|status|mud\w*|troc\w*|entreg\w*|marc\w*)\b/.test(n);
+  if(((verbCad&&(nounTr||VKEYS.placa.test(n)))||implicitCad)&&!/\b(despesa|conta|pagamento|orcamento)\b/.test(n)){
     if(!aten)return {type:'negado'};
     const f={};f.plate=vplate(vgrab(text,n,'placa'));f.client=vtitle(vgrab(text,n,'cliente'));f.phone=vphone(vgrab(text,n,'tel'));
     let md=vgrab(text,n,'modelo');if(!md){const mm=/\b(?:caminhao|veiculo|carreta|cavalo|carro|bongo)\s+(?=\S)/.exec(n);if(mm){const st=mm.index+mm[0].length;let en=text.length;Object.keys(VKEYS).forEach(k=>{const r=new RegExp(VKEYS[k].source,'g');let x;while((x=r.exec(n))){if(x.index>=st&&x.index<en){en=x.index;break}}});const sg=text.slice(st,en).trim();if(sg&&sg.length<40)md=sg}}
@@ -3712,15 +3716,15 @@ async function voiceDo(review){
   if(c.type==='despesa'){const f=c.f;openExpense('');$('eDesc').value=f.desc;$('eAmount').value=mstr(f.amount);$('eCategory').value=f.cat;$('eDue').value=f.due;$('eStatus').value=f.paid?'Pago':'Pendente';if(f.fixa&&$('eFixa'))$('eFixa').checked=true;if(!review)saveExpense();return}
 }
 function openVoice(auto){$('vText').value='';$('vResult').innerHTML='';$('vState').textContent='';openModal('voiceModal');if(auto!==false&&(window.SpeechRecognition||window.webkitSpeechRecognition)){if(!recOn)voiceToggle()}}
-let REC=null,recOn=false,vStop=false,vBase='',vLast=0,vTick=null;
+let REC=null,recOn=false,vStop=false,vBase='',vLast=0,vTick=null,vDone=0;
 const VSIL=5000;
 function vSessionStart(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  REC=new SR();REC.lang='pt-BR';REC.interimResults=true;REC.continuous=true;REC.maxAlternatives=1;
-  REC.onresult=e=>{let t='';for(let i=0;i<e.results.length;i++)t+=e.results[i][0].transcript+' ';$('vText').value=(vBase+' '+t).trim();vLast=Date.now()};
+  vDone=0;REC=new SR();REC.lang='pt-BR';REC.interimResults=true;REC.continuous=true;REC.maxAlternatives=1;
+  REC.onresult=e=>{let it='';for(let i=e.resultIndex||0;i<e.results.length;i++){const r=e.results[i];if(r.isFinal){if(i>=vDone){vBase=(vBase+' '+r[0].transcript).trim();vDone=i+1}}else it+=r[0].transcript};$('vText').value=(vBase+(it?' '+it:'')).trim();vLast=Date.now()};
   REC.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){vStop=true;$('vState').textContent='Permita o microfone quando o celular perguntar.'}else if(e.error==='network'){vStop=true;$('vState').textContent='Sem internet para reconhecer a voz.'}};
   REC.onend=()=>{
-    if(!vStop&&recOn){vBase=$('vText').value.trim();setTimeout(()=>{if(recOn&&!vStop){try{vSessionStart()}catch(e){vFinish()}}},120);return}
+    if(!vStop&&recOn){setTimeout(()=>{if(recOn&&!vStop){try{vSessionStart()}catch(e){vFinish()}}},120);return}
     vFinish();
   };
   REC.onstart=()=>{};
@@ -4047,13 +4051,14 @@ function evLabel(ev){const t=trucks.find(x=>x.plate===ev.plate);return t&&t.clie
 function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
 function garFmt(d){return d.toLocaleDateString('pt-BR')}
+const GAR_PADRAO=30;
 function garInfo(t){
-  const s=garIso(t.deliveredAt),days=Number(t.warrantyDays)||0;
+  const s=garIso(t.deliveredAt);
   if(!s)return {st:'nodate'};
-  if(days<=0)return {st:'nodays'};
+  const days=Number(t.warrantyDays)||GAR_PADRAO;
   const end=new Date(s.getFullYear(),s.getMonth(),s.getDate()+days-1);
   const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  if(today<=end)return {st:'on',end:end,left:Math.round((end-today)/86400000)+1};
+  if(today<=end)return {st:'on',end:end,left:Math.round((end-today)/86400000)+1,days:days};
   return {st:'off',end:end};
 }
 function garRow(t,info){
@@ -4065,19 +4070,30 @@ function garRow(t,info){
   else {pill='<span class="pill s1">Sem prazo</span>';txt='Informe a garantia em dias na ficha do veículo'}
   return '<div class="list-row click" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="grow"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(veh||'Veículo sem placa')+'</small><small>'+txt+'</small></div><div>'+pill+'</div></div>';
 }
-function garBody(q){
-  const k=garKey(q);
-  if(k){
-    const hits=trucks.filter(t=>garKey(t.plate).indexOf(k)>=0&&garInfo(t).st==='on').map(t=>{const p=garKey(t.plate);return {t:t,info:garInfo(t),rank:p.indexOf(k)===0?0:1,plate:p}}).sort((a,b)=>a.rank-b.rank||a.plate.localeCompare(b.plate));
-    return hits.length?'<div class="list-stack">'+hits.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo na garantia com a placa “'+esc(q)+'”.</div>';
+function garList(q){
+  const k=garKey(q),w=msNorm(q).trim(),rows=[];
+  for(const t of trucks){
+    const info=garInfo(t);if(info.st!=='on')continue;
+    const p=garKey(t.plate);let rank=0;
+    if(k||w){
+      const hitPlate=!!k&&p.indexOf(k)>=0;
+      const hitTxt=!!w&&(msNorm(t.client).indexOf(w)>=0||msNorm(t.model).indexOf(w)>=0);
+      if(!hitPlate&&!hitTxt)continue;
+      rank=(hitPlate&&p.indexOf(k)===0)?0:1;
+    }
+    rows.push({t:t,info:info,rank:rank,p:p});
   }
-  const act=trucks.map(t=>({t:t,info:garInfo(t)})).filter(h=>h.info.st==='on').sort((a,b)=>a.info.end-b.info.end);
-  return act.length?'<div class="list-stack">'+act.map(h=>garRow(h.t,h.info)).join('')+'</div>':'<div class="empty">Nenhum veículo na garantia no momento.</div>';
+  return rows.sort((a,b)=>a.rank-b.rank||a.info.end-b.info.end||a.p.localeCompare(b.p));
+}
+function garBody(q){
+  const rows=garList(q);
+  if(!rows.length)return '<div class="empty">'+(q?'Nenhum veículo na garantia com “'+esc(q)+'” (placa, cliente ou modelo).':'Nenhum veículo na garantia no momento.')+'</div>';
+  return '<div class="list-stack">'+rows.map(r=>garRow(r.t,r.info)).join('')+'</div>';
 }
 function grSearch(v){grQ=v;const r=$('grRes');if(r)r.innerHTML=garBody(v)}
 NEWPAGE.garantia=function(){
   return pageHead('Garantia','Veículos dentro do prazo de garantia. A contagem começa na data de retirada: o dia da retirada é o dia 1.','')+
-   '<div class="msearch" style="margin:0 0 12px"><span class="mslupa" aria-hidden="true">🔍</span><input id="grQ" type="search" placeholder="Pesquisar placa" autocomplete="off" oninput="grSearch(this.value)" aria-label="Pesquisar placa" value="'+esc(grQ)+'"></div>'+
+   '<div class="msearch" style="margin:0 0 12px"><span class="mslupa" aria-hidden="true">🔍</span><input id="grQ" type="search" placeholder="Pesquisar placa, cliente ou modelo" autocomplete="off" oninput="grSearch(this.value)" aria-label="Pesquisar garantia" value="'+esc(grQ)+'"></div>'+
    '<div id="grRes">'+garBody(grQ)+'</div>';
 };
 NEWPAGE.metas=function(){
@@ -4737,7 +4753,7 @@ function render(){try{const fabEl=document.getElementById('vfab');if(fabEl)fabEl
     (ed?'<div class="panel section-gap"><h2>Identidade da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Logo, banner, dados e aparência, passo a passo.</p><button class="btn primary" onclick="wzOpen()">✨ Abrir assistente de configuração</button></div>':'')+
     '<div class="panel section-gap"><h2>Dados da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Aparecem no topo do orçamento impresso.'+(ed?'':' Só o dono pode alterar.')+'</p><div class="fgrid">'+
     '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div>'+(ed?ownWAHelp('sPhone'):'')+'<div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
-    '<div class="field"><label>CNPJ</label><input id="sCnpj" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
+    '<div class="field"><label>CNPJ</label><input id="sCnpj" inputmode="numeric" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
     '<div class="field" style="margin-top:12px"><label>Texto no rodapé do orçamento (ex.: validade, garantia)</label><textarea id="sFoot" '+(ed?'':'disabled')+'>'+esc(sh.foot||'')+'</textarea></div>'+(ed?'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="saveShop()">Salvar dados da oficina</button></div>':'')+'</div>'+
     (ed?'<div class="panel section-gap"><h2>Mensagens prontas do WhatsApp</h2><p class="subtle" style="margin:-6px 0 12px;font-size:12px">Use <b>{cliente}</b> (primeiro nome), <b>{placa}</b>, <b>{modelo}</b>, <b>{valor}</b>, <b>{oficina}</b>; na cobrança também <b>{vencimento}</b>, <b>{descricao}</b> e <b>{pix}</b>; na agenda <b>{data}</b>, <b>{hora}</b>, <b>{servico}</b> e <b>{endereco}</b>. Elas aparecem no botão verde de WhatsApp do veículo.</p>'+ALLT().map(t=>'<div class="field" style="margin-bottom:10px"><label>'+t[1]+'</label><textarea id="wm_'+t[0]+'" rows="3">'+esc(waTpl(t[0]))+'</textarea></div>').join('')+'<div class="actions"><button class="btn primary" onclick="saveMsgs()">Salvar mensagens</button><button class="btn soft" onclick="resetMsgs()">Voltar ao padrão</button></div></div>':'')+
     '<div class="panel section-gap"><h2>Sistema</h2><div class="list-stack"><div class="list-row"><div><b>Sincronizar agora</b><small>Envia e busca os dados na nuvem</small></div><button class="small-btn" onclick="syncAll()">☁ Sincronizar</button></div><div class="list-row"><div><b>Versão</b><small>ORBE · gestão de oficinas</small></div><span class="money">V3</span></div></div></div>';
