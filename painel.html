@@ -4608,6 +4608,13 @@ function render(){
   p.innerHTML=h;
   applyLayout();
 }
+/* Validade do cartão: teclado numérico (sem "/") e a barra entra sozinha: 1125 -> 11/25 */
+document.addEventListener('input',function(e){
+  const el=e.target;
+  if(!el||el.id!=='cExp')return;
+  const d=el.value.replace(/\D/g,'').slice(0,6);
+  el.value=d.length>2?d.slice(0,2)+'/'+d.slice(2):d;
+});
 /* ---------- Nuvem (Supabase): login e sincronização ---------- */
 const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_NdF93TvnmX_b_DFlniwFQg_ZtgP-cJZ';
 const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
@@ -5282,10 +5289,24 @@ NEWPAGE.assinatura=function(){
   const sub=myBill.sub,auto=!!(sub&&sub.status==='ativa');
   const planCards=(myPlans||[]).map(p=>'<label class="panel" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer;margin:0 0 8px;padding:12px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1"><b style="text-transform:capitalize">'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado ainda.</div>';
   const status=auto?'<div class="notice" style="margin-bottom:12px">✅ <b>Débito automático ativo</b> · cartão final '+esc(sub.card_last4||'????')+' · '+money(sub.amount)+' por mês. Para trocar o cartão ou o plano, preencha o formulário abaixo.</div>':'<div class="notice" style="margin-bottom:12px">Ainda não há cartão cadastrado. Escolha o plano e preencha o cartão.</div>';
+  const linkBlock='<div class="panel section-gap"><h2>Pagar pelo link seguro</h2><p class="subtle" style="font-size:12px">Você paga por Pix ou cartão numa página do Asaas. Informe seu CPF/CNPJ e abriremos a página de pagamento.</p><div class="field"><label>CPF ou CNPJ do titular</label><input id="lDoc" inputmode="numeric"></div><div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="asLink" onclick="assCheckoutAsaas()">Abrir página de pagamento</button></div></div>';
   const form='<div class="panel section-gap"><h2>'+(auto?'Trocar cartão':'Cadastrar cartão')+'</h2><p class="subtle" style="font-size:12px">Os dados são enviados direto ao Asaas. O ORBE não guarda o número do cartão nem o código de segurança.</p>'+cardFieldsHtml(auto)+'</div>';
   return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+(auto?'':pixBlock())+
-    '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+form;
+    '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+(auto?'':linkBlock)+form;
 };
+async function assCheckoutAsaas(){
+  if(assBusy)return;
+  const plan=(document.querySelector('input[name=assPlan]:checked')||{}).value||myBill.plan;
+  const doc=(($('lDoc')||{}).value||'').replace(/\D/g,'');
+  if(doc.length!==11&&doc.length!==14){alert('Informe um CPF ou CNPJ válido.');return}
+  assBusy=true;
+  try{
+    const r=await sb('/functions/v1/asaas-checkout',{method:'POST',body:{plan:plan,cpf_cnpj:doc}});
+    if(r.ok&&r.json&&r.json.invoice_url){window.open(r.json.invoice_url,'_blank');alert('Página de pagamento aberta em nova aba. Assim que o pagamento for confirmado, sua assinatura fica ativa.')}
+    else alert((r.json&&r.json.error)||'Não consegui gerar o link de pagamento. Tente de novo.');
+  }catch(e){alert('Sem conexão. Tente de novo.')}
+  assBusy=false;
+}
 async function assSubmitAsaas(){
   if(assBusy)return;
   const v=id=>(($(id)||{}).value||'').trim();
