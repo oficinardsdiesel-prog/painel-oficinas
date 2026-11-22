@@ -4660,7 +4660,7 @@ async function doSignIn(email,pw){
 let authMode='login',lastEmail='';
 function showAuth(msg,ok,wait){
   const a=$('auth');a.style.display='flex';
-  if(wait){a.innerHTML='<div class="box"><div class="brandl">ORBE</div><h1>'+esc(wait.t)+'</h1><p class="subtle">'+esc(wait.d)+'</p>'+(wait.btn?'<button class="btn primary" style="width:100%" onclick="bootAfterLogin()">Verificar de novo</button>':'')+'<button class="lnk" onclick="logout()">Sair</button></div>';return}
+  if(wait){a.innerHTML='<div class="box"><div class="brandl">ORBE</div><h1>'+esc(wait.t)+'</h1><p class="subtle">'+esc(wait.d)+'</p>'+(wait.pay?'<button class="btn primary" style="width:100%;margin-bottom:8px" onclick="pagarBloqueada()">Pagar agora</button>':'')+(wait.btn?'<button class="btn primary" style="width:100%" onclick="bootAfterLogin()">Verificar de novo</button>':'')+'<button class="lnk" onclick="logout()">Sair</button></div>';return}
   const su=authMode==='signup';
   a.innerHTML='<div class="box" onkeydown="if(event.key===\'Enter\')authSubmit()"><div class="brandl">ORBE</div><h1>'+(su?'Criar conta':'Entrar')+'</h1><p class="subtle" style="margin:0 0 12px">'+(su?'Use o e-mail e crie uma senha. Depois você cria a sua oficina ou entra em uma já existente.':'Digite seu e-mail e senha.')+'</p>'+
    '<div class="field"><label>E-mail</label><input id="aEmail" type="email" autocomplete="username" inputmode="email" value="'+esc(lastEmail)+'"></div>'+
@@ -4859,7 +4859,7 @@ let admList,admBusy=false;
 function updateBell(){const b=$('bellN');if(!b)return;const n=(admList?admSummary(admList).late.length:0)+tempoAlerts().length;b.textContent=n;b.style.display=n?'block':'none'}
 async function autoBlockOverdue(){
   if(!ws||!ws.is_admin||!admList)return;
-  const late=admSummary(admList).late.filter(r=>r.t.status==='active'&&-r.i.left>=5);
+  const late=admSummary(admList).late.filter(r=>r.t.status==='active'&&-r.i.left>=10);
   for(const r of late){
     try{const x=await sb('/rest/v1/rpc/admin_set_tenant',{method:'POST',body:{p_id:r.t.id,p_status:'blocked',p_plan:'',p_trial_days:null}});if(x.ok)r.t.status='blocked'}catch(e){}
   }
@@ -5294,6 +5294,16 @@ NEWPAGE.assinatura=function(){
   return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+(auto?'':pixBlock())+
     '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+(auto?'':linkBlock)+form;
 };
+async function pagarBloqueada(){
+  if(assBusy)return;
+  assBusy=true;
+  try{
+    const r=await sb('/functions/v1/asaas-checkout',{method:'POST',body:{}});
+    if(r.ok&&r.json&&r.json.invoice_url){window.open(r.json.invoice_url,'_blank');alert('Página de pagamento aberta em nova aba. Assim que o pagamento for confirmado, o acesso volta.')}
+    else alert((r.json&&r.json.error)||'Não consegui gerar o link. Tente de novo.')
+  }catch(e){alert('Sem conexão. Tente de novo.')}
+  assBusy=false;
+}
 async function assCheckoutAsaas(){
   if(assBusy)return;
   const plan=(document.querySelector('input[name=assPlan]:checked')||{}).value||myBill.plan;
@@ -5456,7 +5466,7 @@ async function bootAfterLogin(){
   try{await loadWs()}catch(e){ws=null}
   if(ws&&!ws.id){showOnboard();return}
   applyBrand();
-  if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Fale com o responsável pelo sistema para ativar o plano e voltar a usar.',btn:true});return}
+  if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Pague a mensalidade em atraso para voltar a usar.',btn:true,pay:ws.status==='blocked'});return}
   if(!ROLE_READ[pr.role]){const inat=pr.role==='inativo';showAuth('',false,{t:inat?'Acesso bloqueado':'Aguardando liberação',d:inat?'Fale com o dono da oficina.':'Seu cadastro foi criado. Peça ao dono para liberar o seu acesso e depois toque em “Verificar de novo”.',btn:!inat});return}
   try{await syncAll(true)}catch(e){}
   a.style.display='none';a.innerHTML='';
