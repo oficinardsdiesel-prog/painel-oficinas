@@ -4813,20 +4813,7 @@ function wzCardHtml(){
   if(myBill===undefined)return '<div class="empty">Carregando planos…</div>';
   if(myBill.lifetime)return '<div class="empty">Sua oficina tem acesso vitalício. Nada a cadastrar aqui.</div>';
   const planos=(myPlans||[]).map(p=>'<label class="panel" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer;margin:0 0 6px;padding:10px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1;text-transform:capitalize"><b>'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado.</div>';
-  return '<div style="max-height:44vh;overflow:auto;padding-right:2px">'+planos+'<div style="margin-top:10px">'+cardFieldsHtml(false)+'</div></div>';
-}
-function cardFieldsHtml(auto){
-  return '<div class="fgrid">'+
-    '<div class="field full"><label>Número do cartão</label><input id="cNum" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></div>'+
-    '<div class="field"><label>Validade (mm/aaaa)</label><input id="cExp" inputmode="numeric" placeholder="mm/aaaa"></div>'+
-    '<div class="field"><label>Código de segurança</label><input id="cCvv" inputmode="numeric" maxlength="4" autocomplete="cc-csc"></div>'+
-    '<div class="field full"><label>Nome como está no cartão</label><input id="cName" autocomplete="cc-name"></div>'+
-    '<div class="field"><label>CPF ou CNPJ do titular</label><input id="cDoc" inputmode="numeric"></div>'+
-    '<div class="field"><label>E-mail do titular</label><input id="cMail" type="email" autocomplete="email"></div>'+
-    '<div class="field"><label>Telefone com DDD</label><input id="cPhone" inputmode="tel" autocomplete="tel"></div>'+
-    '<div class="field"><label>CEP</label><input id="cCep" inputmode="numeric" autocomplete="postal-code"></div>'+
-    '<div class="field"><label>Número do endereço</label><input id="cAddrNo" inputmode="numeric"></div>'+
-    '</div><div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="asSubmit" onclick="assSubmitAsaas()">'+(auto?'Trocar cartão':'Cadastrar cartão')+'</button></div>';
+  return '<div style="max-height:44vh;overflow:auto;padding-right:2px">'+planos+'<p class="subtle" style="font-size:12px;margin-top:10px">Depois de escolher o plano, pague pela página segura na tela Plano e cartão.</p></div>';
 }
 function wzCardMount(){
   if(!wz||wz.step!==5)return;
@@ -5288,11 +5275,10 @@ NEWPAGE.assinatura=function(){
   if(myBill.lifetime)return pageHead('Plano e cartão','Sua oficina tem acesso vitalício.','')+'<div class="panel section-gap"><p>Não há mensalidade nem cartão para cadastrar.</p></div>';
   const sub=myBill.sub,auto=!!(sub&&sub.status==='ativa');
   const planCards=(myPlans||[]).map(p=>'<label class="panel" style="display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer;margin:0 0 8px;padding:12px"><input type="radio" name="assPlan" value="'+esc(p.plan)+'"'+(p.plan===myBill.plan?' checked':'')+'><div style="flex:1"><b style="text-transform:capitalize">'+esc(p.plan)+'</b></div><b>'+money(p.price)+'/mês</b></label>').join('')||'<div class="empty">Nenhum plano cadastrado ainda.</div>';
-  const status=auto?'<div class="notice" style="margin-bottom:12px">✅ <b>Débito automático ativo</b> · cartão final '+esc(sub.card_last4||'????')+' · '+money(sub.amount)+' por mês. Para trocar o cartão ou o plano, preencha o formulário abaixo.</div>':'<div class="notice" style="margin-bottom:12px">Ainda não há cartão cadastrado. Escolha o plano e preencha o cartão.</div>';
+  const status=auto?'<div class="notice" style="margin-bottom:12px">✅ <b>Assinatura ativa</b> · '+money(sub.amount)+' por mês. Para pagar uma nova mensalidade, use o link seguro abaixo.</div>':'<div class="notice" style="margin-bottom:12px">Escolha o plano e pague pelo link seguro abaixo.</div>';
   const linkBlock='<div class="panel section-gap"><h2>Pagar pelo link seguro</h2><p class="subtle" style="font-size:12px">Você paga por Pix ou cartão numa página do Asaas. Informe seu CPF/CNPJ e abriremos a página de pagamento.</p><div class="field"><label>CPF ou CNPJ do titular</label><input id="lDoc" inputmode="numeric"></div><div class="actions" style="margin-top:12px"><button type="button" class="btn primary" id="asLink" onclick="assCheckoutAsaas()">Abrir página de pagamento</button></div></div>';
-  const form='<div class="panel section-gap"><h2>'+(auto?'Trocar cartão':'Cadastrar cartão')+'</h2><p class="subtle" style="font-size:12px">Os dados são enviados direto ao Asaas. O ORBE não guarda o número do cartão nem o código de segurança.</p>'+cardFieldsHtml(auto)+'</div>';
   return pageHead('Plano e cartão','Escolha seu plano e cadastre o cartão para o débito automático.','')+status+(auto?'':pixBlock())+
-    '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+(auto?'':linkBlock)+form;
+    '<div class="panel section-gap"><div class="panel-head"><h2>Plano</h2></div>'+planCards+'</div>'+(auto?'':linkBlock);
 };
 async function pagarBloqueada(){
   if(assBusy)return;
@@ -5316,35 +5302,6 @@ async function assCheckoutAsaas(){
     else alert((r.json&&r.json.error)||'Não consegui gerar o link de pagamento. Tente de novo.');
   }catch(e){alert('Sem conexão. Tente de novo.')}
   assBusy=false;
-}
-async function assSubmitAsaas(){
-  if(assBusy)return;
-  const v=id=>(($(id)||{}).value||'').trim();
-  const plan=(document.querySelector('input[name=assPlan]:checked')||{}).value||myBill.plan;
-  const num=v('cNum').replace(/\D/g,''), exp=v('cExp').replace(/\D/g,''), cvv=v('cCvv').replace(/\D/g,''), name=v('cName');
-  const doc=v('cDoc').replace(/\D/g,''), mail=v('cMail'), phone=v('cPhone').replace(/\D/g,''), cep=v('cCep').replace(/\D/g,''), addrNo=v('cAddrNo');
-  if(num.length<13||num.length>19){alert('Confira o número do cartão.');return}
-  if(exp.length!==6&&exp.length!==4){alert('Informe a validade como mm/aaaa.');return}
-  if(cvv.length<3){alert('Informe o código de segurança.');return}
-  if(name.length<3){alert('Informe o nome como está no cartão.');return}
-  if(doc.length!==11&&doc.length!==14){alert('Informe um CPF ou CNPJ válido.');return}
-  if(!mail.includes('@')){alert('Informe o e-mail do titular.');return}
-  if(phone.length<10){alert('Informe o telefone com DDD.');return}
-  if(cep.length!==8){alert('Informe o CEP.');return}
-  if(!addrNo){alert('Informe o número do endereço.');return}
-  const month=exp.slice(0,2), year=exp.length===6?exp.slice(2):'20'+exp.slice(2);
-  assBusy=true;
-  try{
-    const r=await sb('/functions/v1/asaas-subscribe',{method:'POST',body:{plan:plan,cpf_cnpj:doc,
-      card:{number:num,expiryMonth:month,expiryYear:year,ccv:cvv,holderName:name},
-      holder:{email:mail,cpfCnpj:doc,postalCode:cep,addressNumber:addrNo,phone:phone}}});
-    if(r.ok&&r.json&&r.json.status){alert('Cartão cadastrado'+(r.json.card_last4?' (final '+r.json.card_last4+')':'')+'! O débito automático começa no vencimento.')}
-    else alert((r.json&&r.json.error)||'Não consegui cadastrar o cartão. Confira os dados e tente de novo.');
-  }catch(e){alert('Sem conexão. Tente de novo.')}
-  assBusy=false;
-  myBill=undefined;
-  if(wz){if(myBill===undefined)loadMyBill().then(()=>{if(wz)wzRender()});else wzRender()}
-  else{loadMyBill();render()}
 }
 function subLabel(id){const b=billOf(id);if(b.lifetime)return 'não precisa (vitalícia)';if(b.sub_status==='ativa')return 'ativo · cartão final '+esc(b.card_last4||'????');if(b.sub_status)return esc(b.sub_status);return 'sem cartão'}
 /* ---------- Edição de botões: segurar 1,5 s (somente administrador) ---------- */
