@@ -4660,7 +4660,7 @@ async function doSignIn(email,pw){
 let authMode='login',lastEmail='';
 function showAuth(msg,ok,wait){
   const a=$('auth');a.style.display='flex';
-  if(wait){a.innerHTML='<div class="box"><div class="brandl">ORBE</div><h1>'+esc(wait.t)+'</h1><p class="subtle">'+esc(wait.d)+'</p>'+(wait.pay?'<button class="btn primary" style="width:100%;margin-bottom:8px;background:#16a34a;color:#fff;border-color:#16a34a;font-weight:800" onclick="pagarBloqueada()">Pagar agora</button>':'')+(wait.btn?'<button class="btn primary" style="width:100%" onclick="bootAfterLogin()">Verificar de novo</button>':'')+'<button class="lnk" onclick="logout()">Sair</button></div>';return}
+  if(wait){a.innerHTML='<div class="box"><div class="brandl">ORBE</div><h1>'+esc(wait.t)+'</h1><p class="subtle">'+esc(wait.d)+'</p>'+(wait.pay?'<button class="btn primary" style="width:100%;margin-bottom:8px;background:#16a34a!important;color:#fff!important;border-color:#16a34a!important;font-weight:800" onclick="pagarBloqueada()">Pagar agora</button>':'')+(wait.btn?'<button class="btn primary" style="width:100%" onclick="bootAfterLogin()">Verificar de novo</button>':'')+'<button class="lnk" onclick="logout()">Sair</button></div>';return}
   const su=authMode==='signup';
   a.innerHTML='<div class="box" onkeydown="if(event.key===\'Enter\')authSubmit()"><div class="brandl">ORBE</div><h1>'+(su?'Criar conta':'Entrar')+'</h1><p class="subtle" style="margin:0 0 12px">'+(su?'Use o e-mail e crie uma senha. Depois você cria a sua oficina ou entra em uma já existente.':'Digite seu e-mail e senha.')+'</p>'+
    '<div class="field"><label>E-mail</label><input id="aEmail" type="email" autocomplete="username" inputmode="email" value="'+esc(lastEmail)+'"></div>'+
