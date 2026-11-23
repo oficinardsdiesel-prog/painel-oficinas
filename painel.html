@@ -4520,7 +4520,7 @@ NEWPAGE.orbe_tempo=function(){
         '<div class="actions" style="margin-top:12px">'+(waLink(r.phone||'')?'<button class="btn wa" onclick="tempoWA(\''+r.id+'\')">Chamar no WhatsApp</button>':'<span class="subtle">Sem telefone cadastrado</span>')+'</div></div>';
     }
     return '<div class="list-row click" onclick="tempoOpen(\''+r.id+'\')" style="cursor:pointer;flex-direction:column;align-items:stretch">'+
-      '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div class="grow"><b>'+esc(r.name||'Oficina')+'</b><small>'+esc(r.plan||'')+' · média anterior '+tempoFmt(r.baseline)+(pct!=null?' · '+pct+'% da média':'')+'</small></div>'+
+      '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div class="grow"><b>'+esc(r.name||'Oficina')+'</b><small>'+esc(r.plan||'')+(r.status==='blocked'?' · bloqueada':'')+' · média anterior '+tempoFmt(r.baseline)+(pct!=null?' · '+pct+'% da média':'')+'</small></div>'+
       '<div style="text-align:right"><b>'+tempoFmt(r.minutes)+'</b>'+(al?'<div><span class="pill red">Uso caiu</span></div>':'')+'</div></div>'+det+'</div>';}).join('')||'<div class="empty">Nenhuma oficina ativa ainda.</div>';
   const nAl=tempoAlerts().length;
   return pageHead('Tempo de tela','Soma de todos os usuários de cada oficina. Alerta quando o uso cai abaixo de '+Math.round(TEMPO_ALERT_PCT*100)+'% da média.','')+filtro+
