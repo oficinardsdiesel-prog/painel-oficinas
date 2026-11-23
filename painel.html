@@ -2834,7 +2834,7 @@ const SLOTS=[
  {k:'outros',t:'Outras avarias / peças quebradas'}
 ];
 const ADMIN_MENU=[
- {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas parceiras'],['orbe_tempo','⏱','Tempo de tela'],['orbe_bi','📊','BI e planejamento'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
+ {g:'Gestão',items:[['admin','★','Painel'],['orbe_oficinas','▤','Oficinas parceiras'],['orbe_tempo','⏱','Tempo de tela'],['orbe_bi','📊','Meu negócio'],['orbe_pagamentos','💳','Pagamentos'],['orbe_planos','🏷','Planos e valores'],['orbe_pix','🔑','Chave Pix']]},
  {g:'Conta',items:[['orbe_perfil','👤','Perfil'],['orbe_config','⚙️','Configurações']]}
 ];
 const CLIENT_MENU=[
@@ -4862,7 +4862,7 @@ let admF='todas',admBill,admPlans=[],admPix={},admBusy2=false,admCur='',myBill,m
 let admSel=new Set(),admSelMode=false;
 const ADM_PLANS=['basico','intermediario','profissional','anual'];
 const ADM_PLAN_LABEL={basico:'Básico',intermediario:'Intermediário',profissional:'Profissional',anual:'Anual'};
-const ADM_PLAN_DEFAULT={basico:197.90,intermediario:247.00,profissional:297.90,anual:270};
+const ADM_PLAN_DEFAULT={basico:59.90,intermediario:79.90,profissional:99.90,anual:270};
 function planPrice(p){const r=(admPlans||[]).find(x=>x.plan===p);const v=r&&r.price!=null?Number(r.price):NaN;return isNaN(v)?ADM_PLAN_DEFAULT[p]:v}
 function planOptions(sel){return ADM_PLANS.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>'+ADM_PLAN_LABEL[p]+'</option>').join('')}
 function admPlanChange(keepFee){const pl=$('admPlan').value;const v=planPrice(pl);if(!keepFee)$('admFee').value=v.toFixed(2);const h=$('admPlanHint');if(h)h.textContent='Valor do plano '+ADM_PLAN_LABEL[pl]+': '+money(v)+(pl==="anual"?' por mês · total no ano '+money(v*12):'')}
@@ -5072,7 +5072,7 @@ function admOficinasPanel(S){
   const rowsHTML=list.length?'<div class="list-stack">'+list.map(r=>{
     const t=r.t,i=r.i,last=i.last?fmtDate(String(i.last.paid_at).slice(0,10))+' ('+money(i.last.amount)+')':'nenhum';
     return '<div class="list-row click" onclick="admEditOpen(\''+t.id+'\')" style="flex-direction:column;align-items:stretch;gap:6px">'+
-      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>'+esc(t.name)+'</b><span class="pill '+i.cls+'">'+esc(i.label)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>'+esc(t.name)+(t.is_test?' <span class="pill" style="background:#f59e0b;color:#000">TESTE</span>':'')+'</b><span class="pill '+i.cls+'">'+esc(i.label)+'</span></div>'+
       '<small>Plano: '+esc(i.plan||'-')+' · Mensalidade: '+money(i.fee)+' · Vence dia '+i.day+'</small>'+
       '<small>Último pagamento: '+last+' · '+t.users+' usuário(s) · '+t.rec+' registros</small>'+
       '<small>Débito automático: '+subLabel(t.id)+'</small><small>Convite: <b>'+esc(t.invite_code)+'</b> · criada em '+fmtDate(String(t.created_at).slice(0,10))+'</small>'+
@@ -5149,7 +5149,7 @@ function orbBI(){
   const scen=[['Manter a carteira atual',mrr],['Perder a maior oficina',mrr-topFee],['Perder 20% da base',mrr*0.8],['Dobrar a carteira',mrr*2]];
   const scenHTML='<div class="list-stack">'+scen.map(s=>'<div class="list-row click" onclick="navigate(\'orbe_oficinas\')" style="cursor:pointer"><div class="grow"><b>'+esc(s[0])+'</b><small>Receita anual estimada (mensalidades x 12)</small></div><div class="money">'+money(s[1]*12)+'</div></div>').join('')+'</div>';
   const card=(c,v,h,go)=>'<div class="metric'+(go?' click" role="button" tabindex="0" onclick="navigate(\''+go+'\')"':'"')+'"><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
-  return pageHead('BI e planejamento','Carteira de oficinas, mês a mês.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
+  return pageHead('Meu negócio','Carteira de oficinas, mês a mês.','<button class="btn soft" onclick="admList=undefined;admLoad()">↻ Atualizar</button>')+
     '<div class="cards">'+card('Receita mensal',money(mrr),'Soma das mensalidades ativas','orbe_oficinas')+card('Oficinas ativas',ativas,bloq+' bloqueada(s) · '+total+' no total','orbe_oficinas')+
     card('Ticket médio',money(ticket),'Receita por oficina ativa','orbe_planos')+card('Recebido 3 meses',money(last3),trend===null?'Sem base de comparação':(trend>=0?'▲ ':'▼ ')+pct(Math.abs(trend))+' vs 3 meses antes','orbe_pagamentos')+'</div>'+
     '<div class="panel section-gap"><div class="panel-head"><h2>Recebimento mês a mês (12 meses)</h2></div>'+bars+'</div>'+
@@ -5169,7 +5169,7 @@ NEWPAGE.orbe_notif=function(){
     '<div class="panel section-gap">'+body+'</div>';
 };
 NEWPAGE.orbe_bi=function(){
-  if(admNeedData())return pageHead('BI e planejamento','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
+  if(admNeedData())return pageHead('Meu negócio','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
   return orbBI();
 };
 function admCoreRender(){
@@ -5427,11 +5427,55 @@ async function bootAfterLogin(){
   if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Pague a mensalidade em atraso para voltar a usar.',btn:true,pay:ws.status==='blocked'});return}
   if(!ROLE_READ[pr.role]){const inat=pr.role==='inativo';showAuth('',false,{t:inat?'Acesso bloqueado':'Aguardando liberação',d:inat?'Fale com o dono da oficina.':'Seu cadastro foi criado. Peça ao dono para liberar o seu acesso e depois toque em “Verificar de novo”.',btn:!inat});return}
   try{await syncAll(true)}catch(e){}
+  if(prof&&prof.role==='dono'&&!(ws&&ws.is_admin)){try{await segWizard()}catch(e){}}
   a.style.display='none';a.innerHTML='';
   MENU=(ws&&ws.is_admin)?ADMIN_MENU:CLIENT_MENU;
   currentPage=(ws&&ws.is_admin)?'admin':'inicio';
   startPolling();render();
   try{const r=shopSet.find(x=>x.id==='shop');}catch(e){}
+}
+/* ---------- Primeiro acesso: tipo de oficina e plano recomendado ---------- */
+const SEG_LABEL={moto:'Moto',carro:'Carro',caminhao:'Caminhão'};
+const SEG_GOAL=[
+  {k:'basico',t:'Só cadastrar meus veículos',d:'Cadastro dos veículos e dos clientes.'},
+  {k:'intermediario',t:'Cadastro e controle dos serviços',d:'Orçamentos, ordens de serviço e um pouco mais de controle.'},
+  {k:'profissional',t:'Gestão completa',d:'Tudo que o ORBE oferece, incluindo financeiro e BI.'}];
+const SEG_PRICE={basico:59.90,intermediario:79.90,profissional:99.90};
+function segWizard(){
+  return new Promise(async resolve=>{
+    const r=await sb('/rest/v1/rpc/my_segment',{method:'POST',body:{}});
+    if(!r.ok||r.json)return resolve();
+    let seg=null,goal=null,step=1;
+    const ov=document.createElement('div');
+    ov.style.cssText='position:fixed;inset:0;background:#0b1020;z-index:99999;overflow:auto;padding:24px 18px;color:#fff';
+    document.body.appendChild(ov);
+    const btn=(txt,fn,main)=>'<button onclick="'+fn+'" style="display:block;width:100%;text-align:left;margin:10px 0;padding:14px 16px;border-radius:12px;border:1px solid #334155;background:'+(main?'#2563eb':'#131a2e')+';color:#fff;font-size:16px;font-weight:600;cursor:pointer">'+txt+'</button>';
+    function draw(){
+      if(step===1){
+        ov.innerHTML='<div style="max-width:520px;margin:0 auto"><div style="font-size:12px;letter-spacing:2px;color:#94a3b8">ORBE · PRIMEIRO ACESSO</div><h1 style="font-size:24px;margin:10px 0 4px">Qual tipo de oficina você tem?</h1><p style="color:#94a3b8;margin:0 0 8px">Vamos montar o painel com a cara da sua oficina.</p>'+
+          btn('Moto','segPick(\'moto\')')+btn('Carro','segPick(\'carro\')')+btn('Caminhão','segPick(\'caminhao\')')+'</div>';
+      }else if(step===2){
+        ov.innerHTML='<div style="max-width:520px;margin:0 auto"><h1 style="font-size:24px;margin:10px 0 4px">O que você quer com o ORBE?</h1><p style="color:#94a3b8;margin:0 0 8px">Oficina de '+SEG_LABEL[seg].toLowerCase()+'.</p>'+
+          SEG_GOAL.map(g=>btn(g.t+'<br><small style="font-weight:400;color:#cbd5e1">'+g.d+'</small>','segGoal(\''+g.k+'\')')).join('')+
+          '<button onclick="segBack()" style="margin-top:12px;background:none;border:0;color:#94a3b8;font-size:14px;cursor:pointer">← Voltar</button></div>';
+      }else{
+        const g=SEG_GOAL.find(x=>x.k===goal),p=SEG_PRICE[goal];
+        ov.innerHTML='<div style="max-width:520px;margin:0 auto"><h1 style="font-size:24px;margin:10px 0 4px">Plano recomendado: '+g.k.charAt(0).toUpperCase()+g.k.slice(1)+'</h1>'+
+          '<p style="color:#cbd5e1;margin:0 0 8px">'+g.t+'. Mensalidade de R$ '+p.toFixed(2).replace('.',',')+'.</p>'+
+          '<p style="color:#94a3b8;font-size:14px">Você pode trocar de plano depois, em Plano e cartão.</p>'+
+          btn('Salvar e continuar','segSave()',true)+'<button onclick="segBack()" style="margin-top:12px;background:none;border:0;color:#94a3b8;font-size:14px;cursor:pointer">← Voltar</button></div>';
+      }
+    }
+    window.segPick=k=>{seg=k;step=2;draw()};
+    window.segGoal=k=>{goal=k;step=3;draw()};
+    window.segBack=()=>{step=step>1?step-1:1;draw()};
+    window.segSave=async()=>{
+      const s=await sb('/rest/v1/rpc/set_my_segment',{method:'POST',body:{p_segment:seg}});
+      if(!s.ok){alert('Não consegui salvar. Tente de novo.');return}
+      ov.remove();resolve();
+    };
+    draw();
+  });
 }
 /* fotos na nuvem (Storage) */
 let cloudSet=new Set(read('rds_cloudphotos_v1',[]));
