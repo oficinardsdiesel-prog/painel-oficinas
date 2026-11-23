@@ -4751,11 +4751,11 @@ function brandPanel(){if(!ws||!ws.id||!isRole('dono'))return '';const b=ws.brand
 function copyCode(){try{navigator.clipboard.writeText(ws.invite_code);alert('Código copiado: '+ws.invite_code)}catch(e){prompt('Copie o código:',ws.invite_code)}}
 function showOnboard(msg){const a=$('auth');a.style.display='flex';
   a.innerHTML='<div class="box"><div class="brandl">GESTÃO DE OFICINAS</div><h1>Primeiros passos</h1><p class="subtle" style="margin:0 0 12px">Sua conta foi criada. Escolha uma opção:</p>'+
-  '<div class="field"><label>Nome da sua oficina</label><input id="oName" placeholder="Ex.: Oficina do João"></div><button class="btn primary" style="width:100%;margin-top:10px" type="button" onclick="obCreate()">Criar minha oficina (teste grátis de 14 dias)</button>'+
+  '<div class="field"><label>Nome da sua oficina</label><input id="oName" placeholder="Ex.: Oficina do João"></div><div class="field"><label>Cupom de acesso</label><input id="oCoupon" placeholder="Ex.: FB-MOTO-01" autocapitalize="characters"></div><button class="btn primary" style="width:100%;margin-top:10px" type="button" onclick="obCreate()">Criar minha oficina (teste grátis de 30 dias)</button>'+
   '<p class="subtle" style="margin:16px 0 6px;text-align:center">— ou —</p><div class="field"><label>Já trabalho numa oficina? Digite o código de convite</label><input id="oCode" placeholder="Código do dono" autocapitalize="characters"></div><button class="btn soft" style="width:100%;margin-top:10px" type="button" onclick="obJoin()">Entrar nessa oficina</button>'+
   '<div class="msg" id="oMsg">'+esc(msg||'')+'</div><button type="button" class="lnk" onclick="logout()">Sair</button></div>'}
-async function obCreate(){const n=($('oName').value||'').trim();if(n.length<2){showOnboard('Digite o nome da oficina.');return}
-  try{const r=await sb('/rest/v1/rpc/create_workshop',{method:'POST',body:{p_name:n}});if(!r.ok){showOnboard('Não consegui criar a oficina. Tente de novo.');return}await bootAfterLogin()}catch(e){showOnboard('Sem conexão. Tente de novo.')}}
+async function obCreate(){const n=($('oName').value||'').trim();const cp=($('oCoupon').value||'').trim();if(n.length<2){showOnboard('Digite o nome da oficina.');return}if(!cp){showOnboard('Digite o cupom de acesso.');return}
+  try{const r=await sb('/rest/v1/rpc/create_workshop',{method:'POST',body:{p_name:n,p_coupon:cp}});if(!r.ok){const m=String((r.json&&(r.json.message||r.json.hint))||'');showOnboard(/cupom_invalido/.test(m)?'Cupom inválido. Confira o código.':/cupom_esgotado/.test(m)?'Este cupom já atingiu o limite de uso. Fale com a ORBE.':'Não consegui criar a oficina. Tente de novo.');return}await bootAfterLogin()}catch(e){showOnboard('Sem conexão. Tente de novo.')}}
 async function obJoin(){const c=($('oCode').value||'').trim();if(c.length<4){showOnboard('Digite o código de convite.');return}
   try{const r=await sb('/rest/v1/rpc/join_workshop',{method:'POST',body:{p_code:c}});if(!r.ok){showOnboard(/codigo_invalido/.test(JSON.stringify(r.json))?'Código não encontrado. Confira com o dono da oficina.':'Não consegui entrar. Tente de novo.');return}await bootAfterLogin()}catch(e){showOnboard('Sem conexão. Tente de novo.')}}
 /* identidade ao instalar o app / criar atalho (nome e ícone da oficina) */
@@ -5108,7 +5108,24 @@ NEWPAGE.orbe_perfil=function(){
   const body=orbProfEdit
     ?'<div class="fgrid"><div class="field"><label>Nome</label><input id="pfName" value="'+esc(prof.name||'')+'"></div><div class="field"><label>E-mail (não muda aqui)</label><input value="'+esc(prof.email||'')+'" disabled></div></div><div class="actions" style="margin-top:12px"><button class="btn soft" onclick="orbProfToggle()">Cancelar</button><button class="btn primary" onclick="orbProfSave()">Salvar</button></div>'
     :'<div class="acct"><b>'+esc(prof.name||'Sem nome')+'</b><span class="subtle">'+esc(prof.email||'')+'</span><span class="pill s5" style="align-self:flex-start;margin-top:4px">'+esc(roleName(prof.role))+'</span></div><div class="actions" style="margin-top:14px"><button class="btn soft" onclick="orbProfToggle()">✎ Editar</button><button class="btn soft" onclick="changePass()">🔒 Trocar senha</button><button class="btn danger" onclick="logout()">⎋ Sair</button></div>';
-  return pageHead('Perfil','Seus dados de acesso ao ORBE.','')+'<div class="panel section-gap">'+body+'</div>';
+  let cancelPanel='';
+  if(prof.role==='dono'&&!(ws&&ws.is_admin)){
+    if(cancelAtInfo===undefined&&!cancelBusy)loadCancelAt();
+    const d=cancelAtInfo?fmtDate(String(cancelAtInfo).slice(0,10)):'';
+    cancelPanel='<div class="panel section-gap"><div class="panel-head"><h2>Cancelar plano</h2></div>'+
+      (cancelAtInfo?'<p class="subtle">Seu plano está cancelado. Você continua usando o ORBE até <b>'+esc(d)+'</b>. Depois disso o acesso é suspenso e seus dados ficam guardados.</p>'
+      :'<p class="subtle" style="font-size:13px">Se cancelar, a cobrança para no próximo mês. Não há reembolso dos dias que ainda restam: você usa o ORBE até o fim do período já pago. Seus dados ficam guardados e podem ser exportados em até 30 dias; depois são apagados em até 90 dias.</p><div class="actions" style="margin-top:12px"><button class="btn danger" onclick="orbCancelarPlano()">Cancelar plano</button></div>')+'</div>';
+  }
+  return pageHead('Perfil','Seus dados de acesso ao ORBE.','')+'<div class="panel section-gap">'+body+'</div>'+cancelPanel;
+};
+let cancelAtInfo=undefined,cancelBusy=false;
+async function loadCancelAt(){cancelBusy=true;try{const r=await sb('/rest/v1/rpc/my_cancel_at',{method:'POST',body:{}});cancelAtInfo=r.ok?(r.json||null):null}catch(e){cancelAtInfo=null}cancelBusy=false;render()}
+async function orbCancelarPlano(){
+  if(!confirm('Cancelar o plano? A cobrança para no próximo mês. Não há reembolso dos dias restantes.'))return;
+  if(!confirm('Confirma o cancelamento? Você continua usando o ORBE até o fim do período já pago.'))return;
+  const r=await sb('/functions/v1/asaas-cancelar',{method:'POST',body:{}});
+  if(!r.ok){alert((r.json&&r.json.error)||'Não consegui cancelar. Tente de novo.');return}
+  cancelAtInfo=r.json.cancel_at;render();
 };
 NEWPAGE.orbe_config=function(){
   const dark=document.body.classList.contains('dark');
