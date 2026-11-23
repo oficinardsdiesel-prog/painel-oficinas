@@ -4862,10 +4862,10 @@ let admF='todas',admBill,admPlans=[],admPix={},admBusy2=false,admCur='',myBill,m
 let admSel=new Set(),admSelMode=false;
 const ADM_PLANS=['basico','intermediario','profissional','anual'];
 const ADM_PLAN_LABEL={basico:'Básico',intermediario:'Intermediário',profissional:'Profissional',anual:'Anual'};
-const ADM_PLAN_DEFAULT={basico:59.90,intermediario:79.90,profissional:99.90,anual:270};
+const ADM_PLAN_DEFAULT={basico:59.90,intermediario:79.90,profissional:99.90,anual:83.32};
 function planPrice(p){const r=(admPlans||[]).find(x=>x.plan===p);const v=r&&r.price!=null?Number(r.price):NaN;return isNaN(v)?ADM_PLAN_DEFAULT[p]:v}
 function planOptions(sel){return ADM_PLANS.map(p=>'<option value="'+p+'"'+(p===sel?' selected':'')+'>'+ADM_PLAN_LABEL[p]+'</option>').join('')}
-function admPlanChange(keepFee){const pl=$('admPlan').value;const v=planPrice(pl);if(!keepFee)$('admFee').value=v.toFixed(2);const h=$('admPlanHint');if(h)h.textContent='Valor do plano '+ADM_PLAN_LABEL[pl]+': '+money(v)+(pl==="anual"?' por mês · total no ano '+money(v*12):'')}
+function admPlanChange(keepFee){const pl=$('admPlan').value;const v=planPrice(pl);if(!keepFee)$('admFee').value=v.toFixed(2);const h=$('admPlanHint');if(h)h.textContent='Valor do plano '+ADM_PLAN_LABEL[pl]+': '+money(v)+(pl==="anual"?' por mês · total no ano '+money(pl==="anual"?999.90:v*12):'')}
 const ADM_FILTERS={todas:'Todas',ok:'Em dia',due:'A vencer',late:'Atrasadas',trial:'Em teste',life:'Vitalícias',blk:'Bloqueadas'};
 function billOf(id){return (admBill||[]).find(x=>x.id===id)||{}}
 function admInfo(t){
