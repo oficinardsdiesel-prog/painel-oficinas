@@ -5283,11 +5283,12 @@ NEWPAGE.assinatura=function(){
 async function pagarBloqueada(){
   if(assBusy)return;
   assBusy=true;
+  const w=window.open('','_blank');
   try{
     const r=await sb('/functions/v1/asaas-checkout',{method:'POST',body:{}});
-    if(r.ok&&r.json&&r.json.invoice_url){window.open(r.json.invoice_url,'_blank');alert('Página de pagamento aberta em nova aba. Assim que o pagamento for confirmado, o acesso volta.')}
-    else alert((r.json&&r.json.error)||'Não consegui gerar o link. Tente de novo.')
-  }catch(e){alert('Sem conexão. Tente de novo.')}
+    if(r.ok&&r.json&&r.json.invoice_url){if(w)w.location.href=r.json.invoice_url;else location.href=r.json.invoice_url}
+    else{if(w)w.close();alert((r.json&&r.json.error)||'Não consegui gerar o link. Tente de novo.')}
+  }catch(e){if(w)w.close();alert('Sem conexão. Tente de novo.')}
   assBusy=false;
 }
 async function assCheckoutAsaas(){
