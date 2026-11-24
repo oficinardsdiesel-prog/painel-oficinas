@@ -193,6 +193,12 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
 .top .brandbtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;text-align:center;padding:0;font-size:19px}.top .brandbtn small{letter-spacing:2px;text-align:center}.top .syncb{margin-left:auto;font-size:11px;max-width:112px;text-align:right}.top .tabs button{padding:9px 12px}.top{min-height:62px}
 .drawer{background:linear-gradient(180deg,#6b7480 0%,#2e343c 30%,#171a1f 60%,#2a3038 100%)!important}
 .primary{box-shadow:0 2px 0 #7b848f,0 0 16px -3px var(--accent)!important}
+  .placa-m{width:100%;max-width:340px;margin:8px 0 2px;border:3px solid #111;border-radius:10px;background:#fff;overflow:hidden;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .placa-m .faixa{background:#1f4fb4;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;text-align:center;padding:3px 0;position:relative}
+  .placa-m .faixa i{position:absolute;left:8px;top:2px;font-style:normal;font-size:9px;letter-spacing:0}
+  .placa-m .faixa b{position:absolute;right:8px;top:2px;width:16px;height:11px;background:linear-gradient(135deg,#1a9e3f 50%,#f5d000 50%);border-radius:2px}
+  .placa-m .txt{font-family:"Arial Black",Arial,sans-serif;font-weight:900;font-size:34px;letter-spacing:3px;color:#111;text-align:center;padding:6px 0 8px;min-height:44px}
+  .placa-m .txt span{color:#bbb;font-weight:400}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
 </head>
@@ -223,7 +229,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Cliente (ou escolha a empresa abaixo)</label><input id="nClient" placeholder="Nome do cliente"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
-    <div class="field"><label>Placa *</label><input id="nPlate" placeholder="ABC1D23" autocapitalize="characters"></div>
+    <div class="field"><label>Placa *</label><input id="nPlate" oninput="placaUpd('n')" placeholder="ABC1D23" autocapitalize="characters"><div id="nPlateBox"></div></div>
     <div class="field"><label>Telefone / WhatsApp</label><input id="nPhone" inputmode="tel" placeholder="(11) 99999-9999" oninput="$('nWa').innerHTML=waBtn(this.value,true)"><div id="nWa" style="margin-top:6px"></div></div>
     <div class="field"><label>CPF / CNPJ</label><input id="nDoc" inputmode="numeric"></div>
     <div class="field"><label>E-mail</label><input id="nEmail" inputmode="email"></div>
@@ -247,7 +253,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Nome do cliente (ou escolha a empresa abaixo)</label><input id="dClient"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select></div>
     <div class="field"><label>Modelo</label><input id="dModel"></div>
-    <div class="field"><label>Placa *</label><input id="dPlate" autocapitalize="characters"></div>
+    <div class="field"><label>Placa *</label><input id="dPlate" oninput="placaUpd('d')" autocapitalize="characters"><div id="dPlateBox"></div></div>
     <div class="field"><label>Telefone / WhatsApp do cliente</label><input id="dPhone" inputmode="tel" oninput="$('dWa').innerHTML=waBtn(this.value,true)"></div>
     <div class="field"><label>CPF / CNPJ</label><input id="dDoc" inputmode="numeric"></div>
     <div class="field"><label>E-mail</label><input id="dEmail" inputmode="email"></div>
@@ -3074,7 +3080,7 @@ function openTruck(id){
   const t=trucks.find(x=>x.id===id);if(!t)return;curTruck=id;
   $('dTitle').textContent='Editar · '+vehName(t);
   $('dSub').textContent='Todas as informações deste veículo. Altere e toque em “Salvar alterações”.';
-  $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
+  $('dPlate').value=t.plate||'';placaUpd('d');$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
   $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
@@ -3880,6 +3886,13 @@ let metaY=new Date().getFullYear(),metaM=new Date().getMonth()+1;
 function metaGo(d){metaM+=d;if(metaM>12){metaM=1;metaY++}if(metaM<1){metaM=12;metaY--}render()}
 let grQ='';
 function setDeliveryDate(t){if(t.status==='Entregue')t.deliveredAt=t.deliveredAt||todayISO();else t.deliveredAt=''}
+function placaUpd(pref){
+  const el=$(pref+'Plate'),box=$(pref+'PlateBox');if(!el||!box)return;
+  const v=String(el.value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
+  const fill=v+'_'.repeat(Math.max(0,7-v.length));
+  const txt=fill.split('').map(c=>c==='_'?'<span>·</span>':c).join('');
+  box.innerHTML='<div class="placa-m"><div class="faixa"><i>MERCOSUL</i>BRASIL<b></b></div><div class="txt">'+txt+'</div></div>';
+}
 function evLabel(ev){const t=trucks.find(x=>x.plate===ev.plate);return t&&t.client?t.client+' · '+ev.plate:(ev.plate||'')}
 function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
@@ -4596,7 +4609,7 @@ function render(){
   }else if(currentPage==='historico'){
     h=pageHead('Histórico de veículos','Consulte os veículos que já passaram pela oficina e as movimentações registradas.')+
     '<div class="panel"><h2>Veículos entregues</h2>'+truckList(trucks.filter(t=>t.status==='Entregue'),false)+'</div>'+
-    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>'<div class="list-row"><div><b>'+esc(evLabel(ev))+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>').join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
+    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>{const tr=trucks.find(x=>x.plate===ev.plate);const on=tr?' click" style="cursor:pointer" onclick="openTruck(\''+tr.id+'\')':'';return '<div class="list-row'+on+'"><div><b>'+esc(evLabel(ev))+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>'}).join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
   }else if(currentPage==='orcamentos'){
     const appr=quotes.filter(q=>q.status==='Aprovado'),qlist=quoF?quotes.filter(q=>q.status===quoF):quotes;
     h=pageHead('Orçamentos','Monte orçamentos por veículo, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
@@ -4615,7 +4628,7 @@ function render(){
   }else if(currentPage==='usuarios'){
     h=pageHead('Perfil','Sua conta'+(isRole('dono')?' e o acesso de cada pessoa.':'.'),'')+
     '<div class="panel"><h2>Minha conta</h2><div class="acct"><b>'+esc((prof&&prof.name)||'')+'</b><span class="subtle">'+esc((prof&&prof.email)||'')+'</span><span class="pill s5" style="align-self:flex-start;margin-top:4px">'+esc(roleName(prof&&prof.role))+'</span></div>'+
-    '<div class="actions" style="margin-top:14px"><button class="btn soft" onclick="changePass()">🔒 Trocar minha senha</button><button class="btn danger" onclick="logout()">⎋ Sair</button></div></div>'+wsPanel()+
+    '<div class="actions" style="margin-top:14px"><button class="btn soft" onclick="changePass()">🔒 Trocar minha senha</button><button class="btn danger" onclick="logout()">⎋ Sair</button></div></div>'+wsPanel()+dadosOficinaPanel()+
     (isRole('dono')?
     '<div class="panel section-gap"><h2>Criar novo perfil</h2><p class="subtle" style="margin:0 0 12px">Toque no tipo de perfil que você quer criar. Você digita nome, e-mail e uma senha, e a pessoa já pode entrar.</p><div class="list-stack">'+
     [['atendimento','Atendimento','Veículos, orçamentos e cadastros. Sem Financeiro e Pagamentos','📋'],['mecanico','Mecânico','Só Processos, Histórico e fotos/diagnóstico dos veículos','🔧'],['dono','Dono','Vê e faz tudo, inclusive Financeiro, Perfis e Configurações da oficina','👑']].map(p=>'<div class="list-row click" onclick="openUser(\''+p[0]+'\')"><div class="grow"><b>'+p[3]+' Criar perfil de '+p[1]+'</b><small>'+p[2]+'</small></div><span class="pill s5">＋ Criar</span></div>').join('')+'</div></div>'+
@@ -4625,10 +4638,7 @@ function render(){
     const opt=(k,list)=>'<div class="optrow">'+list.map(o=>'<button class="'+(pf[k]===o[0]?'on':'')+'" onclick="setPref(\''+k+'\',\''+o[0]+'\')">'+o[1]+'</button>').join('')+'</div>';
     h=pageHead('Configurações','Pequenos ajustes do sistema.','')+
     (ed?'<div class="panel section-gap"><h2>Identidade da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Logo, banner, dados e aparência, passo a passo.</p><button class="btn primary" onclick="wzOpen()">✨ Abrir assistente de configuração</button></div>':'')+
-    '<div class="panel section-gap"><h2>Dados da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Aparecem no topo do orçamento impresso.'+(ed?'':' Só o dono pode alterar.')+'</p><div class="fgrid">'+
-    '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div>'+(ed?ownWAHelp('sPhone'):'')+'<div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
-    '<div class="field"><label>CNPJ</label><input id="sCnpj" inputmode="numeric" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
-    '<div class="field" style="margin-top:12px"><label>Texto no rodapé do orçamento (ex.: validade, garantia)</label><textarea id="sFoot" '+(ed?'':'disabled')+'>'+esc(sh.foot||'')+'</textarea></div>'+(ed?'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="saveShop()">Salvar dados da oficina</button></div>':'')+'</div>'+
+    
     (ed?'<div class="panel section-gap"><h2>Mensagens prontas do WhatsApp</h2><p class="subtle" style="margin:-6px 0 12px;font-size:12px">Use <b>{cliente}</b> (primeiro nome), <b>{placa}</b>, <b>{modelo}</b>, <b>{valor}</b>, <b>{oficina}</b>; na cobrança também <b>{vencimento}</b>, <b>{descricao}</b> e <b>{pix}</b>; na agenda <b>{data}</b>, <b>{hora}</b>, <b>{servico}</b> e <b>{endereco}</b>. Elas aparecem no botão verde de WhatsApp do veículo.</p>'+ALLT().map(t=>'<div class="field" style="margin-bottom:10px"><label>'+t[1]+'</label><textarea id="wm_'+t[0]+'" rows="3">'+esc(waTpl(t[0]))+'</textarea></div>').join('')+'<div class="actions"><button class="btn primary" onclick="saveMsgs()">Salvar mensagens</button><button class="btn soft" onclick="resetMsgs()">Voltar ao padrão</button></div></div>':'')+
     '<div class="panel section-gap"><h2>Sistema</h2><div class="list-stack"><div class="list-row"><div><b>Sincronizar agora</b><small>Envia e busca os dados na nuvem</small></div><button class="small-btn" onclick="syncAll()">☁ Sincronizar</button></div><div class="list-row"><div><b>Versão</b><small>ORBE · gestão de oficinas</small></div><span class="money">V3</span></div></div></div>';
   }else if(currentPage==='editar'){
@@ -4749,7 +4759,11 @@ async function brandPick(kind){
 function setupHide(){try{localStorage.setItem('orbe_setup_hide','1')}catch(e){}render()}
 function wsStatusTxt(){if(!ws)return '';if(ws.plan==='proprio')return 'Oficina própria do sistema';if(ws.status==='blocked')return 'Acesso suspenso';if(ws.status==='trial'){const d=Math.ceil((new Date(ws.trial_ends)-Date.now())/864e5);return 'Teste grátis · '+(d>0?'faltam '+d+' dia'+(d>1?'s':''):'termina hoje')}return 'Plano '+(ws.plan||'ativo')+' · ativo'}
 function trialNote(){if(!ws||ws.status!=='trial'||!ws.trial_ends||!isRole('dono'))return '';return '<div class="notice" style="margin-bottom:12px">🎁 <b>'+esc(wsStatusTxt())+'</b><br><span style="font-size:12px">Seus dados ficam guardados. Para continuar depois do teste, fale com o responsável pelo sistema.</span></div>'}
-function wsPanel(){if(!ws||!ws.id)return '';return '<div class="panel section-gap"><h2>Minha oficina</h2><div class="acct"><b>'+esc(ws.name)+'</b><span class="subtle">'+esc(wsStatusTxt())+'</span></div>'+(ws.invite_code?'<p class="subtle" style="margin:12px 0 6px;font-size:12px">Código de convite: quem criar uma conta e digitar este código entra na sua oficina e aguarda a sua liberação em “Gerenciar perfis”.</p><div style="display:flex;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:2px">'+esc(ws.invite_code)+'</b><button class="small-btn" onclick="copyCode()">Copiar</button></div>':'')+'</div>'}
+function dadosOficinaPanel(){const sh=shop(),ed=isRole('dono');return '<div class="panel section-gap"><h2>Dados da oficina</h2><p class="subtle" style="margin:-6px 0 12px">Aparecem no topo do orçamento impresso.'+(ed?'':' Só o dono pode alterar.')+'</p><div class="fgrid">'+
+    '<div class="field"><label>Nome da oficina</label><input id="sName" value="'+esc(sh.name||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Telefone / WhatsApp</label><input id="sPhone" value="'+esc(sh.phone||'')+'" inputmode="tel" '+(ed?'':'disabled')+'></div>'+(ed?ownWAHelp('sPhone'):'')+'<div class="field"><label>Chave Pix (aparece nas cobranças)</label><input id="sPix" value="'+esc(sh.pix||'')+'" '+(ed?'':'disabled')+'></div>'+
+    '<div class="field"><label>CNPJ</label><input id="sCnpj" inputmode="numeric" value="'+esc(sh.cnpj||'')+'" '+(ed?'':'disabled')+'></div><div class="field"><label>Endereço</label><input id="sAddr" value="'+esc(sh.addr||'')+'" '+(ed?'':'disabled')+'></div></div>'+
+    '<div class="field" style="margin-top:12px"><label>Texto no rodapé do orçamento (ex.: validade, garantia)</label><textarea id="sFoot" '+(ed?'':'disabled')+'>'+esc(sh.foot||'')+'</textarea></div>'+(ed?'<div class="actions" style="margin-top:12px"><button class="btn primary" onclick="saveShop()">Salvar dados da oficina</button></div>':'')+'</div>';}
+function wsPanel(){if(!ws||!ws.id)return '';return '<div class="panel section-gap"><h2>Minha oficina</h2><div class="acct"><b>'+esc(ws.name)+'</b><span class="subtle">'+esc(wsStatusTxt())+'</span></div>'+(ws.shop_number?'<p class="subtle" style="margin:10px 0 0;font-size:13px">ID da oficina (para o suporte): <b style="letter-spacing:1px">'+esc(ws.shop_number)+'</b></p>':'')+''+(ws.invite_code?'<p class="subtle" style="margin:12px 0 6px;font-size:12px">Código de convite: quem criar uma conta e digitar este código entra na sua oficina e aguarda a sua liberação em “Gerenciar perfis”.</p><div style="display:flex;gap:10px;align-items:center"><b style="font-size:22px;letter-spacing:2px">'+esc(ws.invite_code)+'</b><button class="small-btn" onclick="copyCode()">Copiar</button></div>':'')+'</div>'}
 /* ---------- Cor da loja (roda de cores) ---------- */
 const ACC_DEFAULT='#2563eb';
 let accPick=null,accDrag=false;
