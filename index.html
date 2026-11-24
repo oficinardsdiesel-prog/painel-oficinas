@@ -193,12 +193,9 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
 .top .brandbtn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);margin:0;text-align:center;padding:0;font-size:19px}.top .brandbtn small{letter-spacing:2px;text-align:center}.top .syncb{margin-left:auto;font-size:11px;max-width:112px;text-align:right}.top .tabs button{padding:9px 12px}.top{min-height:62px}
 .drawer{background:linear-gradient(180deg,#6b7480 0%,#2e343c 30%,#171a1f 60%,#2a3038 100%)!important}
 .primary{box-shadow:0 2px 0 #7b848f,0 0 16px -3px var(--accent)!important}
-  .placa-m{width:100%;max-width:340px;margin:8px 0 2px;border:3px solid #111;border-radius:10px;background:#fff;overflow:hidden;position:relative;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-  .placa-m .faixa{background:#1f4fb4;color:#fff;font-size:11px;font-weight:800;letter-spacing:2px;text-align:center;padding:3px 0;position:relative}
-  .placa-m .faixa i{position:absolute;left:8px;top:2px;font-style:normal;font-size:9px;letter-spacing:0}
-  .placa-m .faixa b{position:absolute;right:8px;top:2px;width:16px;height:11px;background:linear-gradient(135deg,#1a9e3f 50%,#f5d000 50%);border-radius:2px}
-  .placa-m .txt{font-family:"Arial Black",Arial,sans-serif;font-weight:900;font-size:34px;letter-spacing:3px;color:#111;text-align:center;padding:6px 0 8px;min-height:44px}
-  .placa-m .txt span{color:#bbb;font-weight:400}
+  .placa-s{display:inline-block;vertical-align:middle;border:1.5px solid #111;border-radius:4px;background:#fff;overflow:hidden;margin-right:6px;font-family:"Arial Black",Arial,sans-serif;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .placa-s .pf{display:block;background:#1f4fb4;color:#fff;font-size:6px;font-weight:800;letter-spacing:1px;text-align:center;padding:1px 4px}
+  .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
 </head>
@@ -229,7 +226,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Cliente (ou escolha a empresa abaixo)</label><input id="nClient" placeholder="Nome do cliente"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
-    <div class="field"><label>Placa *</label><input id="nPlate" oninput="placaUpd('n')" placeholder="ABC1D23" autocapitalize="characters"><div id="nPlateBox"></div></div>
+    <div class="field"><label>Placa *</label><input id="nPlate" placeholder="ABC1D23" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp</label><input id="nPhone" inputmode="tel" placeholder="(11) 99999-9999" oninput="$('nWa').innerHTML=waBtn(this.value,true)"><div id="nWa" style="margin-top:6px"></div></div>
     <div class="field"><label>CPF / CNPJ</label><input id="nDoc" inputmode="numeric"></div>
     <div class="field"><label>E-mail</label><input id="nEmail" inputmode="email"></div>
@@ -253,7 +250,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Nome do cliente (ou escolha a empresa abaixo)</label><input id="dClient"></div>
     <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select></div>
     <div class="field"><label>Modelo</label><input id="dModel"></div>
-    <div class="field"><label>Placa *</label><input id="dPlate" oninput="placaUpd('d')" autocapitalize="characters"><div id="dPlateBox"></div></div>
+    <div class="field"><label>Placa *</label><input id="dPlate" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp do cliente</label><input id="dPhone" inputmode="tel" oninput="$('dWa').innerHTML=waBtn(this.value,true)"></div>
     <div class="field"><label>CPF / CNPJ</label><input id="dDoc" inputmode="numeric"></div>
     <div class="field"><label>E-mail</label><input id="dEmail" inputmode="email"></div>
@@ -3046,7 +3043,7 @@ function vehName(t){return [t.client||'Cliente sem nome',t.plate,t.model].filter
 function truckCard(t,withSelect){
   const wa=waLink(t.phone);
   return '<div class="tcard" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="info"><b style="font-size:16px">'+esc(t.client||'Cliente sem nome')+'</b> <span class="pill '+statusClass(t.status)+'">'+esc(t.status)+'</span>'+
-    '<div style="margin-top:3px;font-weight:600">'+esc(t.plate)+(t.model?' · '+esc(t.model):'')+'</div>'+
+    '<div style="margin-top:3px;font-weight:600"><span class="placa-s"><span class="pf">BRASIL</span><span class="pt">'+esc(t.plate||'')+'</span></span>'+(t.model?esc(t.model):'')+'</div>'+
     '<small>'+(t.date?'Entrada '+esc(t.date)+' · ':'')+'Mecânico: '+esc(mechanicName(t.mechanicId))+'</small></div>'+
     '<div class="rowacts" onclick="event.stopPropagation()">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
     waBtn(t.phone,true,t.id)+
@@ -3080,7 +3077,7 @@ function openTruck(id){
   const t=trucks.find(x=>x.id===id);if(!t)return;curTruck=id;
   $('dTitle').textContent='Editar · '+vehName(t);
   $('dSub').textContent='Todas as informações deste veículo. Altere e toque em “Salvar alterações”.';
-  $('dPlate').value=t.plate||'';placaUpd('d');$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
+  $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
   $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
@@ -3886,13 +3883,6 @@ let metaY=new Date().getFullYear(),metaM=new Date().getMonth()+1;
 function metaGo(d){metaM+=d;if(metaM>12){metaM=1;metaY++}if(metaM<1){metaM=12;metaY--}render()}
 let grQ='';
 function setDeliveryDate(t){if(t.status==='Entregue')t.deliveredAt=t.deliveredAt||todayISO();else t.deliveredAt=''}
-function placaUpd(pref){
-  const el=$(pref+'Plate'),box=$(pref+'PlateBox');if(!el||!box)return;
-  const v=String(el.value||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,7);
-  const fill=v+'_'.repeat(Math.max(0,7-v.length));
-  const txt=fill.split('').map(c=>c==='_'?'<span>·</span>':c).join('');
-  box.innerHTML='<div class="placa-m"><div class="faixa"><i>MERCOSUL</i>BRASIL<b></b></div><div class="txt">'+txt+'</div></div>';
-}
 function evLabel(ev){const t=trucks.find(x=>x.plate===ev.plate);return t&&t.client?t.client+' · '+ev.plate:(ev.plate||'')}
 function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
