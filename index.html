@@ -4429,7 +4429,7 @@ async function loadIndicacao(){
   const r=await sb('/rest/v1/rpc/my_referral',{method:'POST',body:{}}); const d=(r&&r.json)||{};
   if(!d.eligible){box.innerHTML='<h2>Disponível depois de 3 meses</h2><p>O plano de indicação libera depois de 3 meses de uso no plano Profissional.</p>';return;}
   if(d.used){box.innerHTML='<h2>Seu código já foi usado</h2><p>Uma oficina usou o seu código. Sua mensalidade fica com 30% de desconto enquanto ela continuar ativa na ORBE.</p>';return;}
-  box.innerHTML='<h2>Seu código de indicação</h2><p>Mande este código para outra oficina. Ela ganha 30 dias grátis ao criar a conta. O código vale só uma vez.</p><div style="font-size:32px;font-weight:800;letter-spacing:4px;text-align:center;margin:14px 0">'+esc(d.code)+'</div><button class="btn primary" onclick="copyIndCode(\''+esc(d.code)+'\')">Copiar código</button>';
+  box.innerHTML='<h2>Seu código de indicação</h2><p style="font-size:18px;line-height:1.5">Mande este código para outra oficina. Ela ganha 30 dias grátis ao criar a conta. O código vale só uma vez.</p><div style="font-size:20px;margin:14px 0;text-align:center"><s style="opacity:.7">R$ 99,90</s> &nbsp;<b style="font-size:30px;color:#16a34a">R$ 69,93</b><div style="font-size:16px;color:#64748b">sua mensalidade com 30% de desconto</div></div><div style="font-size:32px;font-weight:800;letter-spacing:4px;text-align:center;margin:14px 0">'+esc(d.code)+'</div><button class="btn primary" onclick="copyIndCode(\''+esc(d.code)+'\')">Copiar código</button>';
 }
 function copyIndCode(c){try{navigator.clipboard.writeText(c);alert('Código copiado: '+c)}catch(e){alert('Seu código: '+c)}}
 function indBanner(kind,d){
@@ -4439,8 +4439,9 @@ function indBanner(kind,d){
   const t=parab?'Parabéns! Você ganhou 30% de desconto':'Ganhe 30% de desconto na sua mensalidade';
   const p=parab?'Uma oficina usou o seu código. Sua mensalidade agora tem 30% de desconto enquanto ela continuar ativa na ORBE.':'Indique uma oficina com o seu código. Quando ela entrar, sua mensalidade cai 30% enquanto ela continuar na ORBE. O código vale para uma oficina só.';
   const btnW='background:#fff;color:#16a34a;font-weight:800';
+  const pr=parab?'':'<div style="font-size:20px;margin:10px 0"><s style="opacity:.8">R$ 99,90</s> &nbsp;<b style="font-size:30px">R$ 69,93</b><div style="font-size:15px">sua mensalidade com 30% de desconto</div></div>';
   const btns=parab?'<button class="btn" style="'+btnW+'" onclick="closeIndBanner(\'parab\',\''+esc(d.used_at||'')+'\')">Fechar</button>':'<button class="btn" style="'+btnW+'" onclick="closeIndBanner(\'ver\')">Ver meu código</button><button class="btn" style="background:transparent;color:#fff;border:1px solid #fff" onclick="closeIndBanner(\'depois\')">Agora não</button>';
-  ov.innerHTML='<div style="background:#16a34a;color:#fff;border-radius:18px;padding:22px;max-width:420px;width:100%;text-align:center"><div style="background:#fff;border-radius:50%;width:110px;height:110px;margin:0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden">'+ORBE_SVG+'</div><h2 style="color:#fff;margin:12px 0 6px">'+t+'</h2><p style="color:#fff">'+p+'</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'+btns+'</div></div>';
+  ov.innerHTML='<div style="background:#16a34a;color:#fff;border-radius:18px;padding:22px;max-width:420px;width:100%;text-align:center"><div style="background:#fff;border-radius:50%;width:110px;height:110px;margin:0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden">'+ORBE_SVG+'</div><h2 style="color:#fff;margin:12px 0 6px;font-size:24px">'+t+'</h2><p style="color:#fff;font-size:18px;line-height:1.5">'+p+'</p>'+pr+'<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'+btns+'</div></div>';
   document.body.appendChild(ov);
 }
 function closeIndBanner(a,usedAt){
