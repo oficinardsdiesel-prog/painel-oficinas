@@ -2842,7 +2842,7 @@ const CLIENT_MENU=[
  {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
- {g:'Ajuda',items:[['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
+ {g:'Ajuda',items:[['indicacao','🎁','Plano de indicação'],['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
 ];
 let MENU=ADMIN_MENU;
 const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
@@ -3018,7 +3018,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
   $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
-  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'termos\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Termos de uso e privacidade</a></div>';
+  '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+(i[0]==='indicacao'?'<span style="display:block;color:#e11d48;font-weight:800;font-size:10px;letter-spacing:.5px">NOVO</span>':'')+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'termos\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Termos de uso e privacidade</a></div>';
 }
 function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
 function msSearch(v){
@@ -4420,6 +4420,43 @@ function supEnviar(){
   const txt='Oficina: '+((ws&&ws.name)||'-')+'\n'+m;
   waChoose(ORBE_SUPORTE_FONE,txt);
 }
+NEWPAGE.indicacao=function(){
+  setTimeout(loadIndicacao,0);
+  return pageHead('Plano de indicação','Indique outra oficina e ganhe 30% de desconto na sua mensalidade.','')+'<div class="panel section-gap" id="indBox"><p class="subtle">Carregando…</p></div>';
+};
+async function loadIndicacao(){
+  const box=$('indBox'); if(!box)return;
+  const r=await sb('/rest/v1/rpc/my_referral',{method:'POST',body:{}}); const d=(r&&r.json)||{};
+  if(!d.eligible){box.innerHTML='<h2>Disponível depois de 3 meses</h2><p>O plano de indicação libera depois de 3 meses de uso no plano Profissional.</p>';return;}
+  if(d.used){box.innerHTML='<h2>Seu código já foi usado</h2><p>Uma oficina usou o seu código. Sua mensalidade fica com 30% de desconto enquanto ela continuar ativa na ORBE.</p>';return;}
+  box.innerHTML='<h2>Seu código de indicação</h2><p>Mande este código para outra oficina. Ela ganha 30 dias grátis ao criar a conta. O código vale só uma vez.</p><div style="font-size:32px;font-weight:800;letter-spacing:4px;text-align:center;margin:14px 0">'+esc(d.code)+'</div><button class="btn primary" onclick="copyIndCode(\''+esc(d.code)+'\')">Copiar código</button>';
+}
+function copyIndCode(c){try{navigator.clipboard.writeText(c);alert('Código copiado: '+c)}catch(e){alert('Seu código: '+c)}}
+function indBanner(kind,d){
+  const ov=document.createElement('div');ov.id='indOv';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  const parab=kind==='parab';
+  const t=parab?'Parabéns! Você ganhou 30% de desconto':'Ganhe 30% de desconto na sua mensalidade';
+  const p=parab?'Uma oficina usou o seu código. Sua mensalidade agora tem 30% de desconto enquanto ela continuar ativa na ORBE.':'Indique uma oficina com o seu código. Quando ela entrar, sua mensalidade cai 30% enquanto ela continuar na ORBE. O código vale para uma oficina só.';
+  const btnW='background:#fff;color:#16a34a;font-weight:800';
+  const btns=parab?'<button class="btn" style="'+btnW+'" onclick="closeIndBanner(\'parab\',\''+esc(d.used_at||'')+'\')">Fechar</button>':'<button class="btn" style="'+btnW+'" onclick="closeIndBanner(\'ver\')">Ver meu código</button><button class="btn" style="background:transparent;color:#fff;border:1px solid #fff" onclick="closeIndBanner(\'depois\')">Agora não</button>';
+  ov.innerHTML='<div style="background:#16a34a;color:#fff;border-radius:18px;padding:22px;max-width:420px;width:100%;text-align:center"><div style="background:#fff;border-radius:50%;width:110px;height:110px;margin:0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden">'+ORBE_SVG+'</div><h2 style="color:#fff;margin:12px 0 6px">'+t+'</h2><p style="color:#fff">'+p+'</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">'+btns+'</div></div>';
+  document.body.appendChild(ov);
+}
+function closeIndBanner(a,usedAt){
+  const ov=$('indOv'); if(ov)ov.remove();
+  if(a==='depois'||a==='ver')localStorage.setItem('indDismiss',String(Date.now()));
+  if(a==='ver')navigate('indicacao');
+  if(a==='parab'&&usedAt)localStorage.setItem('indUsedSeen',usedAt);
+}
+async function checkIndBanner(){
+  if(!prof||prof.role!=='dono'||(ws&&ws.is_admin))return;
+  const r=await sb('/rest/v1/rpc/my_referral',{method:'POST',body:{}}); const d=(r&&r.json)||{};
+  window.indElig=!!d.eligible; renderMenu();
+  if(!d.eligible)return;
+  if(d.used){if(d.used_at&&localStorage.getItem('indUsedSeen')!==d.used_at)indBanner('parab',d);return}
+  if(Date.now()-(+localStorage.getItem('indDismiss')||0)>7*864e5)indBanner('offer',d);
+}
 NEWPAGE.treinamento=function(){
   if(trainKey&&TRAIN[trainKey])return pageHead('Treinamento','Explicação rápida de cada aba.','')+trainSlideHTML();
   return pageHead('Treinamento','Toque em uma aba do menu para ver a explicação dela com o Orbe.','')+
@@ -4628,7 +4665,7 @@ const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
 const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','empresas','mecanicos','gestao']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
-function allowed(p){if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
+function allowed(p){if(p==='indicacao')return !!window.indElig;if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
 function sessLoad(){try{sess=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){sess=null}}
@@ -5441,6 +5478,7 @@ async function bootAfterLogin(){
   try{await loadWs()}catch(e){ws=null}
   if(ws&&!ws.id){showOnboard();return}
   applyBrand();
+  checkIndBanner();
   if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Pague a mensalidade em atraso para voltar a usar.',btn:true,pay:ws.status==='blocked'});return}
   if(!ROLE_READ[pr.role]){const inat=pr.role==='inativo';showAuth('',false,{t:inat?'Acesso bloqueado':'Aguardando liberação',d:inat?'Fale com o dono da oficina.':'Seu cadastro foi criado. Peça ao dono para liberar o seu acesso e depois toque em “Verificar de novo”.',btn:!inat});return}
   try{await syncAll(true)}catch(e){}
