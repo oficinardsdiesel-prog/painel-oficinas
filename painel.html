@@ -4897,7 +4897,7 @@ async function loadProfile(){
 let ws=null;
 async function loadWs(){const r=await sb('/rest/v1/rpc/my_workshop',{method:'POST',body:{}});ws=r.ok&&r.json?(r.json.id?r.json:{id:null}):null;if(ws&&ws.id){const c=await sb('/rest/v1/rpc/my_custom',{method:'POST',body:{}});if(c.ok&&c.json){ws.brand=c.json.brand||{};ws.features=c.json.features||{}}}return ws}
 function ownBrand(){return !ws||!ws.id||ws.plan==='proprio'}
-function brandName(){return 'ORBE'}
+function brandName(){if(ownBrand())return 'ORBE';const r=shopSet.find(x=>x.id==='shop')||{};return String(r.name||(ws&&ws.name)||'Oficina').trim()}
 function applyBrand(){applyAccent(ws&&ws.brand&&ws.brand.accent);try{const own=ownBrand(),bn=document.querySelector('.banner'),bb=document.querySelector('.brandbtn'),r=shopSet.find(x=>x.id==='shop'),bd=(ws&&ws.brand&&ws.brand.banner)||(r&&r.banner);
   if(bn){if(bd){bn.style.display='';bn.style.backgroundImage='url('+bd+')';bn.style.backgroundSize='cover';bn.style.backgroundPosition='center';bn.removeAttribute('data-empty');bn.onclick=null}
     else if(!own){bn.style.display='';bn.style.backgroundImage='';bn.setAttribute('data-empty','1');bn.onclick=function(){brandPick('banner')}}
