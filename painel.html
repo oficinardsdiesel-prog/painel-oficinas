@@ -214,6 +214,19 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
   .mx-q.low{background:#fff3d9;color:#936000}
   .mx-q.zero{background:#fde8e8;color:#9b1c1c}
   .mx-empty{padding:12px 14px;font-size:13px;color:var(--muted)}
+  .est-filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .est-filtros>*{flex:1 1 160px;min-width:0}
+  .est-wrap{overflow-x:auto;margin-top:6px}
+  .est-t{width:100%;border-collapse:collapse;font-size:13px}
+  .est-t th,.est-t td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  .est-t th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  .est-t td:first-child{white-space:normal;min-width:170px}
+  .est-t .r{text-align:right}
+  .est-t td small{color:var(--muted)}
+  .est-t tr{cursor:pointer}
+  .est-t tr.st-zero{background:#fff1f1}
+  .est-t tr.st-low{background:#fff8e6}
+  .est-t .qv{font-size:18px;font-weight:800}
   .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
@@ -230,7 +243,7 @@ window.addEventListener('error',function(e){
 <div class="banner" role="img" aria-label="ORBE - O aplicativo de gestão da sua oficina"></div>
 <header class="top">
   <button class="brandbtn" onclick="navigate(ws&&ws.is_admin?'admin':'inicio')" aria-label="ORBE">ORBE<small>GESTÃO DE OFICINAS</small></button>
-  <span class="syncb" id="syncb"></span><nav class="tabs"><button onclick="toggleMenu(true)">☰ Menu</button></nav>
+  <span class="syncb" id="syncb"></span><button class="bell" id="bellEst" style="display:none" onclick="estAbreAvisos()" aria-label="Avisos de estoque">🔔<span class="badge" id="bellEstN" style="display:none"></span></button><nav class="tabs"><button onclick="toggleMenu(true)">☰ Menu</button></nav>
 </header>
 <main class="content" id="page"></main>
 
@@ -3212,10 +3225,60 @@ function regListHTML(kind){
 }
 function regPage(kind){
   const cfg=REG[kind];
-  return pageHead(cfg.title,cfg.desc,'<button class="btn primary" onclick="openReg(\''+kind+'\',\'\')">'+cfg.btn+'</button>')+
+  const btns=kind==='catpecas'?estToggleHTML()+'<button class="btn primary" onclick="openReg(\'catpecas\',\'\')">＋ Cadastrar peça</button>':'<button class="btn primary" onclick="openReg(\''+kind+'\',\'\')">'+cfg.btn+'</button>';
+  if(kind==='catpecas'&&estVisao==='painel')return pageHead(cfg.title,cfg.desc,btns)+estPainelBody();
+  return pageHead(cfg.title,cfg.desc,btns)+
     '<div class="panel"><div class="panel-head"><h2>'+cfg.title+' cadastrados ('+cfg.get().length+')</h2></div>'+
     regSearchHTML(kind)+'<div id="regList">'+regListHTML(kind)+'</div></div>';
 }
+/* ---------- Estoque: Lista e Painel profissional ---------- */
+let estVisao='lista',estF={q:'',st:'',ord:'valor',minv:''};
+function estToggleHTML(){return '<button class="btn '+(estVisao==='lista'?'primary':'soft')+'" onclick="estSetVisao(\'lista\')">Lista</button><button class="btn '+(estVisao==='painel'?'primary':'soft')+'" onclick="estSetVisao(\'painel\')">Painel profissional</button>'}
+function estSetVisao(v){estVisao=v;render()}
+function estAbreAvisos(){estVisao='painel';navigate('catpecas')}
+function estRows(){return catPecas.map(function(p){const q=pnum(p.qty),m=pnum(p.min),c=pnum(p.cost),pr=pnum(p.price),st=q<=0?'zero':(m&&q<=m?'low':'ok');return {p:p,q:q,m:m,c:c,pr:pr,st:st,vParado:q*c,vVenda:q*pr}})}
+function estFiltered(){
+  const toks=msNorm(estF.q).trim().split(/\s+/).filter(Boolean),minv=pnum(estF.minv);
+  const r=estRows().filter(function(x){
+    if(toks.length&&!toks.every(function(t){return msNorm((x.p.name||'')+' '+(x.p.code||'')).indexOf(t)>=0}))return false;
+    if(estF.st&&x.st!==estF.st)return false;
+    if(minv&&x.vParado<minv)return false;
+    return true});
+  const o=estF.ord;
+  r.sort(function(a,b){
+    if(o==='valor')return b.vParado-a.vParado;
+    if(o==='venda')return b.vVenda-a.vVenda;
+    if(o==='qtd')return a.q-b.q;
+    return String(a.p.name||'').localeCompare(String(b.p.name||''),'pt-BR')});
+  return r}
+function estTabelaHTML(){
+  const all=estRows(),rows=estFiltered();
+  const tP=rows.reduce(function(s,x){return s+x.vParado},0),tV=rows.reduce(function(s,x){return s+x.vVenda},0);
+  const cards='<div class="cards">'+mtr('Dinheiro parado (custo)',money(tP),'Quantidade × custo, nos filtros',null)+mtr('Valor de venda em estoque',money(tV),'Quantidade × preço de venda',null)+mtr('Peças nos filtros',String(rows.length),'de '+all.length+' cadastradas',null)+'</div>';
+  const lab={ok:'Em estoque',low:'Baixo',zero:'Zerado'},cls={ok:'',low:'s14',zero:'late'};
+  const tbl=rows.length?'<div class="est-wrap"><table class="est-t"><thead><tr><th>Peça</th><th class="r">Qtd</th><th class="r">Mín.</th><th>Situação</th><th class="r">Custo un.</th><th class="r">Valor parado</th><th class="r">Venda un.</th><th class="r">Valor de venda</th></tr></thead><tbody>'+
+    rows.map(function(x){return '<tr class="st-'+x.st+'" onclick="openReg(\'catpecas\',\''+x.p.id+'\')"><td><b>'+esc(x.p.name)+'</b>'+(x.p.code?'<br><small>'+esc(x.p.code)+'</small>':'')+'</td><td class="r qv">'+x.q+'</td><td class="r">'+(x.m||'—')+'</td><td><span class="pill '+cls[x.st]+'">'+lab[x.st]+'</span></td><td class="r">'+money(x.c)+'</td><td class="r"><b>'+money(x.vParado)+'</b></td><td class="r">'+money(x.pr)+'</td><td class="r">'+money(x.vVenda)+'</td></tr>'}).join('')+
+    '</tbody></table></div>':'<div class="empty">Nenhuma peça com esses filtros.</div>';
+  return cards+tbl}
+function estTabela(){const el=$('estTabela');if(el)el.innerHTML=estTabelaHTML()}
+function estLimpa(){estF={q:'',st:'',ord:'valor',minv:''};render()}
+function estPainelBody(){
+  const all=estRows(),alerts=all.filter(function(x){return x.st!=='ok'}).sort(function(a,b){return (a.st==='zero'?0:1)-(b.st==='zero'?0:1)});
+  const av=alerts.length?'<div class="panel section-gap"><div class="panel-head"><h2>Avisos de estoque ('+alerts.length+')</h2></div><div class="list-stack">'+
+    alerts.map(function(x){return '<div class="list-row click" style="cursor:pointer" onclick="openReg(\'catpecas\',\''+x.p.id+'\')"><div><b>'+esc(x.p.name)+'</b><small>'+(x.st==='zero'?'Sem estoque':'Estoque no mínimo')+' · tem '+x.q+' un. · mínimo '+x.m+'</small></div><span class="pill '+(x.st==='zero'?'late':'s14')+'">'+(x.st==='zero'?'Zerado':'Baixo')+'</span></div>'}).join('')+'</div></div>':'';
+  const opt=function(v,t,cur){return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+t+'</option>'};
+  const filtros='<div class="panel section-gap"><div class="panel-head"><h2>Filtros</h2><button class="small-btn" onclick="estLimpa()">Limpar</button></div><div class="est-filtros">'+
+    '<input class="search" placeholder="Nome ou código" value="'+esc(estF.q)+'" oninput="estF.q=this.value;estTabela()">'+
+    '<select onchange="estF.st=this.value;estTabela()">'+opt('','Todas as situações',estF.st)+opt('ok','Em estoque',estF.st)+opt('low','Estoque baixo',estF.st)+opt('zero','Sem estoque',estF.st)+'</select>'+
+    '<select onchange="estF.ord=this.value;estTabela()">'+opt('valor','Maior valor parado',estF.ord)+opt('venda','Maior valor de venda',estF.ord)+opt('qtd','Menor quantidade',estF.ord)+opt('nome','Nome (A-Z)',estF.ord)+'</select>'+
+    '<input placeholder="Valor parado a partir de (R$)" inputmode="decimal" value="'+esc(estF.minv)+'" onchange="estF.minv=this.value;estTabela()">'+
+    '</div><div id="estTabela">'+estTabelaHTML()+'</div></div>';
+  return av+filtros}
+function updateBellEst(){
+  const b=$('bellEst'),n=$('bellEstN');if(!b||!n)return;
+  const show=!!prof&&!(ws&&ws.is_admin)&&allowed('catpecas');
+  const c=show?catPecas.filter(function(p){const q=pnum(p.qty),m=pnum(p.min);return q<=0||(m>0&&q<=m)}).length:0;
+  b.style.display=show?'':'none';n.textContent=c;n.style.display=c?'block':'none'}
 function regFilter(kind,v){regQuery[kind]=v;$('regList').innerHTML=regListHTML(kind)}
 function openReg(kind,id){
   const cfg=REG[kind],item=id?cfg.get().find(x=>x.id===id):null;regState={kind,id:id||''};
@@ -4676,6 +4739,7 @@ NEWPAGE.orbe_tempo=function(){
     '<div class="panel"><div class="list-stack">'+lista+'</div></div>';
 };
 function render(){
+  try{updateBellEst()}catch(e){}
   if(ws&&ws.is_admin){if(!/^(admin|orbe_)/.test(currentPage))currentPage='admin'}else if(/^(admin|orbe_)/.test(currentPage))currentPage='inicio';
   try{applyTheme()}catch(e){}
   updateBillBanner();
