@@ -196,11 +196,24 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
   .placa-s{display:inline-block;vertical-align:middle;border:1.5px solid #111;border-radius:4px;background:#fff;overflow:hidden;margin-right:6px;font-family:"Arial Black",Arial,sans-serif;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.2)}
   .placa-s .pf{display:block;background:#1f4fb4;color:#fff;font-size:6px;font-weight:800;letter-spacing:1px;text-align:center;padding:1px 4px}
   .qitem{position:relative}
-  .qsug{position:absolute;left:0;right:0;top:auto;z-index:20;background:#101a2b;border-radius:12px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.35);max-height:260px;overflow:auto}
+  .qsug{position:absolute;left:0;right:0;top:auto;z-index:20;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);max-height:300px;overflow:auto}
   .qsug:empty{display:none}
-  .mx-res{margin:0 0 12px;background:#101a2b;border-radius:12px;padding:6px}
+  .mx-res{margin:0 0 12px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
   .mx-res:empty{display:none}
-  .mx-res .item,.qsug .item{margin-bottom:4px}
+  .mx-it{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;background:#fff}
+  .mx-it:last-child{border-bottom:0}
+  .mx-it:hover{background:#f3f7ff}
+  .mx-txt{min-width:0;flex:1}
+  .mx-txt b{display:block;font-size:15px;color:var(--ink);overflow:hidden;text-overflow:ellipsis}
+  .mx-txt small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .mx-q{text-align:center;min-width:86px;padding:6px 10px;border-radius:10px}
+  .mx-q b{display:block;font-size:24px;font-weight:800;line-height:1.1}
+  .mx-q small{display:block;font-size:11px;font-weight:700;margin-top:2px}
+  .mx-q.price b{font-size:16px}
+  .mx-q.ok{background:#e3f6ed;color:#14724d}
+  .mx-q.low{background:#fff3d9;color:#936000}
+  .mx-q.zero{background:#fde8e8;color:#9b1c1c}
+  .mx-empty{padding:12px 14px;font-size:13px;color:var(--muted)}
   .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
@@ -3333,12 +3346,24 @@ function regSearchHTML(kind){
   if(kind==='catpecas'||kind==='servicos')return '<div class="msearch" style="padding:0 0 12px"><span class="mslupa" style="left:12px" aria-hidden="true">🔍</span><input id="regSearch" type="search" placeholder="'+(kind==='catpecas'?'Pesquisar peça ou código...':'Pesquisar serviço...')+'" autocomplete="off" oninput="regSuggest(\''+kind+'\',this.value)" aria-label="Pesquisar"></div><div id="regSug" class="mx-res"></div>';
   return '<input class="search" id="regSearch" placeholder="Buscar..." value="'+esc(regQuery[kind])+'" oninput="regFilter(\''+kind+'\',this.value)">';
 }
+/* Linha de sugestão: nome, detalhe e quantidade em destaque (peças) ou valor da mão de obra (serviços) */
+function mxRowHTML(x,kind,attr){
+  let right;
+  if(kind==='catpecas'){
+    const q=pnum(x.qty),m=pnum(x.min),cls=q<=0?'zero':(m&&q<=m?'low':'ok'),lab=q<=0?'sem estoque':(m&&q<=m?'estoque baixo':'em estoque');
+    right='<div class="mx-q '+cls+'"><b>'+String(q)+'</b><small>'+lab+'</small></div>';
+  }else{
+    right='<div class="mx-q ok price"><b>'+money(pnum(x.labor))+'</b><small>mão de obra</small></div>';
+  }
+  const det=kind==='catpecas'?[x.code?'Código '+x.code:'','venda '+money(pnum(x.price))].filter(Boolean).join(' · '):(x.hours?x.hours+' h estimadas':'');
+  return '<div class="mx-it" '+attr+'><div class="mx-txt"><b>'+esc(x.name)+'</b><small>'+esc(det)+'</small></div>'+right+'</div>';
+}
 function regSuggest(kind,v){
   const box=$('regSug');if(!box)return;
   const cfg=REG[kind];
   if(!String(v||'').trim()){box.innerHTML='';return}
   const hits=mxFind(cfg.get(),v,cfg.sub).slice(0,8);
-  box.innerHTML=hits.length?hits.map(function(i){return '<button class="item" onclick="openReg(\''+kind+'\',\''+i.id+'\')"><span class="ico">'+(kind==='catpecas'?'📦':'🔧')+'</span><span style="flex:1;min-width:0"><b>'+esc(i.name)+'</b><small style="display:block;color:#9fb4d3">'+esc(regExtra(kind,i))+'</small></span></button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
+  box.innerHTML=hits.length?hits.map(function(i){return mxRowHTML(i,kind,'onclick="openReg(\''+kind+'\',\''+i.id+'\')"')}).join(''):'<div class="mx-empty">Nada encontrado para “'+esc(v)+'”.</div>';
 }
 /* Baixa de estoque: ao aprovar o orçamento, tira as peças; ao desaprovar ou excluir, devolve */
 function stockShort(q){
@@ -3363,8 +3388,9 @@ function qSuggest(i,v){
   const isPart=qState.items[i].type!=='Mão de obra';
   if(isPart&&!planOk('catpecas')){box.innerHTML='';return}
   if(!String(v||'').trim()){box.innerHTML='';return}
+  const kind=isPart?'catpecas':'servicos';
   const hits=mxFind(isPart?catPecas:catServ,v).slice(0,8);
-  box.innerHTML=hits.length?hits.map(function(x){return '<button class="item" onmousedown="qPick('+i+',\''+x.id+'\')"><span style="flex:1;min-width:0"><b>'+esc(x.name)+'</b><small style="display:block;color:#9fb4d3">'+(isPart?'Estoque '+(pnum(x.qty)||0)+' un. · venda '+money(pnum(x.price)):'Mão de obra '+money(pnum(x.labor)))+'</small></span></button>'}).join(''):'<div style="padding:10px 12px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
+  box.innerHTML=hits.length?hits.map(function(x){return mxRowHTML(x,kind,'onmousedown="qPick('+i+',\''+x.id+'\')"')}).join(''):'<div class="mx-empty">Nada encontrado para “'+esc(v)+'”.</div>';
 }
 function qHideSug(i){setTimeout(function(){const b=$('qsug'+i);if(b)b.innerHTML=''},150)}
 function qPick(i,id){
