@@ -196,11 +196,11 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
   .placa-s{display:inline-block;vertical-align:middle;border:1.5px solid #111;border-radius:4px;background:#fff;overflow:hidden;margin-right:6px;font-family:"Arial Black",Arial,sans-serif;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.2)}
   .placa-s .pf{display:block;background:#1f4fb4;color:#fff;font-size:6px;font-weight:800;letter-spacing:1px;text-align:center;padding:1px 4px}
   .qitem{position:relative}
-  .qsug{position:absolute;left:0;right:0;top:auto;z-index:20;background:#fff;border:1px solid #cbd3df;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);max-height:240px;overflow:auto}
+  .qsug{position:absolute;left:0;right:0;top:auto;z-index:20;background:#101a2b;border-radius:12px;padding:6px;box-shadow:0 6px 18px rgba(0,0,0,.35);max-height:260px;overflow:auto}
   .qsug:empty{display:none}
-  .qsug-it{padding:8px 10px;border-bottom:1px solid #eef1f5;cursor:pointer;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
-  .qsug-it:hover{background:#eef4ff}
-  .qsug-it small{color:#5b6b7f}
+  .mx-res{margin:0 0 12px;background:#101a2b;border-radius:12px;padding:6px}
+  .mx-res:empty{display:none}
+  .mx-res .item,.qsug .item{margin-bottom:4px}
   .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
@@ -2848,13 +2848,13 @@ const ADMIN_MENU=[
 ];
 const CLIENT_MENU=[
  {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda'],['garantia','🛡','Garantia']]},
- {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos'],['servicos','🔧','Gestão de serviços']]},
- {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos'],['catpecas','⚙','Cadastro de peças']]},
+ {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos'],['servicos','🔧','Gestão de serviços'],['catpecas','📦','Estoque de peças']]},
+ {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['indicacao','🎁','Plano de indicação'],['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis',catpecas:'Peças com custo e preço de venda para usar no orçamento',servicos:'Serviços com o valor da mão de obra de cada um'};
+const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis',catpecas:'Peças em estoque, com quantidade, custo e preço de venda',servicos:'Serviços com o valor da mão de obra de cada um'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
@@ -3144,10 +3144,10 @@ REG.clients={page:'empresas',title:'Empresas clientes',one:'empresa',btn:'＋ Ca
   get:()=>partners.filter(p=>p.kind==='cliente'),set:v=>{partners=partners.filter(p=>p.kind!=='cliente').concat(v.map(x=>Object.assign(x,{kind:'cliente'})))},
   fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Festa Eventos'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'doc',l:'CNPJ'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.contact,i.phone,i.doc].filter(Boolean).join(' · ')};
-REG.catpecas={page:'catpecas',title:'Cadastro de peças',one:'peça',btn:'＋ Cadastrar peça',
-  desc:'Peças que a oficina usa, com custo e preço de venda. No orçamento, basta começar a digitar o nome para preencher.',
+REG.catpecas={page:'catpecas',title:'Estoque de peças',one:'peça',btn:'＋ Cadastrar peça',
+  desc:'Cadastre cada peça com a quantidade que você tem em estoque. Quando chegar ao estoque mínimo, aparece um aviso. No orçamento, basta começar a digitar o nome para preencher.',
   get:()=>catPecas,set:v=>{catPecas=v},
-  fields:[{k:'name',l:'Nome da peça *',req:1,ph:'Ex.: Bomba injetora'},{k:'code',l:'Código / referência',ph:'Ex.: BI-1234'},{k:'cost',l:'Custo (R$)',num:1,money:1,ph:'Ex.: 350,00'},{k:'price',l:'Preço de venda (R$)',num:1,money:1,ph:'Ex.: 480,00'},{k:'notes',l:'Observações',area:1}],
+  fields:[{k:'name',l:'Nome da peça *',req:1,ph:'Ex.: Bomba injetora'},{k:'code',l:'Código / referência',ph:'Ex.: BI-1234'},{k:'qty',l:'Quantidade em estoque *',req:1,num:1,ph:'Ex.: 5'},{k:'min',l:'Estoque mínimo (aviso)',num:1,ph:'Ex.: 2'},{k:'cost',l:'Custo (R$)',num:1,money:1,ph:'Ex.: 350,00'},{k:'price',l:'Preço de venda (R$)',num:1,money:1,ph:'Ex.: 480,00'},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.code].filter(Boolean).join(' · ')};
 REG.servicos={page:'servicos',title:'Gestão de serviços',one:'serviço',btn:'＋ Cadastrar serviço',
   desc:'Serviços que a oficina faz e o valor da mão de obra de cada um. No orçamento, basta começar a digitar o nome para preencher.',
@@ -3177,7 +3177,7 @@ function companyDetail(id){
 const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics',catpecas:'catpecas',servicos:'servicos'};
 let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:'',catpecas:'',servicos:''};
 function regExtra(kind,i){
-  if(kind==='catpecas')return 'Custo '+money(pnum(i.cost))+' · venda '+money(pnum(i.price));
+  if(kind==='catpecas'){const q=pnum(i.qty),m=pnum(i.min);return (q<=0?'SEM ESTOQUE':m&&q<=m?'ESTOQUE BAIXO':'Em estoque')+': '+(i.qty||0)+' un. · custo '+money(pnum(i.cost))+' · venda '+money(pnum(i.price))}
   if(kind==='servicos')return 'Mão de obra '+money(pnum(i.labor));
   if(kind==='clients'){const n=trucks.filter(t=>t.companyId===i.id).length;return n+' caminhão(ões)'}
   if(kind==='mechanics'){const n=trucks.filter(t=>t.mechanicId===i.id).length;return n+' veículo(s) associado(s)'}
@@ -3186,7 +3186,7 @@ function regExtra(kind,i){
 }
 function regListHTML(kind){
   const cfg=REG[kind],q=(regQuery[kind]||'').toLowerCase();
-  const items=cfg.get().filter(i=>!q||JSON.stringify(i).toLowerCase().includes(q));
+  const items=(kind==='catpecas'||kind==='servicos')?cfg.get().slice().sort((x,y)=>String(x.name||'').localeCompare(String(y.name||''),'pt-BR')):cfg.get().filter(i=>!q||JSON.stringify(i).toLowerCase().includes(q));
   if(!cfg.get().length)return '<div class="empty">Nenhum '+cfg.one+' cadastrado. Toque em “'+cfg.btn.replace('＋ ','')+'” para começar.</div>';
   if(!items.length)return '<div class="empty">Nada encontrado para essa busca.</div>';
   return '<div class="list-stack">'+items.map(i=>{
@@ -3201,7 +3201,7 @@ function regPage(kind){
   const cfg=REG[kind];
   return pageHead(cfg.title,cfg.desc,'<button class="btn primary" onclick="openReg(\''+kind+'\',\'\')">'+cfg.btn+'</button>')+
     '<div class="panel"><div class="panel-head"><h2>'+cfg.title+' cadastrados ('+cfg.get().length+')</h2></div>'+
-    '<input class="search" id="regSearch" placeholder="Buscar..." value="'+esc(regQuery[kind])+'" oninput="regFilter(\''+kind+'\',this.value)"><div id="regList">'+regListHTML(kind)+'</div></div>';
+    regSearchHTML(kind)+'<div id="regList">'+regListHTML(kind)+'</div></div>';
 }
 function regFilter(kind,v){regQuery[kind]=v;$('regList').innerHTML=regListHTML(kind)}
 function openReg(kind,id){
@@ -3315,20 +3315,62 @@ function renderQItems(){
    '<div class="subtle">Subtotal cobrado: <b id="qs'+i+'">'+money(it.qty*it.price)+'</b></div></div>').join('');
   qTotals();
 }
+/* Busca igual à do menu: começa com o texto primeiro, depois ordem alfabética */
+function mxFind(src,v,extra){
+  const q=msNorm(v).trim();if(!q)return [];
+  const toks=q.split(/\s+/),out=[];
+  (src||[]).forEach(function(x){
+    const lab=msNorm(x.name||'');
+    const hay=lab+' '+msNorm(x.code||'')+' '+msNorm(extra?extra(x):'');
+    if(!toks.every(function(t){return hay.indexOf(t)>=0}))return;
+    const rank=lab.indexOf(q)===0?0:(lab.split(/\s+/).some(function(w){return w.indexOf(q)===0})?1:(lab.indexOf(q)>=0?2:3));
+    out.push({x:x,rank:rank,lab:lab});
+  });
+  out.sort(function(a,b){return a.rank-b.rank||a.lab.localeCompare(b.lab,'pt-BR')});
+  return out.map(function(h){return h.x});
+}
+function regSearchHTML(kind){
+  if(kind==='catpecas'||kind==='servicos')return '<div class="msearch" style="padding:0 0 12px"><span class="mslupa" style="left:12px" aria-hidden="true">🔍</span><input id="regSearch" type="search" placeholder="'+(kind==='catpecas'?'Pesquisar peça ou código...':'Pesquisar serviço...')+'" autocomplete="off" oninput="regSuggest(\''+kind+'\',this.value)" aria-label="Pesquisar"></div><div id="regSug" class="mx-res"></div>';
+  return '<input class="search" id="regSearch" placeholder="Buscar..." value="'+esc(regQuery[kind])+'" oninput="regFilter(\''+kind+'\',this.value)">';
+}
+function regSuggest(kind,v){
+  const box=$('regSug');if(!box)return;
+  const cfg=REG[kind];
+  if(!String(v||'').trim()){box.innerHTML='';return}
+  const hits=mxFind(cfg.get(),v,cfg.sub).slice(0,8);
+  box.innerHTML=hits.length?hits.map(function(i){return '<button class="item" onclick="openReg(\''+kind+'\',\''+i.id+'\')"><span class="ico">'+(kind==='catpecas'?'📦':'🔧')+'</span><span style="flex:1;min-width:0"><b>'+esc(i.name)+'</b><small style="display:block;color:#9fb4d3">'+esc(regExtra(kind,i))+'</small></span></button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
+}
+/* Baixa de estoque: ao aprovar o orçamento, tira as peças; ao desaprovar ou excluir, devolve */
+function stockShort(q){
+  if(!q||q.status!=='Aprovado')return [];
+  const back={},need={};
+  if(q.stockBaixa&&Array.isArray(q.stockItems))q.stockItems.forEach(function(u){back[u.catId]=(back[u.catId]||0)+u.qty});
+  (q.items||[]).forEach(function(it){if(it.type!=='Mão de obra'&&it.catId)need[it.catId]=(need[it.catId]||0)+(Number(it.qty)||0)});
+  return Object.keys(need).map(function(id){const p=catPecas.find(function(c){return c.id===id});if(!p)return null;const av=(pnum(p.qty)||0)+(back[id]||0);return need[id]>av?p.name+': tem '+av+', precisa '+need[id]:null}).filter(Boolean);
+}
+function stockApply(q){
+  if(q.stockBaixa&&Array.isArray(q.stockItems))q.stockItems.forEach(function(u){const p=catPecas.find(function(c){return c.id===u.catId});if(p)p.qty=String((pnum(p.qty)||0)+u.qty)});
+  q.stockBaixa=false;q.stockItems=[];
+  if(q.status!=='Aprovado')return;
+  const used={};
+  (q.items||[]).forEach(function(it){if(it.type!=='Mão de obra'&&it.catId)used[it.catId]=(used[it.catId]||0)+(Number(it.qty)||0)});
+  q.stockItems=Object.keys(used).map(function(id){return {catId:id,qty:used[id]}});
+  q.stockItems.forEach(function(u){const p=catPecas.find(function(c){return c.id===u.catId});if(p)p.qty=String((pnum(p.qty)||0)-u.qty)});
+  q.stockBaixa=true;
+}
 function qSuggest(i,v){
   const box=$('qsug'+i);if(!box||!qState||!qState.items[i])return;
   const isPart=qState.items[i].type!=='Mão de obra';
   if(isPart&&!planOk('catpecas')){box.innerHTML='';return}
-  const src=isPart?catPecas:catServ,toks=msNorm(v).split(/\s+/).filter(Boolean);
-  if(!toks.length){box.innerHTML='';return}
-  const hits=src.filter(x=>{const h=msNorm((x.name||'')+' '+(x.code||''));return toks.every(t=>h.includes(t))}).slice(0,6);
-  box.innerHTML=hits.map(x=>'<div class="qsug-it" onmousedown="qPick('+i+',\''+x.id+'\')"><b>'+esc(x.name)+'</b><small>'+(isPart?(x.code?esc(x.code)+' · ':'')+'custo '+money(pnum(x.cost))+' · venda '+money(pnum(x.price)):'mão de obra '+money(pnum(x.labor)))+'</small></div>').join('');
+  if(!String(v||'').trim()){box.innerHTML='';return}
+  const hits=mxFind(isPart?catPecas:catServ,v).slice(0,8);
+  box.innerHTML=hits.length?hits.map(function(x){return '<button class="item" onmousedown="qPick('+i+',\''+x.id+'\')"><span style="flex:1;min-width:0"><b>'+esc(x.name)+'</b><small style="display:block;color:#9fb4d3">'+(isPart?'Estoque '+(pnum(x.qty)||0)+' un. · venda '+money(pnum(x.price)):'Mão de obra '+money(pnum(x.labor)))+'</small></span></button>'}).join(''):'<div style="padding:10px 12px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
 }
 function qHideSug(i){setTimeout(function(){const b=$('qsug'+i);if(b)b.innerHTML=''},150)}
 function qPick(i,id){
   const it=qState.items[i];if(!it)return;
   if(it.type==='Mão de obra'){const s=catServ.find(x=>x.id===id);if(!s)return;it.desc=s.name;it.cost=0;it.price=pnum(s.labor);it.qty=1}
-  else{const p=catPecas.find(x=>x.id===id);if(!p)return;it.desc=p.name;it.cost=pnum(p.cost);it.price=pnum(p.price)}
+  else{const p=catPecas.find(x=>x.id===id);if(!p)return;it.desc=p.name;it.cost=pnum(p.cost);it.price=pnum(p.price);it.catId=p.id}
   renderQItems();
 }
 function qTotals(){
@@ -3337,7 +3379,7 @@ function qTotals(){
   $('qTotals').innerHTML='<div><span>Total cobrado do cliente</span><b>'+money(t)+'</b></div><div><span>Custo (peças e mão de obra)</span><span>'+money(c)+'</span></div><div><span>Lucro estimado</span><b style="color:'+(t-c>=0?'#14724d':'#b33d3d')+'">'+money(t-c)+'</b></div>';
 }
 function qSet(i,k,v){
-  const it=qState.items[i];it[k]=(k==='type'||k==='desc')?v:(k==='qty'?(Number(v)||0):pnum(v));
+  const it=qState.items[i];it[k]=(k==='type'||k==='desc')?v:(k==='qty'?(Number(v)||0):pnum(v));if(k==='desc'||k==='type')delete it.catId;
   const el=$('qs'+i);if(el)el.textContent=money(it.qty*it.price);qTotals();
 }
 function qAdd(type){qState.items.push({type,desc:'',qty:1,cost:0,price:0});renderQItems()}
@@ -3360,9 +3402,12 @@ function saveQuote(){
   qState.items=items;
   const t=trucks.find(x=>x.id===qState.truckId);
   if(t){qState.plate=t.plate;qState.client=t.client;qState.model=t.model||''}
+  const shortList=stockShort(qState);
+  if(shortList.length&&!confirm('Estoque insuficiente:\n'+shortList.join('\n')+'\n\nSalvar mesmo assim? O estoque vai ficar negativo.'))return;
   const was=quotes.find(x=>x.id===qState.id),oldStatus=was?was.status:'';
   const rec=Object.assign({},qState);delete rec.isNew;
   if(rec.status==='Aprovado'){if(!rec.approvedIso)rec.approvedIso=todayISO()}else rec.approvedIso='';
+  stockApply(rec);
   if(was)Object.assign(was,rec);else quotes.unshift(rec);
   if(t&&rec.status!==oldStatus){
     if(rec.status==='Aguardando aprovação'&&t.status!=='Aguardando aprovação'){logEvent(t.plate,'Status alterado: '+t.status+' → Aguardando aprovação (orçamento '+quoteNumber(rec)+')');t.status='Aguardando aprovação'}
@@ -3371,7 +3416,7 @@ function saveQuote(){
   }
   persist();closeModal('quoteModal');render();
 }
-function deleteQuote(){if(!confirm('Excluir este orçamento?'))return;quotes=quotes.filter(x=>x.id!==qState.id);persist();closeModal('quoteModal');render()}
+function deleteQuote(){if(!confirm('Excluir este orçamento?'))return;const dq=quotes.find(x=>x.id===qState.id);if(dq){dq.status='';stockApply(dq)}quotes=quotes.filter(x=>x.id!==qState.id);persist();closeModal('quoteModal');render()}
 function printQuote(){
   qSync();const t=trucks.find(x=>x.id===qState.truckId)||{};
   const items=qClean(qState);
