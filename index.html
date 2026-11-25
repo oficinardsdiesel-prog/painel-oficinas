@@ -243,7 +243,7 @@ window.addEventListener('error',function(e){
 <div class="banner" role="img" aria-label="ORBE - O aplicativo de gestão da sua oficina"></div>
 <header class="top">
   <button class="brandbtn" onclick="navigate(ws&&ws.is_admin?'admin':'inicio')" aria-label="ORBE">ORBE<small>GESTÃO DE OFICINAS</small></button>
-  <span class="syncb" id="syncb"></span><button class="bell" id="bellEst" style="display:none" onclick="estAbreAvisos()" aria-label="Avisos de estoque">🔔<span class="badge" id="bellEstN" style="display:none"></span></button><nav class="tabs"><button onclick="toggleMenu(true)">☰ Menu</button></nav>
+  <span class="syncb" id="syncb"></span><nav class="tabs"><button onclick="toggleMenu(true)">☰ Menu</button></nav>
 </header>
 <main class="content" id="page"></main>
 
@@ -3054,7 +3054,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
-  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
+  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bellEst" style="display:none" onclick="estAbreAvisos()" aria-label="Avisos de estoque">🔔<span class="badge" id="bellEstN" style="display:none"></span></button><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
   '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+(i[0]==='indicacao'?'<span style="display:block;color:#e11d48;font-weight:800;font-size:10px;letter-spacing:.5px">NOVO</span>':'')+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'termos\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Termos de uso e privacidade</a></div>';
 }
 function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
@@ -3068,7 +3068,7 @@ function msSearch(v){
   hits.sort(function(a,b){return a.rank-b.rank});
   r.innerHTML=hits.length?hits.map(function(h){const i=h.i;return '<button class="item" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+esc(i[2])+'</button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
 }
-function toggleMenu(open){renderMenu();if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
+function toggleMenu(open){renderMenu();try{updateBellEst()}catch(e){}if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
 function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF='';empSel=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
@@ -3225,7 +3225,7 @@ function regListHTML(kind){
 }
 function regPage(kind){
   const cfg=REG[kind];
-  const btns=kind==='catpecas'?estToggleHTML()+'<button class="btn primary" onclick="openReg(\'catpecas\',\'\')">＋ Cadastrar peça</button>':'<button class="btn primary" onclick="openReg(\''+kind+'\',\'\')">'+cfg.btn+'</button>';
+  const btns=kind==='catpecas'?estToggleHTML():'<button class="btn primary" onclick="openReg(\''+kind+'\',\'\')">'+cfg.btn+'</button>';
   if(kind==='catpecas'&&estVisao==='painel')return pageHead(cfg.title,cfg.desc,btns)+estPainelBody();
   return pageHead(cfg.title,cfg.desc,btns)+
     '<div class="panel"><div class="panel-head"><h2>'+cfg.title+' cadastrados ('+cfg.get().length+')</h2></div>'+
@@ -3233,7 +3233,7 @@ function regPage(kind){
 }
 /* ---------- Estoque: Lista e Painel profissional ---------- */
 let estVisao='lista',estF={q:'',st:'',ord:'valor',minv:''};
-function estToggleHTML(){return '<button class="btn '+(estVisao==='lista'?'primary':'soft')+'" onclick="estSetVisao(\'lista\')">Lista</button><button class="btn '+(estVisao==='painel'?'primary':'soft')+'" onclick="estSetVisao(\'painel\')">Painel profissional</button>'}
+function estToggleHTML(){return '<button class="btn primary" onclick="openReg(\'catpecas\',\'\')">＋ Cadastrar peça</button>'+(estVisao==='lista'?'<button class="btn soft" onclick="estSetVisao(\'painel\')">Painel profissional</button>':'<button class="btn soft" onclick="estSetVisao(\'lista\')">← Voltar</button>')}
 function estSetVisao(v){estVisao=v;render()}
 function estAbreAvisos(){estVisao='painel';navigate('catpecas')}
 function estRows(){return catPecas.map(function(p){const q=pnum(p.qty),m=pnum(p.min),c=pnum(p.cost),pr=pnum(p.price),st=q<=0?'zero':(m&&q<=m?'low':'ok');return {p:p,q:q,m:m,c:c,pr:pr,st:st,vParado:q*c,vVenda:q*pr}})}
@@ -3254,7 +3254,7 @@ function estFiltered(){
 function estTabelaHTML(){
   const all=estRows(),rows=estFiltered();
   const tP=rows.reduce(function(s,x){return s+x.vParado},0),tV=rows.reduce(function(s,x){return s+x.vVenda},0);
-  const cards='<div class="cards">'+mtr('Dinheiro parado (custo)',money(tP),'Quantidade × custo, nos filtros',null)+mtr('Valor de venda em estoque',money(tV),'Quantidade × preço de venda',null)+mtr('Peças nos filtros',String(rows.length),'de '+all.length+' cadastradas',null)+'</div>';
+  const cards='<div class="cards">'+mtr('Valor no estoque',money(tP),'Quantidade × custo, nos filtros',null)+mtr('Valor de venda em estoque',money(tV),'Quantidade × preço de venda',null)+mtr('Peças nos filtros',String(rows.length),'de '+all.length+' cadastradas',null)+'</div>';
   const lab={ok:'Em estoque',low:'Baixo',zero:'Zerado'},cls={ok:'',low:'s14',zero:'late'};
   const tbl=rows.length?'<div class="est-wrap"><table class="est-t"><thead><tr><th>Peça</th><th class="r">Qtd</th><th class="r">Mín.</th><th>Situação</th><th class="r">Custo un.</th><th class="r">Valor parado</th><th class="r">Venda un.</th><th class="r">Valor de venda</th></tr></thead><tbody>'+
     rows.map(function(x){return '<tr class="st-'+x.st+'" onclick="openReg(\'catpecas\',\''+x.p.id+'\')"><td><b>'+esc(x.p.name)+'</b>'+(x.p.code?'<br><small>'+esc(x.p.code)+'</small>':'')+'</td><td class="r qv">'+x.q+'</td><td class="r">'+(x.m||'—')+'</td><td><span class="pill '+cls[x.st]+'">'+lab[x.st]+'</span></td><td class="r">'+money(x.c)+'</td><td class="r"><b>'+money(x.vParado)+'</b></td><td class="r">'+money(x.pr)+'</td><td class="r">'+money(x.vVenda)+'</td></tr>'}).join('')+
