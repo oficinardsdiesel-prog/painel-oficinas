@@ -195,6 +195,12 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
 .primary{box-shadow:0 2px 0 #7b848f,0 0 16px -3px var(--accent)!important}
   .placa-s{display:inline-block;vertical-align:middle;border:1.5px solid #111;border-radius:4px;background:#fff;overflow:hidden;margin-right:6px;font-family:"Arial Black",Arial,sans-serif;line-height:1;box-shadow:0 1px 2px rgba(0,0,0,.2)}
   .placa-s .pf{display:block;background:#1f4fb4;color:#fff;font-size:6px;font-weight:800;letter-spacing:1px;text-align:center;padding:1px 4px}
+  .qitem{position:relative}
+  .qsug{position:absolute;left:0;right:0;top:auto;z-index:20;background:#fff;border:1px solid #cbd3df;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.18);max-height:240px;overflow:auto}
+  .qsug:empty{display:none}
+  .qsug-it{padding:8px 10px;border-bottom:1px solid #eef1f5;cursor:pointer;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .qsug-it:hover{background:#eef4ff}
+  .qsug-it small{color:#5b6b7f}
   .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
@@ -2825,7 +2831,7 @@ var qrcode = function() {
 <script>
 'use strict';
 /* ---------- Dados (ficam salvos neste aparelho) ---------- */
-const K={inv:'rds_invoices_v1',rcv:'rds_recv_v1',agd:'rds_agenda_v1',prt:'rds_parts_v1',trucks:'rds_demo_trucks_v1',exp:'rds_expenses_v1',mech:'rds_mechanics_v1',ev:'rds_events_v1',par:'rds_partners_v1',sup:'rds_suppliers_v1',quo:'rds_quotes_v1',pho:'rds_photometa_v1',set:'rds_shopset_v1'};
+const K={inv:'rds_invoices_v1',rcv:'rds_recv_v1',agd:'rds_agenda_v1',prt:'rds_parts_v1',trucks:'rds_demo_trucks_v1',exp:'rds_expenses_v1',mech:'rds_mechanics_v1',ev:'rds_events_v1',par:'rds_partners_v1',sup:'rds_suppliers_v1',quo:'rds_quotes_v1',pho:'rds_photometa_v1',set:'rds_shopset_v1',catp:'rds_catalog_pecas_v1',cats:'rds_catalog_servicos_v1'};
 const STATUSES=['Aguardando avaliação','Em diagnóstico','Orçamento em elaboração','Aguardando aprovação','Em manutenção','Serviço concluído','Aguardando retirada','Entregue'];
 const QSTATUS=['Rascunho','Aguardando aprovação','Aprovado','Recusado'];
 const CATEGORIES=['Fornecedor / peças','Parceiros / serviços terceirizados','Funcionários','Aluguel','Água e luz','Internet / telefone','Ferramentas e materiais','Impostos e taxas','Outras despesas'];
@@ -2842,17 +2848,18 @@ const ADMIN_MENU=[
 ];
 const CLIENT_MENU=[
  {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda'],['garantia','🛡','Garantia']]},
- {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos']]},
- {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
+ {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos'],['servicos','🔧','Gestão de serviços']]},
+ {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos'],['catpecas','⚙','Cadastro de peças']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['indicacao','🎁','Plano de indicação'],['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
 ];
 let MENU=ADMIN_MENU;
-const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis'};
+const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia',garantia:'Veículos na garantia e consulta por placa',gestao:'Caixa, a receber, despesas fixas e metas (dono)',treinamento:'Explicação rápida de cada aba com o Orbe',notas:'Preparar nota fiscal quando precisar e enviar ao contador',admin:'Oficinas parceiras: ativar, bloquear e teste grátis',agenda:'Calendário de serviços e vencimentos',receber:'Serviços a receber e cobrança no WhatsApp',metas:'Meta de produção de cada mecânico',pecas:'Quanto a oficina deve às autopeças',editar:'Organizar, esconder e adicionar blocos nas páginas',usuarios:'Sua conta e o acesso de cada pessoa',configuracoes:'Aparência e dados da oficina',inicio:'Visão geral da oficina',cadastro:'Registrar cliente, veículo e fotos',historico:'Veículos entregues e movimentações',orcamentos:'Peças, mão de obra e aprovação',financeiro:'Faturamento, despesas e resultado',pagamentos:'Contas a pagar e pagas',parceiros:'Empresas que fazem serviço para nós',fornecedores:'De quem compramos peças e materiais',mecanicos:'Equipe e responsáveis',catpecas:'Peças com custo e preço de venda para usar no orçamento',servicos:'Serviços com o valor da mão de obra de cada um'};
 
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
 let recv=read(K.rcv,[]),agenda=read(K.agd,[]),parts=read(K.prt,[]),invoices=read(K.inv,[]);
+let catPecas=read(K.catp,[]),catServ=read(K.cats,[]);
 let currentPage='inicio';
 trucks.forEach((t,i)=>{if(!t.id)t.id='legacy-'+i;if(!t.mechanicId)t.mechanicId=''});
 [expenses,mechanics,events,partners,suppliers,quotes].forEach(a=>a.forEach((x,i)=>{if(x&&!x.id)x.id='old-'+Date.now().toString(36)+'-'+i}));
@@ -2886,6 +2893,7 @@ function persistLocal(){
     localStorage.setItem(K.par,JSON.stringify(partners));localStorage.setItem(K.sup,JSON.stringify(suppliers));
     localStorage.setItem(K.quo,JSON.stringify(quotes));localStorage.setItem(K.pho,JSON.stringify(photoMeta));localStorage.setItem(K.set,JSON.stringify(shopSet));
     localStorage.setItem(K.rcv,JSON.stringify(recv));localStorage.setItem(K.agd,JSON.stringify(agenda));localStorage.setItem(K.prt,JSON.stringify(parts));localStorage.setItem(K.inv,JSON.stringify(invoices));
+    localStorage.setItem(K.catp,JSON.stringify(catPecas));localStorage.setItem(K.cats,JSON.stringify(catServ));
     safeSnap('automática');
   }catch(e){alert('Não foi possível salvar neste aparelho (memória do navegador cheia ou bloqueada). Faça um backup em Início > Backup.')}
 }
@@ -3136,6 +3144,16 @@ REG.clients={page:'empresas',title:'Empresas clientes',one:'empresa',btn:'＋ Ca
   get:()=>partners.filter(p=>p.kind==='cliente'),set:v=>{partners=partners.filter(p=>p.kind!=='cliente').concat(v.map(x=>Object.assign(x,{kind:'cliente'})))},
   fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Festa Eventos'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'doc',l:'CNPJ'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.contact,i.phone,i.doc].filter(Boolean).join(' · ')};
+REG.catpecas={page:'catpecas',title:'Cadastro de peças',one:'peça',btn:'＋ Cadastrar peça',
+  desc:'Peças que a oficina usa, com custo e preço de venda. No orçamento, basta começar a digitar o nome para preencher.',
+  get:()=>catPecas,set:v=>{catPecas=v},
+  fields:[{k:'name',l:'Nome da peça *',req:1,ph:'Ex.: Bomba injetora'},{k:'code',l:'Código / referência',ph:'Ex.: BI-1234'},{k:'cost',l:'Custo (R$)',num:1,money:1,ph:'Ex.: 350,00'},{k:'price',l:'Preço de venda (R$)',num:1,money:1,ph:'Ex.: 480,00'},{k:'notes',l:'Observações',area:1}],
+  sub:i=>[i.code].filter(Boolean).join(' · ')};
+REG.servicos={page:'servicos',title:'Gestão de serviços',one:'serviço',btn:'＋ Cadastrar serviço',
+  desc:'Serviços que a oficina faz e o valor da mão de obra de cada um. No orçamento, basta começar a digitar o nome para preencher.',
+  get:()=>catServ,set:v=>{catServ=v},
+  fields:[{k:'name',l:'Serviço *',req:1,ph:'Ex.: Troca de óleo'},{k:'labor',l:'Valor da mão de obra (R$) *',req:1,num:1,money:1,ph:'Ex.: 150,00'},{k:'hours',l:'Tempo estimado (horas)',num:1,ph:'Ex.: 1,5'},{k:'notes',l:'Observações',area:1}],
+  sub:i=>[i.hours?i.hours+' h estimadas':''].filter(Boolean).join(' · ')};
 let empSel='';
 function showCompany(id){empSel=id;render();window.scrollTo(0,0)}
 function fillCompanySel(p,sel){const el=$(p+'Company');if(!el)return;el.innerHTML='<option value="">Sem empresa (particular)</option>'+partners.filter(x=>x.kind==='cliente').map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('')}
@@ -3156,9 +3174,11 @@ function companyDetail(id){
   return pageHead(esc(c.name),[c.contact,c.phone,c.doc].filter(Boolean).join(' · ')||'Empresa cliente','<button class="btn soft" onclick="showCompany(\'\')">← Empresas</button><button class="btn soft" onclick="openReg(\'clients\',\''+c.id+'\')">Editar empresa</button><button class="btn primary" onclick="companyNewTruck(\''+c.id+'\')">＋ Caminhão desta empresa</button>')+
     '<div class="panel"><div class="panel-head"><h2>Caminhões ('+list.length+')</h2></div>'+rows+'</div>';
 }
-const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics'};
-let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:''};
+const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics',catpecas:'catpecas',servicos:'servicos'};
+let regState={kind:'',id:''},regQuery={partners:'',suppliers:'',mechanics:'',catpecas:'',servicos:''};
 function regExtra(kind,i){
+  if(kind==='catpecas')return 'Custo '+money(pnum(i.cost))+' · venda '+money(pnum(i.price));
+  if(kind==='servicos')return 'Mão de obra '+money(pnum(i.labor));
   if(kind==='clients'){const n=trucks.filter(t=>t.companyId===i.id).length;return n+' caminhão(ões)'}
   if(kind==='mechanics'){const n=trucks.filter(t=>t.mechanicId===i.id).length;return n+' veículo(s) associado(s)'}
   const ex=expenses.filter(e=>e.linkKind===kind&&e.linkId===i.id);
@@ -3288,12 +3308,28 @@ function openQuote(id,truckId){
 function renderQItems(){
   $('qItems').innerHTML=qState.items.map((it,i)=>
    '<div class="qitem"><div class="qrow1"><select onchange="qSet('+i+',\'type\',this.value)"><option'+(it.type==='Peça'?' selected':'')+'>Peça</option><option'+(it.type==='Mão de obra'?' selected':'')+'>Mão de obra</option></select><button class="small-btn red" onclick="qDel('+i+')">Remover</button></div>'+
-   '<input placeholder="Descrição (ex.: bomba injetora, troca de óleo)" value="'+esc(it.desc)+'" oninput="qSet('+i+',\'desc\',this.value)">'+
+   '<input placeholder="Descrição (ex.: bomba injetora, troca de óleo)" value="'+esc(it.desc)+'" oninput="qSet('+i+',\'desc\',this.value);qSuggest('+i+',this.value)" onfocus="qSuggest('+i+',this.value)" onblur="qHideSug('+i+')" autocomplete="off">'+'<div class="qsug" id="qsug'+i+'"></div>'+
    '<div class="qrow3"><div class="field"><label>Qtd</label><input type="number" inputmode="decimal" min="0" step="any" value="'+it.qty+'" oninput="qSet('+i+',\'qty\',this.value)"></div>'+
    '<div class="field"><label>Custo un. (R$)</label><input type="text" inputmode="decimal" class="money" value="'+mstr(it.cost)+'" oninput="qSet('+i+',\'cost\',this.value)"></div>'+
    '<div class="field"><label>Cobrado un. (R$)</label><input type="text" inputmode="decimal" class="money" value="'+mstr(it.price)+'" oninput="qSet('+i+',\'price\',this.value)"></div></div>'+
    '<div class="subtle">Subtotal cobrado: <b id="qs'+i+'">'+money(it.qty*it.price)+'</b></div></div>').join('');
   qTotals();
+}
+function qSuggest(i,v){
+  const box=$('qsug'+i);if(!box||!qState||!qState.items[i])return;
+  const isPart=qState.items[i].type!=='Mão de obra';
+  if(isPart&&!planOk('catpecas')){box.innerHTML='';return}
+  const src=isPart?catPecas:catServ,toks=msNorm(v).split(/\s+/).filter(Boolean);
+  if(!toks.length){box.innerHTML='';return}
+  const hits=src.filter(x=>{const h=msNorm((x.name||'')+' '+(x.code||''));return toks.every(t=>h.includes(t))}).slice(0,6);
+  box.innerHTML=hits.map(x=>'<div class="qsug-it" onmousedown="qPick('+i+',\''+x.id+'\')"><b>'+esc(x.name)+'</b><small>'+(isPart?(x.code?esc(x.code)+' · ':'')+'custo '+money(pnum(x.cost))+' · venda '+money(pnum(x.price)):'mão de obra '+money(pnum(x.labor)))+'</small></div>').join('');
+}
+function qHideSug(i){setTimeout(function(){const b=$('qsug'+i);if(b)b.innerHTML=''},150)}
+function qPick(i,id){
+  const it=qState.items[i];if(!it)return;
+  if(it.type==='Mão de obra'){const s=catServ.find(x=>x.id===id);if(!s)return;it.desc=s.name;it.cost=0;it.price=pnum(s.labor);it.qty=1}
+  else{const p=catPecas.find(x=>x.id===id);if(!p)return;it.desc=p.name;it.cost=pnum(p.cost);it.price=pnum(p.price)}
+  renderQItems();
 }
 function qTotals(){
   try{qMechRender()}catch(e){}
@@ -4655,8 +4691,8 @@ document.addEventListener('input',function(e){
 });
 /* ---------- Nuvem (Supabase): login e sincronização ---------- */
 const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_NdF93TvnmX_b_DFlniwFQg_ZtgP-cJZ';
-const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}]};
-const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
+const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}],catpecas:[()=>catPecas,v=>{catPecas=v}],servicos:[()=>catServ,v=>{catServ=v}]};
+const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv','catpecas','servicos'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
 const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
 const ROLE_PAGES={atendimento:['inicio','cadastro','garantia','historico','agenda','receber','orcamentos','parceiros','empresas','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
@@ -4664,7 +4700,7 @@ const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
-const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','empresas','mecanicos','gestao']};
+const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar','servicos'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','empresas','mecanicos','gestao','catpecas','servicos']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
 function allowed(p){if(p==='indicacao')return !!window.indElig;if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
