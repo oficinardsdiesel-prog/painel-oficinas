@@ -228,6 +228,57 @@ html .qa-b span{font-size:22px!important;line-height:1!important;color:#101216!i
   .est-t tr.st-low{background:#fff8e6}
   .est-t .qv{font-size:18px;font-weight:800}
   .placa-s .pt{display:block;font-size:12px;font-weight:900;letter-spacing:1px;color:#111;padding:2px 6px 3px;white-space:nowrap}
+.bub-list{display:flex;flex-direction:column}
+  .bub{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+  .bub:last-child{border-bottom:0}
+  .bub:hover{background:#f5f8ff}
+  .bub-av{width:54px;height:54px;border-radius:50%;overflow:hidden;background:#e5e7eb;flex:0 0 54px;display:flex;align-items:center;justify-content:center}
+  .bub-av img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+  .bub-txt{flex:1;min-width:0}
+  .bub-txt b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+  .bub-txt small{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+  .bub-pl{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end}
+  .bub-st{margin-top:6px;text-align:right}
+  select.stpill{width:auto;max-width:100%;border:0;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:800;line-height:1.3;cursor:pointer;margin:0;color:#fff}
+  select.stpill.stA{background:#dc2626}select.stpill.stM{background:#facc15;color:#422006}select.stpill.stP{background:#2563eb}select.stpill.stE{background:#16a34a}
+  .pill.stA{background:#dc2626;color:#fff}.pill.stM{background:#facc15;color:#422006}.pill.stP{background:#2563eb;color:#fff}.pill.stE{background:#16a34a;color:#fff}
+  .av-s{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#e5e7eb;flex:0 0 34px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px}
+  .av-s img{width:100%;height:100%;object-fit:cover}
+  .av-s.big{width:72px;height:72px;flex-basis:72px;font-size:26px}
+  .bub-av.ini{color:#fff;font-size:22px;font-weight:800}
+  .av-row{margin-top:6px}.av-row .av-s{width:40px;height:40px;flex-basis:40px}
+  .ph-pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ph-pick img.big{width:72px;height:72px;border-radius:50%;object-fit:cover}
+  .mp-box{display:flex;flex-wrap:wrap;gap:8px}
+  .ent-wrap{border-bottom:1px solid var(--line);padding-bottom:6px}.ent-wrap .bub{border-bottom:0}.ent-acts{padding:0 4px 4px 70px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .mp-chip{display:inline-flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:13px;color:var(--ink)}
+  .mp-chip.on{border-color:#2563eb;background:#eaf1ff;font-weight:700}
+
+.bub-txt .bub-st{text-align:left;margin-top:5px}
+.bub-pl{justify-content:flex-start;gap:6px;padding-top:2px}
+.wabtn.mini{padding:3px 8px;font-size:10px;gap:4px;border-radius:20px;margin-top:2px}
+.wabtn.mini svg{width:12px;height:12px}
+.mp-tab{width:100%;display:flex;align-items:center;gap:8px;text-align:left;border:1px solid #d6dbe6;background:#fff;border-radius:10px;padding:10px 12px;font:inherit;cursor:pointer;color:inherit}
+.mp-tab span{font-weight:700}
+.mp-tab small{flex:1;min-width:0;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+.placa-s{width:80px;box-sizing:border-box;text-align:center}
+.placa-s .pt{text-align:center;white-space:nowrap}
+select.stpill{padding:2px 16px 2px 7px;font-size:10.5px;line-height:1.3;width:112px;text-overflow:ellipsis}
+
+.eLinkList{margin-top:8px;border:1px solid #d6dbe6;border-radius:12px;background:#fff;padding:4px 12px;max-height:320px;overflow:auto}
+.eLinkGroup{font-weight:800;color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin:10px 0 2px}
+.eLinkItem{width:100%;display:flex;justify-content:space-between;align-items:center;border:0;border-bottom:1px solid #eef1f6;background:transparent;padding:11px 2px;font:inherit;text-align:left;cursor:pointer;color:inherit}
+.eLinkItem.on{font-weight:700;color:#1d4ed8}
+.eLinkItem b{font-size:16px}
+.fcal{margin-top:10px;background:#fff;border:1px solid #d6dbe5;border-radius:12px;padding:8px}
+.fcal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.fcal-week,.fcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.fcal-week span{font-size:12px;color:#64748b}
+.fcal-d{border:0;background:#f1f4f9;border-radius:8px;padding:9px 0;font-size:15px;color:#1e293b;cursor:pointer}
+.fcal-d.in{background:#dbe7ff}
+.fcal-d.edge{background:#1d4ed8;color:#fff;font-weight:700}
 </style>
 <style>.msearch{position:relative;padding:0 16px 12px}.mslupa{position:absolute;left:28px;top:50%;transform:translateY(-62%);font-size:15px;pointer-events:none;opacity:.8}.msearch input{width:100%;box-sizing:border-box;padding:12px 14px 12px 40px;border-radius:12px;border:1px solid #3a4a63;background:#1b2535;color:#fff;font-size:15px;outline:none}.msearch input::placeholder{color:#8fa3bf}#msRes .item{margin-bottom:8px}</style>
 </head>
@@ -256,7 +307,7 @@ window.addEventListener('error',function(e){
   <h2>Cadastro de veículo</h2><p class="modal-sub">Registre a entrada, os dados do cliente e as fotos do estado do veículo.</p>
   <div class="form-grid">
     <div class="field"><label>Cliente (ou escolha a empresa abaixo)</label><input id="nClient" placeholder="Nome do cliente"></div>
-    <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select></div>
+    <div class="field"><label>Empresa cliente (opcional)</label><select id="nCompany" onchange="pickCompany('n')"></select><div class="av-row" id="nCompanyAv"></div></div>
     <div class="field"><label>Marca / modelo</label><input id="nModel" placeholder="Ex.: Volvo FH"></div>
     <div class="field"><label>Placa *</label><input id="nPlate" placeholder="ABC1D23" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp</label><input id="nPhone" inputmode="tel" placeholder="(11) 99999-9999" oninput="$('nWa').innerHTML=waBtn(this.value,true)"><div id="nWa" style="margin-top:6px"></div></div>
@@ -265,10 +316,10 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Endereço</label><input id="nAddr"></div>
     <div class="field"><label>Motorista / contato na entrada</label><input id="nDriver"></div>
     <div class="field"><label>Quilometragem</label><input id="nKm" inputmode="numeric" placeholder="Km atual"></div>
-    <div class="field"><label>Garantia (dias, vazio = sem garantia)</label><input id="nGar" inputmode="numeric" placeholder="Ex.: 30"></div>
+    <div class="field"><label>Garantia (dias · padrão 90 · use 0 para sem garantia)</label><input id="nGar" inputmode="numeric" placeholder="90"></div>
     <div class="field"><label>Status inicial</label><select id="nStatus"></select></div>
     <div class="field full"><label>Problema relatado / serviço solicitado</label><textarea id="nReason" placeholder="Descreva o que o cliente informou..."></textarea></div>
-    <div class="field full"><label>Mecânico responsável (opcional)</label><select id="nMech"></select></div>
+    <div class="field full"><label>Mecânicos responsáveis (opcional, pode marcar mais de um)</label><div id="nMechBox" class="mp-box"></div></div>
     <div class="field full"><label>Avarias já existentes na entrada (vidro quebrado, amassados, faltando peça...)</label><textarea id="nDamage" placeholder="Anote tudo que já está quebrado ou com defeito."></textarea></div>
   </div>
   <div id="phNew"></div>
@@ -280,7 +331,7 @@ window.addEventListener('error',function(e){
   <h2 id="dTitle"></h2><p class="modal-sub" id="dSub"></p>
   <div class="form-grid">
     <div class="field"><label>Nome do cliente (ou escolha a empresa abaixo)</label><input id="dClient"></div>
-    <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select></div>
+    <div class="field"><label>Empresa cliente (opcional)</label><select id="dCompany" onchange="pickCompany('d')"></select><div class="av-row" id="dCompanyAv"></div></div>
     <div class="field"><label>Modelo</label><input id="dModel"></div>
     <div class="field"><label>Placa *</label><input id="dPlate" autocapitalize="characters"></div>
     <div class="field"><label>Telefone / WhatsApp do cliente</label><input id="dPhone" inputmode="tel" oninput="$('dWa').innerHTML=waBtn(this.value,true)"></div>
@@ -289,7 +340,7 @@ window.addEventListener('error',function(e){
     <div class="field"><label>Endereço</label><input id="dAddr"></div>
     <div class="field"><label>Motorista / contato na entrada</label><input id="dDriver"></div>
     <div class="field"><label>Status</label><select id="dStatus"></select></div>
-    <div class="field"><label>Mecânico responsável</label><select id="dMech"></select></div>
+    <div class="field full"><label>Mecânicos responsáveis (pode marcar mais de um)</label><div id="dMechBox" class="mp-box"></div></div>
     <div class="field"><label>Quilometragem</label><input id="dKm" inputmode="numeric"></div>
     <div class="field"><label>Garantia (dias)</label><input id="dGar" inputmode="numeric" placeholder="Ex.: 30"></div>
     <div class="field"><label>Data de retirada</label><div id="dRet" class="subtle">—</div></div>
@@ -308,6 +359,7 @@ window.addEventListener('error',function(e){
     <button class="btn plain" onclick="closeModal('truckModal')">Fechar</button>
     <button class="btn primary" onclick="saveTruckEdit()">Salvar alterações</button>
   </div>
+  <button class="btn primary" id="dCriarOrc" style="width:100%;margin-top:12px" onclick="criarOrcDoCadastro()">📋 Criar orçamento deste veículo</button>
 </div></div>
 
 <!-- Criar perfil -->
@@ -455,7 +507,7 @@ window.addEventListener('error',function(e){
   <div class="form-grid">
     <div class="field"><label>Descrição *</label><input id="eDesc" placeholder="Ex.: conta de energia"></div>
     <div class="field"><label>Categoria</label><select id="eCategory"></select></div>
-    <div class="field"><label>Fornecedor / parceiro cadastrado</label><select id="eLink" onchange="expenseLinkChanged()"></select></div>
+    <div class="field"><label>Quem recebe (fornecedor, parceiro ou funcionário)</label><div id="eLinkBox"></div><select id="eLink" onchange="expenseLinkChanged()" style="display:none"></select></div>
     <div class="field"><label>Favorecido (nome)</label><input id="ePayee" placeholder="Nome"></div>
     <div class="field"><label>Valor (R$) *</label><input id="eAmount" type="text" inputmode="decimal" class="money" placeholder="0,00"></div>
     <div class="field"><label>Forma de pagamento</label><select id="eMethod"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Transferência</option><option>Boleto</option><option>Outro</option></select></div>
@@ -472,6 +524,22 @@ window.addEventListener('error',function(e){
   <h2 id="regTitle"></h2><p class="modal-sub" id="regSub"></p>
   <div class="form-grid" id="regFields"></div>
   <div class="modal-actions"><button class="btn plain" onclick="closeModal('regModal')">Cancelar</button><button class="btn primary" onclick="saveReg()">Salvar</button></div>
+</div></div>
+
+<div class="modal" id="maintModal"><div class="modal-box" style="width:min(440px,92vw);max-height:78vh;display:flex;flex-direction:column">
+  <h2 id="maintTitle">Histórico de manutenção</h2>
+  <div id="maintBody" style="overflow:auto;flex:1;min-height:0"></div>
+  <div class="modal-actions"><button class="btn soft" id="maintBack" onclick="hwinBack()">‹ Voltar</button><button class="btn plain" onclick="closeModal('maintModal')">Fechar</button></div>
+</div></div>
+<div class="modal" id="orcHistModal"><div class="modal-box" style="width:min(440px,92vw);max-height:78vh;display:flex;flex-direction:column">
+  <h2 id="orcHistTitle">Histórico de orçamentos</h2>
+  <div id="orcHistBody" style="overflow:auto;flex:1;min-height:0"></div>
+  <div class="modal-actions"><button class="btn soft" id="orcHistBack" onclick="hwinBack()">‹ Voltar</button><button class="btn plain" onclick="closeModal('orcHistModal')">Fechar</button></div>
+</div></div>
+<div class="modal" id="jobsModal"><div class="modal-box">
+  <h2 id="jobsTitle">Serviços</h2>
+  <div id="jobsBody"></div>
+  <div class="modal-actions"><button class="btn plain" onclick="closeModal('jobsModal')">Fechar</button></div>
 </div></div>
 
 <!-- Orçamento -->
@@ -2857,8 +2925,10 @@ var qrcode = function() {
 <script>
 'use strict';
 /* ---------- Dados (ficam salvos neste aparelho) ---------- */
-const K={inv:'rds_invoices_v1',rcv:'rds_recv_v1',agd:'rds_agenda_v1',prt:'rds_parts_v1',trucks:'rds_demo_trucks_v1',exp:'rds_expenses_v1',mech:'rds_mechanics_v1',ev:'rds_events_v1',par:'rds_partners_v1',sup:'rds_suppliers_v1',quo:'rds_quotes_v1',pho:'rds_photometa_v1',set:'rds_shopset_v1',catp:'rds_catalog_pecas_v1',cats:'rds_catalog_servicos_v1'};
-const STATUSES=['Aguardando avaliação','Em diagnóstico','Orçamento em elaboração','Aguardando aprovação','Em manutenção','Serviço concluído','Aguardando retirada','Entregue'];
+const K={inv:'rds_invoices_v1',rcv:'rds_recv_v1',agd:'rds_agenda_v1',prt:'rds_parts_v1',trucks:'rds_demo_trucks_v1',exp:'rds_expenses_v1',mech:'rds_mechanics_v1',ev:'rds_events_v1',par:'rds_partners_v1',sup:'rds_suppliers_v1',quo:'rds_quotes_v1',pho:'rds_photometa_v1',set:'rds_shopset_v1',catp:'rds_catalog_pecas_v1',cats:'rds_catalog_servicos_v1',lix:'orbe_lixeira_v1'};
+const STATUSES=['Em avaliação','Em manutenção','Pronto','Entregue'];
+const MAPST={'Aguardando avaliação':'Em avaliação','Em diagnóstico':'Em avaliação','Orçamento em elaboração':'Em avaliação','Aguardando aprovação':'Em avaliação','Serviço concluído':'Pronto','Aguardando retirada':'Pronto'};
+const STCLS_TRUCK={'Em avaliação':'stA','Em manutenção':'stM','Pronto':'stP','Entregue':'stE'};
 const QSTATUS=['Rascunho','Aguardando aprovação','Aprovado','Recusado'];
 const CATEGORIES=['Fornecedor / peças','Parceiros / serviços terceirizados','Funcionários','Aluguel','Água e luz','Internet / telefone','Ferramentas e materiais','Impostos e taxas','Outras despesas'];
 const SLOTS=[
@@ -2874,7 +2944,7 @@ const ADMIN_MENU=[
 ];
 const CLIENT_MENU=[
  {g:'Operação',items:[['inicio','⌂','Início'],['cadastro','＋','Cadastro de veículo'],['historico','◷','Histórico'],['agenda','▦','Agenda'],['garantia','🛡','Garantia']]},
- {g:'Gestão',items:[['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos'],['servicos','🔧','Gestão de serviços'],['catpecas','📦','Estoque de peças']]},
+ {g:'Gestão',items:[['painel_rede','🏭','Painel das oficinas'],['orcamentos','▤','Orçamentos'],['financeiro','▥','Financeiro'],['gestao','◆','Gestão financeira'],['pagamentos','＄','Pagamentos'],['receber','◈','A receber'],['pecas','⛭','Peças a pagar'],['notas','🧾','Notas fiscais'],['metas','◎','Metas dos mecânicos'],['servicos','🔧','Gestão de serviços'],['catpecas','📦','Estoque de peças']]},
  {g:'Cadastros',items:[['parceiros','⚑','Parceiros/freelancers'],['empresas','🏢','Empresas clientes'],['fornecedores','⛟','Fornecedores'],['mecanicos','♙','Mecânicos']]},
  {g:'Sistema',items:[['usuarios','👤','Perfil'],['assinatura','▣','Plano e cartão'],['configuracoes','⚙','Configurações'],['editar','✎','Editar']]},
  {g:'Ajuda',items:[['indicacao','🎁','Plano de indicação'],['treinamento','🎓','Treinamento'],['suporte','💬','Suporte']]}
@@ -2885,9 +2955,9 @@ const QUICK={empresas:'Empresas clientes: caminhões de cada empresa e garantia'
 function read(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 let trucks=read(K.trucks,[]),expenses=read(K.exp,[]),mechanics=read(K.mech,[]),events=read(K.ev,[]),partners=read(K.par,[]),suppliers=read(K.sup,[]),quotes=read(K.quo,[]),photoMeta=read(K.pho,[]),shopSet=read(K.set,[]);
 let recv=read(K.rcv,[]),agenda=read(K.agd,[]),parts=read(K.prt,[]),invoices=read(K.inv,[]);
-let catPecas=read(K.catp,[]),catServ=read(K.cats,[]);
+let catPecas=read(K.catp,[]),catServ=read(K.cats,[]),trash=read(K.lix,[]);
 let currentPage='inicio';
-trucks.forEach((t,i)=>{if(!t.id)t.id='legacy-'+i;if(!t.mechanicId)t.mechanicId=''});
+trucks.forEach((t,i)=>{if(!t.id)t.id='legacy-'+i;if(!t.mechanicId)t.mechanicId='';t.status=MAPST[t.status]||(STATUSES.indexOf(t.status)>=0?t.status:'Em avaliação')});
 [expenses,mechanics,events,partners,suppliers,quotes].forEach(a=>a.forEach((x,i)=>{if(x&&!x.id)x.id='old-'+Date.now().toString(36)+'-'+i}));
 function persist(){persistLocal();if(typeof scheduleSync==='function')scheduleSync()}
 const SAFE='rds_safety_v1';
@@ -2919,7 +2989,7 @@ function persistLocal(){
     localStorage.setItem(K.par,JSON.stringify(partners));localStorage.setItem(K.sup,JSON.stringify(suppliers));
     localStorage.setItem(K.quo,JSON.stringify(quotes));localStorage.setItem(K.pho,JSON.stringify(photoMeta));localStorage.setItem(K.set,JSON.stringify(shopSet));
     localStorage.setItem(K.rcv,JSON.stringify(recv));localStorage.setItem(K.agd,JSON.stringify(agenda));localStorage.setItem(K.prt,JSON.stringify(parts));localStorage.setItem(K.inv,JSON.stringify(invoices));
-    localStorage.setItem(K.catp,JSON.stringify(catPecas));localStorage.setItem(K.cats,JSON.stringify(catServ));
+    localStorage.setItem(K.catp,JSON.stringify(catPecas));localStorage.setItem(K.lix,JSON.stringify(trash));localStorage.setItem(K.cats,JSON.stringify(catServ));
     safeSnap('automática');
   }catch(e){alert('Não foi possível salvar neste aparelho (memória do navegador cheia ou bloqueada). Faça um backup em Início > Backup.')}
 }
@@ -2933,7 +3003,7 @@ const sum=a=>a.reduce((s,x)=>s+Number(x.amount||0),0);
 const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dateNow=()=>new Date().toLocaleDateString('pt-BR');
 const fmtDate=iso=>iso?new Date(iso+'T12:00:00').toLocaleDateString('pt-BR'):'—';
-const STCLS={'Aguardando avaliação':'s1','Em diagnóstico':'s2','Orçamento em elaboração':'s3','Aguardando aprovação':'s4','Em manutenção':'s5','Serviço concluído':'s6','Aguardando retirada':'s7','Entregue':'s8','Rascunho':'s9','Aprovado':'s10','Recusado':'s11','Pago':'s12','Pendente':'s13','Atrasado':'s14','Vencida':'s14'};
+const STCLS={'Em avaliação':'stA','Em manutenção':'stM','Pronto':'stP','Entregue':'stE','Rascunho':'s9','Aprovado':'s10','Recusado':'s11','Pago':'s12','Pendente':'s13','Atrasado':'s14','Vencida':'s14'};
 function statusClass(s){return STCLS[s]||''}
 const WA_SVG='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.200zm4.5-6.1c-.2-.1-1.500-.7-1.700-.8s-.4-.1-.6.100-.6.8-.8 1-.3.200-.5.100a6.700 6.700 0 0 1-3.300-2.900c-.3-.4.300-.4.800-1.400.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.300 3 3 0 0 0-.9 2.200 5.200 5.200 0 0 0 1.100 2.800 11.900 11.900 0 0 0 4.600 4.100c1.700.7 2.400.8 3.200.7a2.700 2.700 0 0 0 1.800-1.300 2.200 2.200 0 0 0 .2-1.300c-.1-.1-.3-.2-.5-.3z"/></svg>';
 function waBtn(phone,label,tid){const l=waLink(phone);if(l&&tid)return '<button class="wabtn'+(label?'':' icon')+'" onclick="openWAMsg(\''+tid+'\')" title="Mensagem pronta no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</button>';return l?'<button type="button" class="wabtn'+(label?'':' icon')+'" onclick="waChoose(\''+waDigits(phone)+'\')" title="Chamar no WhatsApp" aria-label="WhatsApp">'+WA_SVG+(label?'WhatsApp':'')+'</button>':''}
@@ -3027,7 +3097,7 @@ async function addPhotos(slot,input){
       const data=await compress(f,1280,.72);
       const p={id:uid(),truckId:ph.truckId,slot,data,date:new Date().toISOString()};
       if(ph.live)await dbPut(p);
-      ph.list.push(p);
+      ph.list.push(p);delete thumbCache[ph.truckId];
     }catch(e){alert(e.message||'Não foi possível salvar a foto.')}
   }
   renderPhotos();
@@ -3043,10 +3113,10 @@ function closeLightbox(){if(!$('lightbox').classList.contains('open'))return;$('
 
 /* ---------- Filtros dos cartões clicáveis ---------- */
 let procF='',quoF='',pagF='';
-const PF={pat:['Veículos no pátio',t=>t.status!=='Entregue'],manut:['Em manutenção',t=>t.status==='Em manutenção'],aprov:['Aguardando aprovação',t=>t.status==='Aguardando aprovação'],concl:['Concluídos / aguardando retirada',t=>['Serviço concluído','Aguardando retirada'].indexOf(t.status)>=0],ret:['Aguardando retirada',t=>t.status==='Aguardando retirada']};
+const PF={pat:['Veículos no pátio',t=>t.status!=='Entregue'],manut:['Em manutenção',t=>t.status==='Em manutenção'],aprov:['Em avaliação',t=>t.status==='Em avaliação'],concl:['Prontos para retirada',t=>t.status==='Pronto']};
 const PAGF={pend:'Contas a pagar (pendentes)',paid:'Já pagos',late:'Vencidos'};
 const chip=(label,fn)=>'<div class="chip"><span>Mostrando: <b>'+esc(label)+'</b></span><button class="small-btn" onclick="'+fn+'">✕ Mostrar tudo</button></div>';
-function goTruck(k){procF=k;render();setTimeout(function(){const e=$('movPanel');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
+function goTruck(k){const m={pat:'',manut:'Em manutenção',aprov:'Em avaliação',concl:'Pronto',ret:'Pronto'};procF=k;render();setTimeout(function(){const e=$('movPanel');if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
 function goQuo(k){quoF=k;navigate('orcamentos',true)}
 function goPag(k){pagF=k;navigate('pagamentos',true)}
 function goFin(k){finTab='avancado';finOpen[k]=true;navigate('financeiro',true);setTimeout(function(){const e=$('fin_'+k);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
@@ -3054,7 +3124,7 @@ function setProcF(k){procF=k;render()}function setQuoF(k){quoF=k;render()}functi
 
 /* ---------- Navegação / menu ---------- */
 function renderMenu(){
-  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bellEst" style="display:none" onclick="estAbreAvisos()" aria-label="Avisos de estoque">🔔<span class="badge" id="bellEstN" style="display:none"></span></button><button class="bell" id="bell" onclick="navigate(\'orbe_notif\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
+  $('drawer').innerHTML='<div class="dh"><div class="brand">'+esc(brandName())+'<small>MENU · versão 26/11 22:55</small></div><div style="display:flex;gap:8px;align-items:center"><button class="bell" id="bell" onclick="navigate(\'notificacoes\')" aria-label="Notificações">🔔<span class="badge" id="bellN"></span></button><button class="x" onclick="toggleMenu(false)" aria-label="Fechar menu">✕</button></div></div>'+
   '<div class="msearch"><span class="mslupa" aria-hidden="true">🔍</span><input id="msQ" type="search" placeholder="Pesquisar" autocomplete="off" oninput="msSearch(this.value)" aria-label="Pesquisar"></div><div id="msRes"></div><div id="msGroups">'+menuFor().map(g=>'<div class="nav-label">'+g.g+'</div>'+g.items.map(i=>'<button class="item'+(i[0]===currentPage?' active':'')+'" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+(i[0]==='indicacao'?'<span style="display:block;color:#e11d48;font-weight:800;font-size:10px;letter-spacing:.5px">NOVO</span>':'')+i[2]+'</button>').join('')).join('')+'</div>'+(prof?'<div style="padding:14px 16px;font-size:12px;color:#9fb4d3">'+esc(prof.email||'')+' · '+esc(roleName(prof.role))+'</div>':'')+'<div style="padding:0 16px 14px"><a href="#" onclick="navigate(\'termos\');toggleMenu(false);return false" style="color:#3b82f6;text-decoration:underline;font-size:12px">Termos de uso e privacidade</a></div>';
 }
 function msNorm(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
@@ -3068,22 +3138,65 @@ function msSearch(v){
   hits.sort(function(a,b){return a.rank-b.rank});
   r.innerHTML=hits.length?hits.map(function(h){const i=h.i;return '<button class="item" onclick="navigate(\''+i[0]+'\')"><span class="ico">'+i[1]+'</span>'+esc(i[2])+'</button>'}).join(''):'<div style="padding:12px 16px;font-size:13px;color:#9fb4d3">Nada encontrado para “'+esc(v)+'”.</div>';
 }
-function toggleMenu(open){renderMenu();try{updateBellEst()}catch(e){}if(!(ws&&ws.is_admin)){const bb=$('bell');if(bb)bb.remove()}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
+function toggleMenu(open){renderMenu();try{updateBellEst()}catch(e){}try{updateBell()}catch(e){}const was=$('drawer').classList.contains('open');$('drawer').classList.toggle('open',open);$('ov').classList.toggle('open',open);if(open&&!was)ovPush('menu');if(!open&&was)ovPop('menu')}
 function navigate(p,keep,nopush){if(!allowed(p))p=(ws&&ws.is_admin)?'admin':'inicio';if(!keep){procF='';quoF='';pagF='';empSel=''}currentPage=p;if(p!=='treinamento')trainKey=null;if(p==='usuarios')loadUsers();toggleMenu(false);window.scrollTo(0,0);if(!nopush)hbRun(()=>{try{if(!(history.state&&history.state.p===p&&!HB.open.length))history.pushState({p:p},'')}catch(e){}});render()}
 function pageHead(title,desc,buttons){return '<div class="page-head"><div><h1>'+title+'</h1><p>'+(desc||'')+'</p></div><div class="actions">'+(buttons||'')+'</div></div>'}
 
 /* ---------- Veículos ---------- */
 function vehName(t){return [t.client||'Cliente sem nome',t.plate,t.model].filter(Boolean).join(' · ')}
-function truckCard(t,withSelect){
-  const wa=waLink(t.phone);
-  return '<div class="tcard" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="info"><b style="font-size:16px">'+esc(t.client||'Cliente sem nome')+'</b> <span class="pill '+statusClass(t.status)+'">'+esc(t.status)+'</span>'+
-    '<div style="margin-top:3px;font-weight:600"><span class="placa-s"><span class="pf">BRASIL</span><span class="pt">'+esc(t.plate||'')+'</span></span>'+(t.model?esc(t.model):'')+'</div>'+
-    '<small>'+(t.date?'Entrada '+esc(t.date)+' · ':'')+'Mecânico: '+esc(mechanicName(t.mechanicId))+'</small></div>'+
-    '<div class="rowacts" onclick="event.stopPropagation()">'+(withSelect?'<select onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>':'')+
-    waBtn(t.phone,true,t.id)+
-    '</div></div>';
+const CAR_SVG='<svg viewBox="0 0 24 24" width="30" height="30" fill="#9ca3af" aria-hidden="true"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-6zm2.2-1h9.6l-1.1-3.3H8.3L7.2 10zM7.5 13.5a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5zm9 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5z"/></svg>';
+const thumbCache={};let thumbBusy=false;
+function openThumb(id){const s=thumbCache[id];if(!s)return;$('lbImg').src=s;if(!$('lightbox').classList.contains('open')){$('lightbox').classList.add('open');ovPush('lightbox')}}
+function stPillHTML(t){const c=STCLS_TRUCK[t.status]||'stA';return '<select class="stpill '+c+'" aria-label="Status do veículo" onclick="event.stopPropagation()" onchange="quickStatus(\''+t.id+'\',this.value)">'+STATUSES.map(s=>'<option'+(s===t.status?' selected':'')+'>'+s+'</option>').join('')+'</select>'}
+function truckCompany(t){return t&&t.companyId&&REG.clients?REG.clients.get().find(function(c){return c.id===t.companyId}):null}
+function bubbleHTML(t,sub){const co=truckCompany(t),coPhoto=co&&co.photo?co.photo:'';const im=coPhoto?'':thumbCache[t.id];const wa=waLink(t.phone)?'<button type="button" class="wabtn mini" onclick="event.stopPropagation();waChoose(\''+waDigits(t.phone)+'\')" aria-label="WhatsApp do cliente">'+WA_SVG+'WhatsApp</button>':'';return '<div class="bub" onclick="openTruck(\''+t.id+'\')"><div class="bub-av"'+(coPhoto?' onclick="event.stopPropagation();showPhoto(\''+coPhoto+'\')"':im?' onclick="event.stopPropagation();openThumb(\''+t.id+'\')"':'')+'>'+(coPhoto?'<img src="'+coPhoto+'" alt="Foto da empresa">':im?'<img src="'+im+'" alt="Foto do veículo">':CAR_SVG)+'</div><div class="bub-txt"><b>'+esc(t.client||'Cliente sem nome')+'</b><small>'+esc(sub!=null?sub:(t.model||'Modelo não cadastrado'))+'</small><div class="bub-st">'+stPillHTML(t)+'</div></div><div class="bub-pl"><span class="placa-s"><span class="pf">BRASIL</span><span class="pt">'+esc(t.plate||'')+'</span></span>'+wa+'</div></div>'}
+function movBubbleHTML(ev){const tk=trucks.find(function(x){return x.plate===ev.plate});if(tk)return bubbleHTML(tk,ev.text+' · '+ev.date);return '<div class="bub"><div class="bub-av">'+CAR_SVG+'</div><div class="bub-txt"><b>'+esc(ev.plate||'Veículo sem cadastro')+'</b><small>'+esc(ev.text)+' · '+esc(ev.date)+'</small></div><div class="bub-pl"><span class="placa-s"><span class="pf">BRASIL</span><span class="pt">'+esc(ev.plate||'')+'</span></span></div></div>'}
+function movListHTML(){loadThumbs();return events.slice(0,40).map(movBubbleHTML).join('')}
+function truckBubbles(items){
+  if(!items.length)return '<div class="empty">Nenhum veículo encontrado.</div>';
+  loadThumbs();
+  return '<div class="bub-list">'+items.map(function(t){return bubbleHTML(t)}).join('')+'</div>';
 }
-function truckList(items,withSelect){return items.length?'<div class="list-stack">'+items.map(t=>truckCard(t,withSelect)).join('')+'</div>':'<div class="empty">Nenhum veículo encontrado.</div>'}
+async function loadThumbs(){
+  if(thumbBusy)return;
+  const need=trucks.filter(t=>!(t.id in thumbCache));
+  if(!need.length)return;
+  thumbBusy=true;
+  try{
+    const want=new Set(need.map(t=>t.id)),found={};
+    const keys=await dbKeys();
+    for(const k of keys){const p=await dbGet(k);if(p&&p.data&&want.has(p.truckId)&&!found[p.truckId])found[p.truckId]=p.data}
+    need.forEach(t=>{thumbCache[t.id]=found[t.id]||''});
+    if(Object.keys(found).length&&currentPage==='inicio')render();
+  }catch(e){need.forEach(t=>{if(!(t.id in thumbCache))thumbCache[t.id]=''})}
+  thumbBusy=false;
+}
+/* ---------- Fotos de cadastros (fornecedores, mecânicos, parceiros, empresas) ---------- */
+function initOf(n){return String(n||'?').trim().charAt(0).toUpperCase()||'?'}
+function avColor(s){const c=['#1f4fb4','#14724d','#b45f06','#6b34b8','#9b1c1c','#0b7285'];let h=0;for(const ch of String(s||''))h=(h*31+ch.charCodeAt(0))>>>0;return c[h%c.length]}
+function avatarHTML(e,cls){const base=cls||'av-s';if(e&&e.photo)return '<span class="'+base+'"><img src="'+e.photo+'" alt=""></span>';return '<span class="'+base+' ini" style="background:'+avColor(e&&e.name)+'">'+esc(initOf(e&&e.name))+'</span>'}
+function showPhoto(src){if(!src)return;$('lbImg').src=src;if(!$('lightbox').classList.contains('open')){$('lightbox').classList.add('open');ovPush('lightbox')}}
+function showEntPhoto(kind,id){const i=REG[kind].get().find(x=>x.id===id);if(i&&i.photo)showPhoto(i.photo)}
+const ENT_KINDS=['partners','suppliers','mechanics','clients'];
+function entBubbleHTML(kind,i){
+  const cfg=REG[kind],onRow=kind==='clients'?"showCompany('"+i.id+"')":"openReg('"+kind+"','"+i.id+"')";
+  const av=i.photo?'<div class="bub-av" onclick="event.stopPropagation();showEntPhoto(\''+kind+'\',\''+i.id+'\')"><img src="'+i.photo+'" alt=""></div>':'<div class="bub-av ini" style="background:'+avColor(i.name)+'">'+esc(initOf(i.name))+'</div>';
+  return '<div class="ent-wrap"><div class="bub" onclick="'+onRow+'">'+av+'<div class="bub-txt"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small></div></div><div class="rowacts ent-acts" onclick="event.stopPropagation()">'+waBtn(i.phone,true)+'<button class="small-btn" onclick="openReg(\''+kind+'\',\''+i.id+'\')">Editar</button>'+(kind==='mechanics'?'<button class="small-btn" onclick="showMechanicJobs(\''+i.id+'\')">Ver serviços</button>':'')+'<button class="small-btn red" onclick="deleteReg(\''+kind+'\',\''+i.id+'\')">Excluir</button></div></div>';
+}
+let regPhotoVal='',regPhotoName='';
+function regPhotoBlockHTML(){return '<div class="field full photo-f"><label>Foto (opcional)</label><div class="ph-pick">'+(regPhotoVal?'<img class="big" src="'+regPhotoVal+'" alt="">':avatarHTML({name:regPhotoName},'av-s big'))+'<label class="small-btn">Escolher foto<input type="file" accept="image/*" hidden onchange="regPhotoPick(this)"></label><button type="button" class="small-btn red" onclick="regPhotoVal=\'\';regPhotoRefresh()">Remover</button></div></div>'}
+function regPhotoRefresh(){const el=document.querySelector('#regFields .photo-f');if(el)el.outerHTML=regPhotoBlockHTML()}
+function regPhotoPick(input){const f=input.files&&input.files[0];input.value='';if(!f)return;compress(f,240,.75).then(d=>{regPhotoVal=d;regPhotoRefresh()}).catch(()=>alert('Não foi possível carregar a foto.'))}
+function updateCompanyAv(p){const el=$(p+'CompanyAv');if(!el)return;const c=partners.find(x=>x.kind==='cliente'&&x.id===$(p+'Company').value);el.innerHTML=c?avatarHTML(c,'av-s'):''}
+const mpState={};
+const mpOpenSt={};
+function mpRender(p){const box=$(p+'Box');if(!box)return;const ids=mpState[p]||[];const names=mechanics.filter(m=>ids.indexOf(m.id)>=0).map(m=>m.name);const open=!!mpOpenSt[p];box.innerHTML='<button type="button" class="mp-tab" onclick="mpOpenToggle(\''+p+'\')" aria-expanded="'+open+'"><span>Mecânicos</span><small>'+(names.length?esc(names.join(', ')):'Nenhum selecionado')+'</small><b>'+(open?'▴':'▾')+'</b></button>'+(open?(mechanics.length?'<div class="mp-list">'+mechanics.map(m=>'<button type="button" class="mp-chip'+(ids.indexOf(m.id)>=0?' on':'')+'" onclick="mpToggle(\''+p+'\',\''+m.id+'\')">'+avatarHTML(m,'av-s')+'<span>'+esc(m.name)+'</span></button>').join('')+'</div>':'<span class="subtle">Cadastre mecânicos no menu Mecânicos.</span>'):'')}
+function mpOpenToggle(p){mpOpenSt[p]=!mpOpenSt[p];mpRender(p)}
+function mpToggle(p,id){const a=mpState[p]=mpState[p]||[];const i=a.indexOf(id);if(i>=0)a.splice(i,1);else a.push(id);mpRender(p)}
+function mpSet(p,ids){mpState[p]=(ids||[]).slice();mpRender(p)}
+function mpGet(p){return (mpState[p]||[]).slice()}
+function garSub(i){if(i.st==='on')return 'Faltam '+i.left+(i.left===1?' dia':' dias')+' · até '+garFmt(i.end);if(i.st==='off')return 'Venceu em '+garFmt(i.end);if(i.st==='nodate')return 'Ainda não marcado como Entregue';return 'Sem garantia em dias cadastrada'}
+function truckList(items){return truckBubbles(items)}
 function quickStatus(id,status){const t=trucks.find(x=>x.id===id);if(!t||t.status===status)return;logEvent(t.plate,'Status alterado: '+t.status+' → '+status);t.status=status;setDeliveryDate(t);persist();render()}
 
 function fillTruckSelects(prefix,sel){
@@ -3092,7 +3205,7 @@ function fillTruckSelects(prefix,sel){
 function mechOptions(sel){return '<option value="">Não definido</option>'+mechanics.map(m=>'<option value="'+esc(m.id)+'"'+(m.id===sel?' selected':'')+'>'+esc(m.name)+'</option>').join('')}
 function openNewTruck(){
   ['nPlate','nClient','nPhone','nModel','nDoc','nEmail','nAddr','nDriver','nKm','nGar','nReason','nDamage'].forEach(i=>$(i).value='');
-  fillTruckSelects('n');$('nMech').innerHTML=mechOptions('');fillCompanySel('n','');
+  fillTruckSelects('n');mpSet('nMech',[]);fillCompanySel('n','');$('nGar').value=String(GAR_PADRAO);
   ph={truckId:uid(),live:false,list:[],box:'phNew'};renderPhotos();
   $('newTruckModal').scrollTop=0;openModal('newTruckModal');
 }
@@ -3100,7 +3213,7 @@ async function saveNewTruck(){
   const plate=$('nPlate').value.trim().toUpperCase(),client=$('nClient').value.trim()||companyName('n');
   if(!plate||!client){alert('Informe a placa e o nome do cliente ou escolha a empresa.');return}
   if(trucks.some(t=>t.plate===plate&&t.status!=='Entregue')&&!confirm('Já existe um veículo com essa placa em aberto. Deseja cadastrar mesmo assim?'))return;
-  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:$('nMech').value,date:dateNow(),created:new Date().toISOString(),warrantyDays:parseInt($('nGar').value,10)||0};
+  const t={id:ph.truckId,companyId:$('nCompany').value,plate,client,phone:$('nPhone').value.trim(),model:$('nModel').value.trim(),doc:$('nDoc').value.trim(),email:$('nEmail').value.trim(),addr:$('nAddr').value.trim(),driver:$('nDriver').value.trim(),km:$('nKm').value.trim(),status:$('nStatus').value,reason:$('nReason').value.trim(),damage:$('nDamage').value.trim(),mechanicId:mpGet('nMech')[0]||'',mechIds:mpGet('nMech'),date:dateNow(),created:new Date().toISOString(),warrantyDays:(function(g){return g===''?GAR_PADRAO:(parseInt(g,10)||0)})($('nGar').value.trim())};
   setDeliveryDate(t);
   try{for(const p of ph.list)await dbPut(p)}catch(e){if(!confirm('Não foi possível guardar as fotos neste navegador. Salvar o veículo sem as fotos?'))return}
   trucks.unshift(t);logEvent(plate,'Entrada cadastrada · '+t.status+(ph.list.length?' · '+ph.list.length+' foto(s)':''));persist();
@@ -3114,8 +3227,8 @@ function openTruck(id){
   $('dPlate').value=t.plate||'';$('dClient').value=t.client||'';fillCompanySel('d',t.companyId||'');$('dPhone').value=t.phone||'';$('dModel').value=t.model||'';$('dDoc').value=t.doc||'';$('dEmail').value=t.email||'';$('dAddr').value=t.addr||'';$('dDriver').value=t.driver||'';$('dDiag').value=t.diagnosis||'';
   $('dWa').innerHTML=waBtn(t.phone,true);$('dQuotes').innerHTML=truckQuotesHTML(id);
   $('dDel').style.display=isRole('dono','atendimento')?'':'none';$('dNewQ').style.display=isRole('dono','atendimento')?'':'none';$('dDocs').style.display=isRole('dono','atendimento')?'':'none';
-  $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);$('dMech').innerHTML=mechOptions(t.mechanicId);
-  $('dKm').value=t.km||'';$('dGar').value=t.warrantyDays||'';$('dRet').textContent=t.deliveredAt?fmtDate(t.deliveredAt):'Ainda não marcado como Entregue';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
+  $('dStatus').innerHTML=optionsHTML(STATUSES,t.status);mpSet('dMech',t.mechIds&&t.mechIds.length?t.mechIds:(t.mechanicId?[t.mechanicId]:[]));
+  $('dKm').value=t.km||'';$('dGar').value=t.warrantyDays==null?GAR_PADRAO:t.warrantyDays;$('dRet').textContent=t.deliveredAt?fmtDate(t.deliveredAt):'Ainda não marcado como Entregue';$('dDate').value=t.date||'';$('dReason').value=t.reason||'';$('dDamage').value=t.damage||'';
   ph={truckId:id,live:true,list:[],box:'phDet'};renderPhotos();
   dbOf(id).then(list=>{if(ph.truckId===id){ph.list=list.sort((a,b)=>(a.date||'').localeCompare(b.date||''));renderPhotos()}}).catch(()=>{});
   $('truckModal').scrollTop=0;openModal('truckModal');
@@ -3131,9 +3244,10 @@ function saveTruckEdit(keep){
   if(plate!==t.plate){logEvent(plate,'Placa alterada: '+t.plate+' → '+plate);quotes.forEach(q=>{if(q.truckId===t.id)q.plate=plate});t.plate=plate}
   if(client!==t.client){quotes.forEach(q=>{if(q.truckId===t.id&&q.client!=null)q.client=client});t.client=client}
   t.phone=$('dPhone').value.trim();t.model=$('dModel').value.trim();t.doc=$('dDoc').value.trim();t.email=$('dEmail').value.trim();t.addr=$('dAddr').value.trim();t.driver=$('dDriver').value.trim();t.diagnosis=$('dDiag').value.trim();
-  const ns=$('dStatus').value,nm=$('dMech').value;
+  const ns=$('dStatus').value,nms=mpGet('dMech'),nm=nms[0]||'';
   if(ns!==t.status){logEvent(t.plate,'Status alterado: '+t.status+' → '+ns);t.status=ns;setDeliveryDate(t)}
   if(nm!==t.mechanicId){t.mechanicId=nm;logEvent(t.plate,'Mecânico responsável: '+mechanicName(nm))}
+  t.mechIds=nms;
   if(t.status==='Entregue'&&!t.deliveredAt)t.deliveredAt=todayISO();
   t.km=$('dKm').value.trim();if(!isNaN(parseInt($('dGar').value,10)))t.warrantyDays=parseInt($('dGar').value,10);t.reason=$('dReason').value.trim();t.damage=$('dDamage').value.trim();
   persist();if(!keep)closeModal('truckModal');render();return true;
@@ -3141,31 +3255,33 @@ function saveTruckEdit(keep){
 async function deleteTruck(){
   const t=trucks.find(x=>x.id===curTruck);if(!t)return;
   if(!confirm('Excluir o veículo '+t.plate+' e as fotos dele? Isso não pode ser desfeito.'))return;
+  trash.unshift({id:uid(),kind:'truck',item:JSON.parse(JSON.stringify(t)),name:t.plate||'',deletedAt:new Date().toLocaleString('pt-BR')});
   trucks=trucks.filter(x=>x.id!==curTruck);try{await dbDelTruck(curTruck)}catch(e){}
   cloudPhotoRemove(photoMeta.filter(m=>m.truckId===t.id));
   logEvent(t.plate,'Veículo excluído do sistema');persist();closeModal('truckModal');render();
 }
 function quoteForTruck(){const id=curTruck;closeModal('truckModal');openQuote('',id)}
+function criarOrcDoCadastro(){if(saveTruckEdit(true)===false)return;closeModal('truckModal');openQuote('',curTruck)}
 
 /* ---------- Cadastros: parceiros, fornecedores, mecânicos ---------- */
 const REG={
- partners:{page:'parceiros',title:'Parceiros/freelancers',one:'parceiro',btn:'＋ Cadastrar parceiro',
+ partners:{photo:1,page:'parceiros',title:'Parceiros/freelancers',one:'parceiro',btn:'＋ Cadastrar parceiro',
   desc:'Empresas que fazem serviço para a oficina (carcaça, retífica, torno, elétrica...). Cadastre cada uma aqui.',
   get:()=>partners.filter(p=>p.kind!=='cliente'),set:v=>{partners=partners.filter(p=>p.kind==='cliente').concat(v)},
   fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Carcaça Valente'},{k:'service',l:'Tipo de serviço *',req:1,ph:'Ex.: carcaça, retífica, torno'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.service,i.contact,i.phone,i.city].filter(Boolean).join(' · ')},
- suppliers:{page:'fornecedores',title:'Fornecedores',one:'fornecedor',btn:'＋ Cadastrar fornecedor',
+ suppliers:{photo:1,page:'fornecedores',title:'Fornecedores',one:'fornecedor',btn:'＋ Cadastrar fornecedor',
   desc:'De quem a oficina compra peças, óleo, ferramentas e materiais. É um cadastro separado dos parceiros.',
   get:()=>suppliers,set:v=>{suppliers=v},
   fields:[{k:'name',l:'Nome do fornecedor *',req:1},{k:'category',l:'O que fornece',sel:['Peças','Óleo e lubrificantes','Ferramentas','Pneus','Materiais em geral','Outros']},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'email',l:'E-mail'},{k:'doc',l:'CNPJ / CPF'},{k:'city',l:'Cidade / endereço'},{k:'notes',l:'Observações',area:1}],
   sub:i=>[i.category,i.phone,i.email,i.city].filter(Boolean).join(' · ')},
- mechanics:{page:'mecanicos',title:'Mecânicos',one:'mecânico',btn:'＋ Cadastrar mecânico',
+ mechanics:{photo:1,page:'mecanicos',title:'Mecânicos',one:'mecânico',btn:'＋ Cadastrar mecânico',
   desc:'Cadastre a equipe e associe cada profissional aos veículos em que trabalhou.',
   get:()=>mechanics,set:v=>{mechanics=v},
   fields:[{k:'name',l:'Nome *',req:1,ph:'Ex.: Mecânico A'},{k:'phone',l:'Telefone',tel:1},{k:'goal',l:'Meta de mão de obra por mês (R$)',num:1,money:1,dono:1,ph:'Ex.: 10000'},{k:'salary',l:'Salário / custo mensal do mecânico (R$)',num:1,money:1,dono:1,ph:'Ex.: 3500'},{k:'hours',l:'Horas de trabalho por mês',num:1,dono:1,ph:'176'},{k:'notes',l:'Especialidade / observações',area:1}],
   sub:i=>[i.phone].filter(Boolean).join(' · ')}
 };
-REG.clients={page:'empresas',title:'Empresas clientes',one:'empresa',btn:'＋ Cadastrar empresa',
+REG.clients={photo:1,page:'empresas',title:'Empresas clientes',one:'empresa',btn:'＋ Cadastrar empresa',
   desc:'Empresas que levam caminhões para a oficina. Cadastre a empresa e escolha-a no cadastro de cada caminhão.',
   get:()=>partners.filter(p=>p.kind==='cliente'),set:v=>{partners=partners.filter(p=>p.kind!=='cliente').concat(v.map(x=>Object.assign(x,{kind:'cliente'})))},
   fields:[{k:'name',l:'Nome da empresa *',req:1,ph:'Ex.: Festa Eventos'},{k:'phone',l:'Telefone / WhatsApp',tel:1},{k:'contact',l:'Pessoa de contato'},{k:'doc',l:'CNPJ'},{k:'city',l:'Cidade / endereço',full:1},{k:'notes',l:'Observações',area:1}],
@@ -3182,22 +3298,16 @@ REG.servicos={page:'servicos',title:'Gestão de serviços',one:'serviço',btn:'�
   sub:i=>[i.hours?i.hours+' h estimadas':''].filter(Boolean).join(' · ')};
 let empSel='';
 function showCompany(id){empSel=id;render();window.scrollTo(0,0)}
-function fillCompanySel(p,sel){const el=$(p+'Company');if(!el)return;el.innerHTML='<option value="">Sem empresa (particular)</option>'+partners.filter(x=>x.kind==='cliente').map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('')}
-function pickCompany(p){const c=partners.find(x=>x.id===$(p+'Company').value&&x.kind==='cliente');if(!c)return;const cl=$(p==='n'?'nClient':'dClient'),pe=$(p==='n'?'nPhone':'dPhone');if(!cl.value.trim())cl.value=c.name;if(!pe.value.trim())pe.value=c.phone||''}
+function fillCompanySel(p,sel){const el=$(p+'Company');if(!el)return;el.innerHTML='<option value="">Sem empresa (particular)</option>'+partners.filter(x=>x.kind==='cliente').map(c=>'<option value="'+esc(c.id)+'"'+(c.id===sel?' selected':'')+'>'+esc(c.name)+'</option>').join('');updateCompanyAv(p)}
+function pickCompany(p){updateCompanyAv(p);const c=partners.find(x=>x.id===$(p+'Company').value&&x.kind==='cliente');if(!c)return;const cl=$(p==='n'?'nClient':'dClient'),pe=$(p==='n'?'nPhone':'dPhone');if(!cl.value.trim())cl.value=c.name;if(!pe.value.trim())pe.value=c.phone||''}
 function companyName(p){const c=partners.find(x=>x.kind==='cliente'&&x.id===$(p+'Company').value);return c?c.name:''}
 function companyNewTruck(id){openNewTruck();fillCompanySel('n',id)}
 function companyDetail(id){
   const c=partners.find(x=>x.id===id&&x.kind==='cliente');
   if(!c){empSel='';return regPage('clients')}
   const list=trucks.filter(t=>t.companyId===id).map(t=>({t:t,info:garInfo(t)})).sort((a,b)=>String(a.t.plate||'').localeCompare(String(b.t.plate||'')));
-  const rows=list.length?'<div class="list-stack">'+list.map(h=>{const t=h.t,i=h.info;let pill,txt;
-    if(i.st==='on'){pill='<span class="pill green">Na garantia</span>';txt='Faltam '+i.left+(i.left===1?' dia':' dias')+' · até '+garFmt(i.end)}
-    else if(i.st==='off'){pill='<span class="pill late">Fora da garantia</span>';txt='Venceu em '+garFmt(i.end)}
-    else if(i.st==='nodate'){pill='<span class="pill s1">Sem retirada</span>';txt='Ainda não marcado como Entregue'}
-    else {pill='<span class="pill s1">Sem prazo</span>';txt='Sem garantia em dias cadastrada'}
-    return '<div class="list-row click" style="cursor:pointer" onclick="openTruck(\''+t.id+'\')"><div class="grow"><b>'+esc(t.client||c.name)+'</b><small>'+esc([t.plate,t.model].filter(Boolean).join(' · '))+'</small><small>'+esc(t.status)+' · '+esc(mechanicName(t.mechanicId)||'Sem mecânico')+'</small><small>'+(t.deliveredAt?'Retirada em '+fmtDate(t.deliveredAt)+' · ':'')+txt+'</small></div><div>'+pill+'</div></div>'}).join('')+'</div>'
-    :'<div class="empty">Nenhum caminhão desta empresa ainda.</div>';
-  return pageHead(esc(c.name),[c.contact,c.phone,c.doc].filter(Boolean).join(' · ')||'Empresa cliente','<button class="btn soft" onclick="showCompany(\'\')">← Empresas</button><button class="btn soft" onclick="openReg(\'clients\',\''+c.id+'\')">Editar empresa</button><button class="btn primary" onclick="companyNewTruck(\''+c.id+'\')">＋ Caminhão desta empresa</button>')+
+  const rows=truckBubbles(list.map(h=>h.t));
+  return pageHead(esc(c.name),[c.contact,c.phone,c.doc].filter(Boolean).join(' · ')||'Empresa cliente','<button class="btn soft" onclick="showCompany(\'\')">← Empresas</button><button class="btn soft" onclick="maintOpen(\''+c.id+'\')">Histórico de manutenção</button><button class="btn soft" onclick="orcHistOpen(\''+c.id+'\')">Histórico de orçamentos</button><button class="btn soft" onclick="openReg(\'clients\',\''+c.id+'\')">Editar empresa</button><button class="btn primary" onclick="companyNewTruck(\''+c.id+'\')">＋ Caminhão desta empresa</button>')+
     '<div class="panel"><div class="panel-head"><h2>Caminhões ('+list.length+')</h2></div>'+rows+'</div>';
 }
 const PAGE_KIND={parceiros:'partners',fornecedores:'suppliers',mecanicos:'mechanics',catpecas:'catpecas',servicos:'servicos'};
@@ -3215,11 +3325,12 @@ function regListHTML(kind){
   const items=(kind==='catpecas'||kind==='servicos')?cfg.get().slice().sort((x,y)=>String(x.name||'').localeCompare(String(y.name||''),'pt-BR')):cfg.get().filter(i=>!q||JSON.stringify(i).toLowerCase().includes(q));
   if(!cfg.get().length)return '<div class="empty">Nenhum '+cfg.one+' cadastrado. Toque em “'+cfg.btn.replace('＋ ','')+'” para começar.</div>';
   if(!items.length)return '<div class="empty">Nada encontrado para essa busca.</div>';
+  if(ENT_KINDS.indexOf(kind)>=0)return '<div class="bub-list">'+items.map(i=>entBubbleHTML(kind,i)).join('')+'</div>';
   return '<div class="list-stack">'+items.map(i=>{
     const wa=waLink(i.phone);
     return '<div class="list-row click" onclick="'+(kind==='clients'?'showCompany(\''+i.id+'\')':'openReg(\''+kind+'\',\''+i.id+'\')')+'"><div class="grow"><b>'+esc(i.name)+'</b><small>'+esc(cfg.sub(i)||'Sem detalhes')+'</small><small>'+esc(regExtra(kind,i))+'</small>'+(i.notes?'<small>Obs.: '+esc(i.notes)+'</small>':'')+'</div>'+
       '<div class="rowacts" onclick="event.stopPropagation()">'+waBtn(i.phone,true)+
-      (kind==='mechanics'?'<button class="small-btn" onclick="showMechanicJobs(\''+i.id+'\')">Ver serviços</button>':'')+
+      '<button class="small-btn" onclick="openReg(\''+kind+'\',\''+i.id+'\')">Editar</button>'+(kind==='mechanics'?'<button class="small-btn" onclick="showMechanicJobs(\''+i.id+'\')">Ver serviços</button>':'')+
       '<button class="small-btn red" onclick="deleteReg(\''+kind+'\',\''+i.id+'\')">Excluir</button></div></div>';
   }).join('')+'</div>';
 }
@@ -3274,16 +3385,15 @@ function estPainelBody(){
     '<input placeholder="Valor parado a partir de (R$)" inputmode="decimal" value="'+esc(estF.minv)+'" onchange="estF.minv=this.value;estTabela()">'+
     '</div><div id="estTabela">'+estTabelaHTML()+'</div></div>';
   return av+filtros}
-function updateBellEst(){
-  const b=$('bellEst'),n=$('bellEstN');if(!b||!n)return;
-  const show=!!prof&&!(ws&&ws.is_admin)&&allowed('catpecas');
-  const c=show?catPecas.filter(function(p){const q=pnum(p.qty),m=pnum(p.min);return q<=0||(m>0&&q<=m)}).length:0;
-  b.style.display=show?'':'none';n.textContent=c;n.style.display=c?'block':'none'}
+function stockLowRows(){return (!!prof&&!(ws&&ws.is_admin)&&allowed('catpecas'))?estRows().filter(function(x){return x.st==='zero'||x.st==='low'}):[]}
+function notifStockHTML(){const rows=stockLowRows();if(!rows.length)return '';return '<h2 style="font-size:15px;margin:0 0 8px">Estoque · peças acabando</h2><div class="list-stack">'+rows.map(function(x){return '<div class="list-row click" style="cursor:pointer" onclick="estAbreAvisos()"><div class="grow"><b>'+esc(x.p.name||'Peça sem nome')+'</b><small>'+(x.q<=0?'Sem estoque':'Restam '+x.q+' · mínimo '+x.m)+'</small></div><span class="pill '+(x.q<=0?'late':'s1')+'">'+(x.q<=0?'Zerado':'Acabando')+'</span></div>'}).join('')+'</div>'}
+function updateBellEst(){try{updateBell()}catch(e){}}
 function regFilter(kind,v){regQuery[kind]=v;$('regList').innerHTML=regListHTML(kind)}
 function openReg(kind,id){
   const cfg=REG[kind],item=id?cfg.get().find(x=>x.id===id):null;regState={kind,id:id||''};
   $('regTitle').textContent=(item?'Editar ':'Cadastrar ')+cfg.one;$('regSub').textContent=cfg.desc;
-  $('regFields').innerHTML=cfg.fields.filter(f=>!f.dono||isRole('dono')).map(f=>{
+  regPhotoVal=item&&item.photo||'';regPhotoName=item?item.name:'';
+  $('regFields').innerHTML=(cfg.photo?regPhotoBlockHTML():'')+cfg.fields.filter(f=>!f.dono||isRole('dono')).map(f=>{
     const v=item?item[f.k]||'':'',cls='field'+(f.area||f.full?' full':'');
     let inp;
     if(f.sel)inp='<select id="rf_'+f.k+'">'+f.sel.map(o=>'<option'+(o===v?' selected':'')+'>'+o+'</option>').join('')+'</select>';
@@ -3296,6 +3406,7 @@ function openReg(kind,id){
 function saveReg(){
   const {kind,id}=regState,cfg=REG[kind],data={};
   for(const f of cfg.fields.filter(f=>!f.dono||isRole('dono'))){const v=$('rf_'+f.k).value.trim();if(f.req&&!v){alert('Preencha: '+f.l.replace(' *',''));return}data[f.k]=v}
+  if(cfg.photo)data.photo=regPhotoVal||'';
   const list=cfg.get();
   if(id){const i=list.find(x=>x.id===id);Object.assign(i,data)}else list.push(Object.assign({id:uid()},data));cfg.set(list);
   persist();closeModal('regModal');render();
@@ -3303,6 +3414,7 @@ function saveReg(){
 function deleteReg(kind,id){
   const cfg=REG[kind],i=cfg.get().find(x=>x.id===id);if(!i)return;
   if(!confirm('Excluir '+cfg.one+' “'+i.name+'”?'))return;
+  trash.unshift({id:uid(),kind:kind,item:JSON.parse(JSON.stringify(i)),name:i.name||'',deletedAt:new Date().toLocaleString('pt-BR')});
   cfg.set(cfg.get().filter(x=>x.id!==id));
   if(kind==='clients')trucks.forEach(t=>{if(t.companyId===id)t.companyId=''});
   if(kind==='mechanics'){trucks.forEach(t=>{if(t.mechanicId===id)t.mechanicId=''});quotes.forEach(q=>{if(Array.isArray(q.mechIds))q.mechIds=q.mechIds.filter(x=>x!==id);if(q.mechanicId===id)q.mechanicId=''})}
@@ -3310,8 +3422,12 @@ function deleteReg(kind,id){
   persist();render();
 }
 function showMechanicJobs(id){
-  const m=mechanics.find(x=>x.id===id);if(!m)return;const jobs=trucks.filter(t=>t.mechanicId===id);
-  alert('Serviços associados a '+m.name+':\n'+(jobs.length?jobs.map(t=>t.plate+' · '+t.client+' · '+t.status).join('\n'):'Nenhum veículo associado.'));
+  const m=mechanics.find(function(x){return x.id===id});if(!m)return;
+  const jobs=trucks.filter(function(t){return t.mechanicId===id||(t.mechIds||[]).indexOf(id)>=0});
+  $('jobsTitle').textContent='Serviços de '+m.name;
+  loadThumbs();
+  $('jobsBody').innerHTML=jobs.length?'<div class="bub-list">'+jobs.map(function(t){return bubbleHTML(t)}).join('')+'</div>':'<div class="empty">Nenhum veículo associado a este mecânico ainda.</div>';
+  openModal('jobsModal');
 }
 
 /* ---------- Financeiro / pagamentos ---------- */
@@ -3319,18 +3435,30 @@ let curExp='';
 function linkOptions(sel){
   return '<option value="">Nenhum (digitar o nome)</option>'+
    (suppliers.length?'<optgroup label="Fornecedores">'+suppliers.map(s=>'<option value="suppliers:'+esc(s.id)+'"'+(sel==='suppliers:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'')+
-   (partners.length?'<optgroup label="Parceiros/freelancers">'+partners.filter(p=>p.kind!=='cliente').map(s=>'<option value="partners:'+esc(s.id)+'"'+(sel==='partners:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'');
+   (partners.length?'<optgroup label="Parceiros/freelancers">'+partners.filter(p=>p.kind!=='cliente').map(s=>'<option value="partners:'+esc(s.id)+'"'+(sel==='partners:'+s.id?' selected':'')+'>'+esc(s.name)+'</option>').join('')+'</optgroup>':'')+
+   (mechanics.length?'<optgroup label="Funcionários (mecânicos)">'+mechanics.map(m=>'<option value="mechanics:'+esc(m.id)+'"'+(sel==='mechanics:'+m.id?' selected':'')+'>'+esc(m.name)+'</option>').join('')+'</optgroup>':'');
 }
 function payeeToggle(){const f=$('ePayee').parentElement;f.style.display=$('eLink').value?'none':''}
 function expenseLinkChanged(){
-  const v=$('eLink').value;payeeToggle();if(!v)return;const [k,id]=v.split(':'),it=(k==='partners'?partners:suppliers).find(x=>x.id===id);
-  if(it){$('ePayee').value=it.name;if(k==='partners'&&$('eCategory').value==='Fornecedor / peças')$('eCategory').value='Parceiros / serviços terceirizados'}
+  const v=$('eLink').value;payeeToggle();if(!v)return;const [k,id]=v.split(':'),it=(k==='partners'?partners:k==='mechanics'?mechanics:suppliers).find(x=>x.id===id);
+  if(it){$('ePayee').value=it.name;if(k==='partners'&&$('eCategory').value==='Fornecedor / peças')$('eCategory').value='Parceiros / serviços terceirizados';if(k==='mechanics')$('eCategory').value='Funcionários'}
+  eLinkRender();
+}
+let eLinkOpen=false;
+function eLinkToggle(){eLinkOpen=!eLinkOpen;eLinkRender()}
+function eLinkPick(v){$('eLink').value=v;eLinkOpen=false;expenseLinkChanged()}
+function eLinkRender(){
+  const sel=$('eLink'),box=$('eLinkBox');if(!sel||!box)return;
+  const cur=sel.value,opt=[...sel.options].find(o=>o.value===cur),label=cur&&opt?opt.text:'Nenhum (digitar o nome)',open=eLinkOpen;
+  const item=o=>'<button type="button" class="eLinkItem'+(o.value===cur?' on':'')+'" onclick="eLinkPick(\''+o.value+'\')"><span>'+esc(o.text)+'</span><b>'+(o.value===cur?'●':'○')+'</b></button>';
+  box.innerHTML='<button type="button" class="mp-tab'+(open?' open':'')+'" onclick="eLinkToggle()" aria-expanded="'+open+'"><span>Quem recebe</span><small>'+esc(label)+'</small><b>'+(open?'▴':'▾')+'</b></button>'+
+    (open?'<div class="eLinkList">'+[...sel.children].map(c=>c.tagName==='OPTGROUP'?'<div class="eLinkGroup">'+esc(c.label)+'</div>'+[...c.children].map(item).join(''):item(c)).join('')+'</div>':'');
 }
 function openExpense(id){
   const e=id?expenses.find(x=>x.id===id):null;curExp=id||'';
   $('eTitle').textContent=e?'Editar lançamento':'Lançar despesa ou pagamento';
   $('eDesc').value=e?e.desc:'';$('eCategory').innerHTML=optionsHTML(CATEGORIES,e?e.category:CATEGORIES[0]);
-  $('eLink').innerHTML=linkOptions(e&&e.linkKind?e.linkKind+':'+e.linkId:'');$('ePayee').value=e?e.payee||'':'';payeeToggle();
+  $('eLink').innerHTML=linkOptions(e&&e.linkKind?e.linkKind+':'+e.linkId:'');eLinkOpen=false;eLinkRender();$('ePayee').value=e?e.payee||'':'';payeeToggle();
   $('eAmount').value=e?mstr(e.amount):'';$('eMethod').value=e?e.method||'Pix':'Pix';$('eDue').value=e?e.due||'':'';
   $('ePaidDate').value=e?e.paidDate||'':'';$('eStatus').value=e?e.status:'Pendente';$('eDelBtn').style.display=e?'':'none';
   $('eFixWrap').innerHTML=!e?'<label style="display:flex;gap:10px;align-items:flex-start;font-weight:700;cursor:pointer"><input type="checkbox" id="eFixa" style="width:22px;height:22px;margin:0;flex:none"><span>🔁 Despesa fixa: repetir todo mês<small style="display:block;font-weight:400;color:var(--muted);margin-top:2px">Para contas de valor fixo (aluguel, folha, internet). O dia do vencimento acima se repete todo mês. Escolha a categoria certa (Aluguel, Funcionários, Internet...) para entrar em “Despesas fixas” no Financeiro. Conta que muda de valor (luz, água) lance normal, só quando pagar.</small></span></label>':(e.fixaId?'<div class="notice">🔁 Esta conta vem de uma <b>despesa fixa mensal</b>. Mudar algo aqui altera só este mês. Para mudar de vez, use “Despesas fixas” na tela Pagamentos.</div>':'');
@@ -3473,10 +3601,12 @@ function qSet(i,k,v){
 }
 function qAdd(type){qState.items.push({type,desc:'',qty:1,cost:0,price:0});renderQItems()}
 function qDel(i){if(qState.items.length===1){qState.items=[{type:'Peça',desc:'',qty:1,cost:0,price:0}]}else qState.items.splice(i,1);renderQItems()}
+const qMechOpenSt={};
+function qMechOpenToggle(){qMechOpenSt.q=!qMechOpenSt.q;qMechRender()}
 function qMechRender(){
   if(!$('qMechBox')||typeof qState==='undefined'||!qState)return;
   const ids=qState.mechIds||[];
-  $('qMechBox').innerHTML=mechanics.length?mechanics.map(m=>'<button type="button" class="'+(ids.indexOf(m.id)>=0?'on':'')+'" onclick="qMechToggle(\''+m.id+'\')">'+esc(m.name)+'</button>').join(''):'<span class="subtle">Cadastre mecânicos no menu Mecânicos.</span>';
+  const qOpen=!!qMechOpenSt.q;const qNames=(mechanics||[]).filter(m=>ids.indexOf(m.id)>=0).map(m=>m.name);$('qMechBox').innerHTML='<button type="button" class="mp-tab'+(qOpen?' open':'')+'" onclick="qMechOpenToggle()" aria-expanded="'+qOpen+'"><span>Mecânicos</span><small>'+(qNames.length?esc(qNames.join(', ')):'Nenhum selecionado')+'</small><b>'+(qOpen?'▴':'▾')+'</b></button>'+(qOpen?(mechanics.length?'<div class="mp-list">'+mechanics.map(m=>'<button type="button" class="'+(ids.indexOf(m.id)>=0?'on':'')+'" onclick="qMechToggle(\''+m.id+'\')">'+avatarHTML(m,'av-s')+esc(m.name)+'</button>').join('')+'</div>':'<span class="subtle">Cadastre mecânicos no menu Mecânicos.</span>'):'');
   const lab=(qState.items||[]).filter(i=>i.type==='Mão de obra').reduce((x,i)=>x+(Number(i.qty)||0)*(Number(i.price)||0),0);
   $('qMechInfo').textContent=ids.length>1&&lab?ids.length+' mecânicos: '+money(lab/ids.length)+' de mão de obra para cada um (aparece assim no Financeiro e nas Metas).':(ids.length?'':'Nenhum mecânico marcado.');
 }
@@ -3499,7 +3629,7 @@ function saveQuote(){
   stockApply(rec);
   if(was)Object.assign(was,rec);else quotes.unshift(rec);
   if(t&&rec.status!==oldStatus){
-    if(rec.status==='Aguardando aprovação'&&t.status!=='Aguardando aprovação'){logEvent(t.plate,'Status alterado: '+t.status+' → Aguardando aprovação (orçamento '+quoteNumber(rec)+')');t.status='Aguardando aprovação'}
+    if(rec.status==='Aguardando aprovação'){logEvent(t.plate,'Orçamento '+quoteNumber(rec)+' aguardando aprovação')}
     else if(rec.status==='Aprovado'&&STATUSES.indexOf(t.status)<STATUSES.indexOf('Em manutenção')){logEvent(t.plate,'Orçamento '+quoteNumber(rec)+' aprovado · status: '+t.status+' → Em manutenção');t.status='Em manutenção'}
     else logEvent(t.plate,'Orçamento '+quoteNumber(rec)+': '+rec.status);
   }
@@ -3624,10 +3754,10 @@ function layContainers(){const out=[];LAYC.forEach(c=>{const els=c[1]==='#page'?
 function layLabel(el){const q=el.querySelector('h1,h2,h3,.cap,b')||el;return (q.textContent||'').replace(/[×✕↩⠿]/g,'').replace(/\s+/g,' ').replace(/^[^A-Za-zÀ-ú0-9]+/,'').trim().slice(0,40)}
 function layBlocks(cs){const seen={},list=[];cs.forEach(c=>{[].slice.call(c.el.children).forEach((el,i)=>{if(el.tagName==='SCRIPT'||el.matches(LAYWRAP))return;const lb=layLabel(el);const base=el.dataset.ck?'c:'+el.dataset.ck:c.ck+':'+(lb.toLowerCase().replace(/[^a-z0-9à-ú]+/g,'-')||'n'+i);seen[base]=(seen[base]||0)+1;list.push({k:seen[base]>1?base+'~'+seen[base]:base,el:el,c:c,label:lb||'Bloco'})})});return list}
 function layWrap(cls){const root=$('page');let w=root.querySelector('.'+cls);if(w)return w;w=document.createElement('div');w.className=cls;const prev=(cls==='qa'?['page-head']:['qa','page-head']).map(c=>root.querySelector(':scope > .'+c)).find(Boolean);if(prev)prev.after(w);else root.insertBefore(w,root.firstChild);return w}
-const NUMSRC=[['pat','Veículos no pátio'],['manut','Em manutenção'],['aprov','Aguardando aprovação'],['concl','Concluídos / retirada'],['entr','Entregues (total)'],['cam','Veículos cadastrados'],['orc','Orçamentos feitos'],['pend','Contas pendentes (R$)'],['paid','Pagamentos realizados (R$)'],['mec','Mecânicos cadastrados']];
+const NUMSRC=[['pat','Veículos no pátio'],['manut','Em manutenção'],['aprov','Em avaliação'],['concl','Prontos para retirada'],['entr','Entregues (total)'],['cam','Veículos cadastrados'],['orc','Orçamentos feitos'],['pend','Contas pendentes (R$)'],['paid','Pagamentos realizados (R$)'],['mec','Mecânicos cadastrados']];
 function layNum(src){const n=st=>trucks.filter(t=>t.status===st).length;
-  switch(src){case 'pat':return trucks.filter(t=>t.status!=='Entregue').length;case 'manut':return n('Em manutenção');case 'aprov':return n('Aguardando aprovação');
-   case 'concl':return trucks.filter(t=>['Serviço concluído','Aguardando retirada'].includes(t.status)).length;case 'entr':return n('Entregue');case 'cam':return trucks.length;case 'orc':return quotes.length;
+  switch(src){case 'pat':return trucks.filter(t=>t.status!=='Entregue').length;case 'manut':return n('Em manutenção');case 'aprov':return n('Em avaliação');
+   case 'concl':return trucks.filter(t=>t.status==='Pronto').length;case 'entr':return n('Entregue');case 'cam':return trucks.length;case 'orc':return quotes.length;
    case 'pend':return money(sum(expenses.filter(e=>e.status==='Pendente')));case 'paid':return money(sum(expenses.filter(e=>e.status==='Pago')));case 'mec':return mechanics.length}return ''}
 function layNumGo(src){({pat:()=>goTruck('pat'),manut:()=>goTruck('manut'),aprov:()=>goTruck('aprov'),concl:()=>goTruck('concl'),pend:()=>goPag('pend'),paid:()=>goPag('paid'),entr:()=>navigate('historico'),cam:()=>navigate('historico'),orc:()=>navigate('orcamentos'),mec:()=>navigate('mecanicos')})[src]()}
 function layGo(id){const L=layRead(currentPage);const c=L&&L.custom.find(x=>x.id===id);if(!c)return;
@@ -3880,7 +4010,7 @@ const WATPL=[
 ];
 const ALLT=()=>WATPL.concat(RTPL,ATPL);
 function waTpl(k){const m=(shop().msgs||{})[k];if(m)return m;const t=ALLT().find(x=>x[0]===k);return t?t[2]:''}
-const WASUG={'Aguardando avaliação':'entrada','Em diagnóstico':'entrada','Orçamento em elaboração':'orcamento','Aguardando aprovação':'aprovacao','Em manutenção':'andamento','Serviço concluído':'liberado','Aguardando retirada':'liberado','Entregue':'obrigado'};
+const WASUG={'Em avaliação':'entrada','Em manutenção':'andamento','Pronto':'liberado','Entregue':'obrigado'};
 function waFill(txt,t){
   const q=quotes.filter(x=>x.truckId===t.id&&x.status!=='Recusado').sort((a,b)=>(b.number||0)-(a.number||0))[0];
   const first=(t.client||'').trim().split(/\s+/)[0]||'';
@@ -3989,10 +4119,11 @@ NEWPAGE.receber=function(){
   list=list.slice().sort((a,b)=>(a.due||'9999').localeCompare(b.due||'9999'));
   const FL=[['open','Em aberto'],['late','Vencidos'],['today','Hoje'],['soon','A vencer'],['paid','Pagos'],['all','Todos']];
   return pageHead('A receber','Serviços vendidos para o cliente pagar depois. Cobre pelo WhatsApp na data certa.','<button class="btn primary" onclick="openRecv(\'\')">＋ Lançar a receber</button>')+
+   vehBar('recQ','Pesquisar cliente, placa ou serviço','filtBox(\'recBox\',this.value)','')+
    '<div class="cards">'+mcard('Total a receber',money(sumO(op)),op.length+' em aberto')+mcard('Vencidos',money(sumO(late)),late.length+' cobrança(s)',"rcSet('late');goLista()")+mcard('Vencem hoje',money(sumO(td)),td.length+' cobrança(s)',"rcSet('today');goLista()")+mcard('Próximos 7 dias',money(sumO(wk)),wk.length+' cobrança(s)')+'</div>'+
    '<div class="notice section-gap">O WhatsApp não deixa programas enviarem mensagem sozinhos de graça. Por isso o sistema avisa na tela inicial quando tem cobrança para hoje e você toca em <b>💬 Cobrar</b>: a mensagem já sai pronta, no tom certo (lembrete, vence hoje ou atrasado).</div>'+
    '<div class="panel section-gap listaAlvo"><div class="chips" style="margin-bottom:12px">'+FL.map(f=>'<button class="'+(rcF===f[0]?'on':'')+'" onclick="rcSet(\''+f[0]+'\')">'+f[1]+'</button>').join('')+'</div>'+
-   (list.length?'<div class="list-stack">'+list.map(r=>{
+   (list.length?'<div class="list-stack" id="recBox">'+list.map(r=>{
      const st=rcStat(r),pill=st==='paid'?'<span class="pill ok">Pago</span>':st==='late'?'<span class="pill late">Venceu há '+dayDiff(todayISO(),r.due)+' dia(s)</span>':st==='today'?'<span class="pill today">Vence hoje</span>':'<span class="pill s1">Vence em '+dayDiff(r.due,todayISO())+' dia(s)</span>';
      return '<div class="list-row"><div class="grow"><b>'+esc(r.client)+'</b> '+pill+'<small>'+esc([r.plate,r.desc].filter(Boolean).join(' · '))+'</small><small>Vencimento '+fmtDate(r.due)+' · '+(rcPaid(r)?'Restam '+money(rcOpen(r))+' de '+money(r.amount):money(r.amount))+'</small></div>'+
       '<div class="rowacts">'+(st!=='paid'?'<button class="small-btn" style="background:#25d366;color:#fff" onclick="rcCharge(\''+r.id+'\')">💬 Cobrar</button><button class="small-btn" onclick="rcPay(\''+r.id+'\')">💰 Receber</button>':'')+'<button class="small-btn" onclick="openRecv(\''+r.id+'\')">Editar</button></div></div>'}).join('')+'</div>':'<div class="empty">Nada por aqui. Toque em “＋ Lançar a receber” para registrar um serviço a receber.</div>')+'</div>';
@@ -4057,7 +4188,7 @@ function evLabel(ev){const t=trucks.find(x=>x.plate===ev.plate);return t&&t.clie
 function garKey(s){return String(s||'').toUpperCase().replace(/[^A-Z0-9]/g,'')}
 function garIso(s){const p=String(s||'').split('-').map(Number);return p.length===3&&p[0]?new Date(p[0],p[1]-1,p[2]):null}
 function garFmt(d){return d.toLocaleDateString('pt-BR')}
-const GAR_PADRAO=30;
+const GAR_PADRAO=90;
 function garInfo(t){
   const s=garIso(t.deliveredAt);
   if(!s)return {st:'nodate'};
@@ -4097,7 +4228,8 @@ function garList(q){
 function garBody(q){
   const rows=garList(q);
   if(!rows.length)return '<div class="empty">'+(q?'Nenhum veículo com “'+esc(q)+'” (placa, cliente ou modelo).':'Nenhum veículo na garantia no momento.')+'</div>';
-  return '<div class="list-stack">'+rows.map(r=>(r.info.st==='off'||r.info.st==='none'?'<div style="color:#dc2626;font-weight:700;font-size:13px;margin:4px 0 2px">'+(r.info.st==='off'?'VENCIDO':'SEM GARANTIA')+'</div>':'')+garRow(r.t,r.info)).join('')+'</div>';
+  loadThumbs();
+  return '<div class="bub-list">'+rows.map(r=>(r.info.st==='off'||r.info.st==='none'?'<div style="color:#dc2626;font-weight:700;font-size:13px;margin:8px 0 2px">'+(r.info.st==='off'?'VENCIDO':'SEM GARANTIA')+'</div>':'')+bubbleHTML(r.t,garSub(r.info))).join('')+'</div>';
 }
 function grSearch(v){grQ=v;const r=$('grRes');if(r)r.innerHTML=garBody(v)}
 NEWPAGE.garantia=function(){
@@ -4112,6 +4244,7 @@ NEWPAGE.metas=function(){
   const fixed=expenses.filter(e=>FIXED.includes(e.category)&&String(expDate(e)||'').slice(0,7)===ym);
   let totGoal=0,totLab=0,totSal=0;
   const cards=mechanics.map(m=>{
+    const gasto=expenses.filter(e=>e.linkKind==='mechanics'&&e.linkId===m.id).reduce((x,e)=>x+Number(e.amount||0),0);
     const s=by[m.id]||{labor:0,n:0},goal=pnum(m.goal),sal=pnum(m.salary),hrs=pnum(m.hours)||176,lab=s.labor,pct=goal?lab/goal*100:0,
       proj=isCur&&el?lab/el*dim:lab,hrsEl=hrs*(dim?el/dim:0),ph=hrsEl>0?lab/hrsEl:0;
     totGoal+=goal;totLab+=lab;totSal+=sal;
@@ -4121,6 +4254,7 @@ NEWPAGE.metas=function(){
       (goal?'<div class="list-row"><div class="grow"><b>'+(pct>=100?'Meta batida 🎉':'Falta '+money(Math.max(0,goal-lab)))+'</b><small>'+(isCur?'Projeção para o fim do mês: '+money(proj)+(proj>=goal?' (bate a meta)':' (fica abaixo)'):'Mão de obra aprovada no mês')+'</small></div></div>':'')+
       '<div class="list-row"><div class="grow"><b>Valor por hora</b><small>Meta: '+(goal?money(goal/hrs)+'/h':'—')+' ('+hrs+' h/mês) · até agora: '+(el?money(ph)+'/h':'—')+'</small></div></div>'+
       (sal?'<div class="list-row"><div class="grow"><b>Salário / custo: '+money(sal)+'</b><small>'+(lab>=sal?'A mão de obra dele já cobre o custo ('+money(lab-sal)+' acima).':'Faltam '+money(sal-lab)+' para cobrir o custo dele.')+'</small></div></div>':'')+
+      '<div class="list-row"><div class="grow"><b>Gasto com ele: '+money(gasto)+'</b><small>Lançado no Financeiro. Mão de obra feita '+money(lab)+' · saldo '+money(lab-gasto)+'</small></div></div>'+
       '<div class="list-row"><div class="grow"><small>'+s.n+' serviço(s) aprovado(s) no mês (mão de obra dividida quando há mais de um mecânico)</small></div></div></div></div>';
   }).join('');
   const sem=by['']&&by[''].labor>0?'<div class="notice section-gap">Há '+money(by[''].labor)+' de mão de obra aprovada <b>sem mecânico definido</b>. Marque o mecânico no orçamento para entrar na meta de cada um.</div>':'';
@@ -4200,7 +4334,7 @@ function agToTruck(id){
   const a=agenda.find(x=>x.id===id);if(!a)return;
   if(a.truckId&&trucks.find(t=>t.id===a.truckId)){navigate('inicio');openTruck(a.truckId);return}
   openNewTruck();$('nPlate').value=a.plate||'';$('nClient').value=a.client||'';$('nPhone').value=a.phone||'';$('nReason').value=a.what||'';
-  if(a.mechId)$('nMech').value=a.mechId;
+  if(a.mechId)mpSet('nMech',[a.mechId]);
 }
 
 /* =====================================================================
@@ -4314,7 +4448,7 @@ NEWPAGE.notas=function(){
 /* ---------- Filtro de período (Financeiro e Pagamentos) ---------- */
 const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const FMODES=[['ano','Ano inteiro'],['mes','Mês inteiro'],['t1','1º trimestre'],['t2','2º trimestre'],['t3','3º trimestre'],['t4','4º trimestre'],['s1','1º semestre'],['s2','2º semestre'],['custom','Período personalizado']];
-let fin={mode:'ano',year:new Date().getFullYear(),month:new Date().getMonth()+1,from:'',to:''};
+let fin={mode:'ano',year:new Date().getFullYear(),month:new Date().getMonth()+1,from:'',to:'',calM:new Date().getMonth()+1,pending:''};
 const p2=n=>String(n).padStart(2,'0');
 const lastDay=(y,m)=>new Date(y,m,0).getDate();
 function finRange(){
@@ -4331,6 +4465,27 @@ const quoteDate=q=>q.approvedIso||q.iso||parseBR(q.date);
 const qMechIds=q=>{if(Array.isArray(q.mechIds))return q.mechIds.filter(Boolean);const id=qMechId(q);return id?[id]:[]};
 const qMechId=q=>{if(q.mechanicId!=null)return q.mechanicId;const t=trucks.find(x=>x.id===q.truckId);return t?t.mechanicId||'':''};
 function setFin(k,v){fin[k]=(k==='year'||k==='month')?Number(v):v;render()}
+function finCalMove(d){fin.calM=Math.min(12,Math.max(1,(fin.calM||1)+d));render()}
+function finPickDay(iso){
+  if(fin.pending){const a=fin.pending;fin.from=a<iso?a:iso;fin.to=a<iso?iso:a;fin.pending=''}
+  else{fin.pending=iso;fin.from=iso;fin.to=iso}
+  render();
+}
+function finClear(){fin.from='';fin.to='';fin.pending='';render()}
+function finCalHTML(){
+  const y=fin.year,m=fin.calM||(new Date().getMonth()+1);
+  const first=new Date(y,m-1,1).getDay(),n=lastDay(y,m);
+  let cells='';
+  for(let i=0;i<first;i++)cells+='<span></span>';
+  for(let d=1;d<=n;d++){
+    const iso=y+'-'+p2(m)+'-'+p2(d);
+    const inSel=!!fin.from&&!!fin.to&&iso>=fin.from&&iso<=fin.to;
+    const edge=iso===fin.from||iso===fin.to;
+    cells+='<button type="button" class="fcal-d'+(inSel?' in':'')+(edge?' edge':'')+'" onclick="finPickDay(\''+iso+'\')">'+d+'</button>';
+  }
+  return '<div class="fcal"><div class="fcal-head"><button type="button" class="small-btn" onclick="finCalMove(-1)">‹</button><b>'+MONTHS[m-1]+' '+y+'</b><button type="button" class="small-btn" onclick="finCalMove(1)">›</button></div>'+
+   '<div class="fcal-week"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div><div class="fcal-grid">'+cells+'</div></div>';
+}
 function finYears(){
   const ys=new Set([new Date().getFullYear()]);
   expenses.forEach(e=>{const d=expDate(e);if(d)ys.add(Number(d.slice(0,4)))});
@@ -4342,10 +4497,10 @@ function finFilterHTML(){
   const sel=(opts,cur,fn)=>'<select onchange="'+fn+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(String(o[0])===String(cur)?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>';
   return '<div class="panel" style="margin-bottom:14px"><div class="panel-head"><h2>Período</h2></div><div class="fgrid">'+
    '<div class="field"><label>Filtrar por</label>'+sel(FMODES,fin.mode,"setFin('mode',this.value)")+'</div>'+
-   (fin.mode!=='custom'?'<div class="field"><label>Ano</label>'+sel(finYears().map(y=>[y,y]),fin.year,"setFin('year',this.value)")+'</div>':'')+
+   '<div class="field"><label>Ano</label>'+sel(finYears().map(y=>[y,y]),fin.year,"setFin('year',this.value)")+'</div>'+
    (fin.mode==='mes'?'<div class="field"><label>Mês</label>'+sel(MONTHS.map((n,i)=>[i+1,n]),fin.month,"setFin('month',this.value)")+'</div>':'')+
-   (fin.mode==='custom'?'<div class="field"><label>De (dia 1, por exemplo)</label><input type="date" value="'+esc(fin.from)+'" onchange="setFin(\'from\',this.value)"></div><div class="field"><label>Até (dia 30, por exemplo)</label><input type="date" value="'+esc(fin.to)+'" onchange="setFin(\'to\',this.value)"></div>':'')+
-   '</div><p class="subtle" style="margin:10px 0 0">Mostrando de <b>'+(fin.mode==='custom'&&!fin.from?'o começo':fmtDate(a))+'</b> até <b>'+(fin.mode==='custom'&&!fin.to?'o fim':fmtDate(b))+'</b>. Despesas pagas contam pela data do pagamento, as pendentes pelo vencimento e os orçamentos pela data de aprovação.</p></div>';
+   ''+
+   '</div>'+(fin.mode==='custom'?finCalHTML()+'<div class="actions" style="margin-top:8px"><button class="small-btn" onclick="finClear()">Limpar período</button></div><p class="subtle" style="font-size:12px;margin:6px 0 0">'+(fin.pending?'Agora toque no dia final.':'Toque no dia inicial e depois no dia final.')+'</p>':'')+'<p class="subtle" style="margin:10px 0 0">Mostrando de <b>'+(fin.mode==='custom'&&!fin.from?'o começo':fmtDate(a))+'</b> até <b>'+(fin.mode==='custom'&&!fin.to?'o fim':fmtDate(b))+'</b>. Despesas pagas contam pela data do pagamento, as pendentes pelo vencimento e os orçamentos pela data de aprovação.</p></div>';
 }
 function finData(all){
   const r=finRange(),a=r[0],b=r[1],inR=iso=>all?true:(!!iso&&iso>=a&&iso<=b);
@@ -4748,8 +4903,8 @@ function render(){
   try{fxGenerate()}catch(e){}
   try{applyBrand()}catch(e){}
   try{updateBell()}catch(e){}
-  const p=$('page'),open=trucks.filter(t=>t.status!=='Entregue'),working=trucks.filter(t=>t.status==='Em manutenção'),waiting=trucks.filter(t=>t.status==='Aguardando aprovação'),
-    done=trucks.filter(t=>['Serviço concluído','Aguardando retirada'].includes(t.status)),pending=expenses.filter(e=>e.status==='Pendente'),paid=expenses.filter(e=>e.status==='Pago');
+  const p=$('page'),open=trucks.filter(t=>t.status!=='Entregue'),working=trucks.filter(t=>t.status==='Em manutenção'),waiting=trucks.filter(t=>t.status==='Em avaliação'),
+    done=trucks.filter(t=>t.status==='Pronto'),pending=expenses.filter(e=>e.status==='Pendente'),paid=expenses.filter(e=>e.status==='Pago');
   const metric=(c,v,h,go)=>'<div class="metric'+toneCls(c,v)+(go?' click" role="button" tabindex="0" onclick="'+go+'"':'"')+'><div class="cap">'+c+'</div><div class="value">'+v+'</div>'+(h?'<div class="hint">'+h+'</div>':'')+'</div>';
   let h='';
   if(currentPage==='inicio'){
@@ -4765,17 +4920,19 @@ function render(){
     (!isRole('dono')?'':'<div class="panel section-gap"><h2>Backup dos dados</h2><p class="subtle" style="font-size:12px">Baixe um arquivo com tudo (veículos, financeiro, cadastros, orçamentos, despesas fixas e configurações). Guarde no Drive ou mande para o seu WhatsApp. Os dados também ficam salvos na nuvem; o backup é a sua cópia extra.</p><p style="font-size:13px;margin:0 0 10px"><b>Último backup:</b> '+(lastBackup()?fmtDate(lastBackup()):'ainda não fez')+'</p><div class="actions"><button class="btn primary" onclick="exportAll()">⬇ Baixar backup</button><label class="btn soft" style="cursor:pointer">⬆ Importar backup<input type="file" accept="application/json,.json" style="display:none" onchange="importAll(this)"></label></div>'+safeList()+'</div>');
   }else if(currentPage==='cadastro'){
     h=pageHead('Cadastro de veículos','Registre a chegada do veículo, os dados do cliente, o problema informado e as fotos do estado em que ele chegou.','<button class="btn primary" onclick="openNewTruck()">＋ Novo cadastro</button>')+
+    vehBar('cadQ','Pesquisar placa, cliente ou modelo','cadSearch(this.value)',cadQ)+
     '<div class="panel"><h2>Como funciona</h2><p class="subtle" style="font-size:12px">Ao salvar, o veículo entra na lista de Processos e a entrada fica no histórico. Tire fotos do painel (luzes de injeção e avisos), da frente, da traseira e dos vidros para constar o que já estava quebrado.</p><button class="btn primary" onclick="openNewTruck()">＋ Cadastrar veículo</button></div>'+
-    '<div class="panel section-gap"><h2>Últimos cadastros</h2>'+truckList(trucks.slice(0,10),false)+'</div>';
+    '<div class="panel section-gap"><h2 id="cadTit">'+(cadQ?'Resultados':'Últimos cadastros')+'</h2><div id="cadRes">'+cadBody(cadQ)+'</div></div>';
   }else if(currentPage==='historico'){
-    h=pageHead('Histórico de veículos','Consulte os veículos que já passaram pela oficina e as movimentações registradas.')+
-    '<div class="panel"><h2>Veículos entregues</h2>'+truckList(trucks.filter(t=>t.status==='Entregue'),false)+'</div>'+
-    '<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(events.length?'<div class="list-stack">'+events.slice(0,40).map(ev=>{const tr=trucks.find(x=>x.plate===ev.plate);const on=tr?' click" style="cursor:pointer" onclick="openTruck(\''+tr.id+'\')':'';return '<div class="list-row'+on+'"><div><b>'+esc(evLabel(ev))+'</b><small>'+esc(ev.text)+'</small></div><span class="subtle">'+esc(ev.date)+'</span></div>'}).join('')+'</div>':'<div class="empty">As movimentações aparecem aqui conforme você cadastra veículos e altera status.</div>')+'</div>';
+    h=    '<div class="msearch" style="margin:0 0 12px"><span class="mslupa" aria-hidden="true">🔍</span><input id="histQ" type="search" placeholder="Pesquisar placa, cliente, modelo, serviço ou nome" autocomplete="off" value="'+esc(histQ)+'" oninput="histSearch(this.value)"></div>'+
+    pageHead('Histórico de veículos','Consulte os veículos que já passaram pela oficina, as movimentações e os cadastros excluídos.','<button class="btn soft" onclick="maintOpen(\'\')">Histórico de manutenção</button><button class="btn soft" onclick="orcHistOpen(\'\')">Histórico de orçamentos</button>')+
+    '<div id="histRes">'+histBody(histQ)+'</div>';
   }else if(currentPage==='orcamentos'){
     const appr=quotes.filter(q=>q.status==='Aprovado'),qlist=quoF?quotes.filter(q=>q.status===quoF):quotes;
     h=pageHead('Orçamentos','Monte orçamentos por veículo, com peças e mão de obra, e imprima para o cliente.','<button class="btn primary" onclick="openQuote(\'\',\'\')">＋ Novo orçamento</button>')+
+    vehBar('orcQ','Pesquisar placa, cliente ou nº do orçamento','filtBox(\'orcBox\',this.value)','')+
     '<div class="cards">'+metric('Total de orçamentos',quotes.length,'',"setQuoF('');goLista()")+metric('Aguardando aprovação',quotes.filter(q=>q.status==='Aguardando aprovação').length,'',"setQuoF('Aguardando aprovação');goLista()")+metric('Aprovados',appr.length,'',"setQuoF('Aprovado');goLista()")+metric('Valor aprovado',money(appr.reduce((s,q)=>s+qTotal(q),0)),'',"setQuoF('Aprovado');goLista()")+'</div>'+
-    '<div class="panel listaAlvo"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack">'+qlist.map(q=>'<div class="list-row click" onclick="openQuote(\''+q.id+'\',\'\')"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
+    '<div class="panel listaAlvo"><h2>Orçamentos</h2>'+(quoF?chip(quoF,"setQuoF('')"):'')+(qlist.length?'<div class="list-stack" id="orcBox">'+qlist.map(q=>'<div class="list-row click" onclick="openQuote(\''+q.id+'\',\'\')"><div class="grow"><b>Nº '+quoteNumber(q)+' · '+esc(q.plate||'')+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.client||'')+' · '+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>').join('')+'</div>':'<div class="empty">Nenhum orçamento ainda. Toque em “Novo orçamento”.</div>')+'</div>';
   }else if(currentPage==='financeiro'){
     h=pageHead('Financeiro',finTab==='avancado'?'Dados, filtros e gráficos para entender o dinheiro da oficina.':'Resumo simples do que já foi lançado.','<button class="btn primary" onclick="openExpense(\'\')">＋ Novo lançamento</button><button class="btn soft" onclick="reportPDF()">📄 Relatório do período (PDF)</button>')+
     '<div class="ftabs"><button class="'+(finTab==='basico'?'on':'')+'" onclick="setFinTab(\'basico\')">Básico</button><button class="'+(finTab==='avancado'?'on':'')+'" onclick="setFinTab(\'avancado\')">Avançado</button>'+'</div>'+
@@ -4814,6 +4971,7 @@ function render(){
   }else if(PAGE_KIND[currentPage]){
     h=regPage(PAGE_KIND[currentPage]);
   }
+  if(netView&&prof&&prof.role==='dono')h='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;background:#1d4ed8;color:#fff;padding:10px 12px;border-radius:12px;margin-bottom:12px"><span>Vendo a oficina: <b>'+esc(netName())+'</b></span><button class="small-btn" onclick="netSwitch(null)">← Voltar ao painel das oficinas</button></div>'+h;
   p.innerHTML=h;
   applyLayout();
 }
@@ -4826,18 +4984,19 @@ document.addEventListener('input',function(e){
 });
 /* ---------- Nuvem (Supabase): login e sincronização ---------- */
 const SB_URL='https://xvdozfvwzoggfmnccqen.supabase.co',SB_KEY='sb_publishable_NdF93TvnmX_b_DFlniwFQg_ZtgP-cJZ';
-const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}],catpecas:[()=>catPecas,v=>{catPecas=v}],servicos:[()=>catServ,v=>{catServ=v}]};
-const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv','catpecas','servicos'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
-const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv'],mecanico:['trucks','events','photos']};
+const COLS={trucks:[()=>trucks,v=>{trucks=v}],expenses:[()=>expenses,v=>{expenses=v}],mechanics:[()=>mechanics,v=>{mechanics=v}],events:[()=>events,v=>{events=v}],partners:[()=>partners,v=>{partners=v}],suppliers:[()=>suppliers,v=>{suppliers=v}],quotes:[()=>quotes,v=>{quotes=v}],photos:[()=>photoMeta,v=>{photoMeta=v}],settings:[()=>shopSet,v=>{shopSet=v}],recv:[()=>recv,v=>{recv=v}],agenda:[()=>agenda,v=>{agenda=v}],parts:[()=>parts,v=>{parts=v}],invoices:[()=>invoices,v=>{invoices=v}],catpecas:[()=>catPecas,v=>{catPecas=v}],servicos:[()=>catServ,v=>{catServ=v}],lixeira:[()=>trash,v=>{trash=v}]};
+const ROLE_READ={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','settings','agenda','recv','catpecas','servicos','lixeira'],mecanico:['trucks','events','mechanics','photos','settings','agenda']};
+const ROLE_WRITE={dono:Object.keys(COLS),atendimento:['trucks','quotes','partners','suppliers','mechanics','events','photos','agenda','recv','lixeira'],mecanico:['trucks','events','photos']};
 const ROLE_PAGES={atendimento:['inicio','cadastro','garantia','historico','agenda','receber','orcamentos','parceiros','empresas','fornecedores','mecanicos','usuarios','configuracoes','treinamento','suporte','termos','privacidade'],mecanico:['inicio','historico','agenda','usuarios','configuracoes','treinamento','suporte','termos','privacidade']};
 const ROLE_NAMES={dono:'Dono',atendimento:'Atendimento',mecanico:'Mecânico',pendente:'Aguardando liberação',inativo:'Sem acesso'};
 const roleName=r=>ROLE_NAMES[r]||r;
 let sess=null,prof=null,syncTimer=null,syncing=false,syncAgain=false,userList=null;
 const SK='rds_session_v1',SYK='rds_synced_v1';
+let netView=(function(){try{return localStorage.getItem('orbe_net_view')||null}catch(e){return null}})(),netChildren=[],netLoaded=false;
 const isRole=function(){return !!prof&&Array.prototype.indexOf.call(arguments,prof.role)>=0};
 const PLAN_PAGES={basico:['inicio','cadastro','historico','garantia','agenda','usuarios','assinatura','configuracoes','editar','servicos'],intermediario:['inicio','cadastro','historico','agenda','usuarios','assinatura','configuracoes','editar','orcamentos','financeiro','pagamentos','receber','pecas','parceiros','fornecedores','empresas','mecanicos','gestao','catpecas','servicos']};
 function planOk(p){if(!ws||!ws.id||ws.is_admin)return true;if(['treinamento','suporte','termos','privacidade'].indexOf(p)>=0)return true;const plan=ws.status==='trial'?'profissional':(ws.plan||'basico');if(plan==='proprio'||plan==='profissional'||plan==='anual')return true;const l=PLAN_PAGES[plan];return !l||l.indexOf(p)>=0}
-function allowed(p){if(p==='indicacao')return !!window.indElig;if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
+function allowed(p){if(p==='painel_rede')return !!(prof&&prof.role==='dono'&&netChildren.length);if(p==='notificacoes')return true;if(p==='indicacao')return !!window.indElig;if(p==='admin'||p.indexOf('orbe_')===0)return !!(ws&&ws.is_admin);if(p==='gestao'&&prof&&!isRole('dono'))return false;if(ws&&ws.features&&ws.features[p]===false)return false;if(!planOk(p))return false;if(!prof)return true;const l=ROLE_PAGES[prof.role];return !l||l.indexOf(p)>=0}
 function menuFor(){return MENU.map(g=>({g:g.g,items:g.items.filter(i=>allowed(i[0]))})).filter(g=>g.items.length)}
 function canon(o){if(Array.isArray(o))return '['+o.map(canon).join(',')+']';if(o&&typeof o==='object'){return '{'+Object.keys(o).sort().filter(k=>o[k]!==undefined).map(k=>JSON.stringify(k)+':'+canon(o[k])).join(',')+'}'}return JSON.stringify(o===undefined?null:o)}
 function sessLoad(){try{sess=JSON.parse(localStorage.getItem(SK)||'null')}catch(e){sess=null}}
@@ -5056,7 +5215,7 @@ function wzRender(msg){
   a.innerHTML='<div class="box" style="max-width:420px;border-radius:22px;background:linear-gradient(180deg,#fff,#f3f6fb);box-shadow:0 30px 60px -20px rgba(15,23,42,.5)">'+dots+b+'<div class="msg" id="wMsg">'+esc(msg||'')+'</div>'+nav+'</div>';if(st===5)setTimeout(wzCardMount,0)}
 /* painel do administrador do sistema */
 let admList,admBusy=false;
-function updateBell(){const b=$('bellN');if(!b)return;const n=(admList?admSummary(admList).late.length:0)+tempoAlerts().length;b.textContent=n;b.style.display=n?'block':'none'}
+function updateBell(){const b=$('bellN');if(!b)return;const n=(admList?admSummary(admList).late.length:0)+tempoAlerts().length+stockLowRows().length;b.textContent=n;b.style.display=n?'block':'none'}
 async function autoBlockOverdue(){
   if(!ws||!ws.is_admin||!admList)return;
   const late=admSummary(admList).late.filter(r=>r.t.status==='active'&&-r.i.left>=10);
@@ -5388,6 +5547,143 @@ function orbBI(){
     '<div class="panel section-gap"><div class="panel-head"><h2>Cenários</h2></div>'+scenHTML+'</div>';
 }
 /* ---------- ORBE: notificações (sininho) ---------- */
+/* ---------- Histórico: pesquisa e cadastros excluídos ---------- */
+let histQ='';
+function histMatch(hay,q){const h=msNorm(hay),ws=msNorm(q).trim().split(/\s+/).filter(Boolean);return ws.every(function(w){return h.indexOf(w)>=0})}
+function histSearch(v){histQ=v;const r=$('histRes');if(r)r.innerHTML=histBody(v)}
+function histTruckHay(t){const m=mechanics.find(function(x){return x.id===t.mechanicId});const c=(REG.clients?REG.clients.get():[]).find(function(x){return x.id===t.companyId});return [t.plate,t.client,t.model,t.phone,t.status,m?m.name:'',c?c.name:''].join(' ')}
+function histBody(q){
+  const on=!!msNorm(q).trim();
+  const del=trash.filter(function(x){return !on||histMatch([x.name,x.kind,Object.values(x.item||{}).filter(function(v){return typeof v==='string'}).join(' ')].join(' '),q)});
+  const ent=trucks.filter(function(t){return t.status==='Entregue'&&(!on||histMatch(histTruckHay(t),q))});
+  const evs=events.filter(function(ev){const t=trucks.find(function(x){return x.plate===ev.plate});return !on||histMatch([ev.plate,ev.text,ev.date,t?histTruckHay(t):''].join(' '),q)});
+  let out='';
+  if(on){out+='<div class="subtle" style="font-size:12px;margin:0 0 10px">Resultados para “'+esc(q)+'”: '+ent.length+' veículo(s) entregue(s), '+evs.length+' movimentação(ões), '+del.length+' cadastro(s) excluído(s).</div>'}
+  out+='<div class="panel"><h2>Veículos entregues</h2>'+(ent.length?truckList(ent,false):'<div class="empty">'+(on?'Nenhum veículo entregue com essa busca.':'Nenhum veículo entregue ainda.')+'</div>')+'</div>';
+  out+='<div class="panel section-gap"><h2>Registros de movimentação</h2>'+(evs.length?'<div class="bub-list">'+(loadThumbs(),evs.slice(0,on?200:40).map(movBubbleHTML).join(''))+'</div>':'<div class="empty">'+(events.length?(on?'Nenhuma movimentação com essa busca.':'As movimentações aparecem aqui conforme você cadastra veículos e altera status.'):'As movimentações aparecem aqui conforme você cadastra veículos e altera status.')+'</div>')+'</div>';
+  out+='<div class="panel section-gap"><h2>Cadastros excluídos</h2><p class="subtle" style="font-size:12px;margin:0 0 8px">Quem foi excluído fica aqui até você restaurar ou apagar de vez. As fotos de veículo excluído não voltam.</p>'+
+    (del.length?'<div class="list-stack">'+del.map(function(x){const it=x.item||{};const lab={truck:'Veículo',clients:'Empresa cliente',partners:'Parceiro',suppliers:'Fornecedor',mechanics:'Funcionário (mecânico)'}[x.kind]||x.kind;
+      const sub=x.kind==='truck'?[it.client,it.model].filter(Boolean).join(' · '):[it.service,it.contact,it.phone,it.city].filter(Boolean).join(' · ');
+      return '<div class="list-row"><div class="grow"><b>'+esc(x.name||'(sem nome)')+'</b> <span class="pill">'+esc(lab)+'</span><small>'+esc(sub||'Sem detalhes')+'<br>Excluído em '+esc(x.deletedAt||'')+'</small></div><div class="rowacts"><button class="small-btn" onclick="restoreTrash(\''+x.id+'\')">Restaurar</button><button class="small-btn red" onclick="purgeTrash(\''+x.id+'\')">Apagar de vez</button></div></div>'}).join('')+'</div>':'<div class="empty">'+(on?'Nenhum cadastro excluído com essa busca.':'Nenhum cadastro excluído.')+'</div>')+'</div>';
+  return out;
+}
+function restoreTrash(id){
+  const x=trash.find(function(t){return t.id===id});if(!x)return;
+  const it=x.item;
+  if(x.kind==='truck'){if(!trucks.some(function(t){return t.id===it.id}))trucks.push(it);logEvent(it.plate,'Veículo restaurado da lixeira')}
+  else{const cfg=REG[x.kind];if(!cfg){alert('Não consegui restaurar este cadastro.');return}if(!cfg.get().some(function(t){return t.id===it.id}))cfg.set(cfg.get().concat([it]))}
+  trash=trash.filter(function(t){return t.id!==id});persist();render();
+}
+function purgeTrash(id){
+  const x=trash.find(function(t){return t.id===id});if(!x)return;
+  if(!confirm('Apagar de vez “'+(x.name||'este cadastro')+'”? Não tem como desfazer.'))return;
+  trash=trash.filter(function(t){return t.id!==id});persist();render();
+}
+/* ---------- Barras de pesquisa por veículo ---------- */
+function vehBar(id,ph,oninput,val){return '<div class="msearch" style="margin:0 0 12px"><span class="mslupa" aria-hidden="true">🔍</span><input id="'+id+'" type="search" placeholder="'+esc(ph)+'" autocomplete="off" value="'+esc(val||'')+'" oninput="'+oninput+'"></div>'}
+function filtBox(boxId,v){const box=document.getElementById(boxId);if(!box)return;const w=msNorm(v).trim().split(/\s+/).filter(Boolean);box.querySelectorAll('.list-row').forEach(function(el){el.style.display=w.every(function(x){return msNorm(el.textContent).indexOf(x)>=0})?'':'none'})}
+let cadQ='';
+function cadSearch(v){cadQ=v;const r=$('cadRes');if(r)r.innerHTML=cadBody(v)}
+function cadBody(q){const w=msNorm(q).trim();const rows=w?trucks.filter(function(t){return histMatch(histTruckHay(t),q)}):trucks.slice(0,10);loadThumbs();return (rows.length?truckList(rows,false):'<div class="empty">'+(w?'Nenhum veículo com essa busca.':'Nenhum veículo cadastrado ainda.')+'</div>')}
+/* ---------- Histórico de manutenção ---------- */
+function plateKey(p){return msNorm(p).replace(/[^a-z0-9]/g,'')}
+function visitDate(t){return fmtDate((t.created||'').slice(0,10)||t.date)}
+function maintGroups(list,minVisits){
+  const g={};list.forEach(function(t){const k=plateKey(t.plate);if(!k)return;(g[k]=g[k]||[]).push(t)});
+  return Object.keys(g).filter(function(k){return g[k].length>=minVisits}).map(function(k){
+    const visits=g[k].slice().sort(function(a,b){return String(a.created||a.date||'').localeCompare(String(b.created||b.date||''))});
+    return {plate:visits[visits.length-1].plate,visits:visits}
+  }).sort(function(a,b){return String(b.visits[b.visits.length-1].created||'').localeCompare(String(a.visits[a.visits.length-1].created||''))});
+}
+function maintSpent(key){
+  const qs=quotes.filter(function(q){return plateKey(q.plate)===key&&q.status&&q.status!==''});
+  const ap=qs.filter(function(q){return q.status==='Aprovado'});
+  return {quotes:qs.slice().sort(function(a,b){return String(b.iso||b.date||'').localeCompare(String(a.iso||a.date||''))}),approved:ap,total:ap.reduce(function(x,q){return x+qTotal(q)},0)};
+}
+let hwin={mode:'manut',co:'',plate:'',vi:-1,qi:''};
+function hwinModal(){return hwin.mode==='manut'?'maintModal':'orcHistModal'}
+function hwinCompany(){return hwin.co?(REG.clients?REG.clients.get().find(function(c){return c.id===hwin.co}):null):null}
+function hwinBubble(t,sub,key){
+  let h=bubbleHTML(t,sub);
+  h=h.replace("onclick=\"openTruck('"+(t&&t.id||'')+"')\"","onclick=\"hwinPlate('"+key+"')\"");
+  return h;
+}
+function hwinPlate(key){hwin.plate=key;hwin.vi=-1;hwin.qi='';hwinRender()}
+function hwinVisit(i){hwin.vi=i;hwinRender()}
+function hwinQuote(id){hwin.qi=id;hwinRender()}
+function hwinBack(){
+  if(hwin.qi){hwin.qi='';}
+  else if(hwin.vi>=0){hwin.vi=-1}
+  else if(hwin.plate){hwin.plate=''}
+  hwinRender();
+}
+function hwinOpenTruck(id){closeModal('maintModal');openTruck(id)}
+function hwinRender(){
+  const co=hwinCompany(),isM=hwin.mode==='manut',mod=hwinModal();
+  const list=hwin.co?trucks.filter(function(t){return t.companyId===hwin.co}):trucks;
+  const ids=list.map(function(t){return plateKey(t.plate)});
+  let title=isM?'Histórico de manutenção':'Histórico de orçamentos';
+  if(co)title=(isM?'Manutenções':'Orçamentos')+' · '+co.name;
+  let body='',back=hwin.plate||hwin.vi>=0||hwin.qi;
+  loadThumbs();
+  if(!hwin.plate){
+    if(isM){
+      const groups=maintGroups(list,1);
+      const tot=groups.reduce(function(x,gr){return x+maintSpent(plateKey(gr.plate)).total},0);
+      body=(groups.length?'<p class="subtle" style="font-size:12px;margin:0 0 10px">'+groups.length+' veículo(s) · Total gasto: '+money(tot)+'</p><div class="bub-list">'+
+        groups.map(function(gr){const sp=maintSpent(plateKey(gr.plate)),last=gr.visits[gr.visits.length-1];
+          return hwinBubble(last,gr.visits.length+' entrada'+(gr.visits.length>1?'s':'')+' · gasto '+money(sp.total),plateKey(gr.plate))}).join('')+'</div>':'<div class="empty">'+(co?'Nenhum caminhão desta empresa ainda.':'Nenhum veículo passou pela oficina ainda.')+'</div>');
+    }else{
+      const qs=quotes.filter(function(q){return q.status&&q.status!==''&&ids.indexOf(plateKey(q.plate))>=0||(!hwin.co&&q.status&&q.status!=='')});
+      const g={};qs.forEach(function(q){const k=plateKey(q.plate);(g[k]=g[k]||[]).push(q)});
+      const keys=Object.keys(g);
+      body=(keys.length?'<div class="bub-list">'+keys.map(function(k){
+        const L=g[k],t=trucks.filter(function(x){return plateKey(x.plate)===k}).sort(function(a,b){return String(b.created||'').localeCompare(String(a.created||''))})[0]||{id:'',plate:L[0].plate,client:L[0].client||'',model:'',status:''};
+        const ap=L.filter(function(q){return q.status==='Aprovado'}).reduce(function(x,q){return x+qTotal(q)},0);
+        return hwinBubble(t,L.length+' orçamento(s) · aprovado '+money(ap),k)}).join('')+'</div>':'<div class="empty">'+(co?'Nenhum orçamento desta empresa ainda.':'Nenhum orçamento lançado ainda.')+'</div>');
+    }
+  }else{
+    const key=hwin.plate,grp=(isM?maintGroups(list,1):[]).filter(function(gr){return plateKey(gr.plate)===key})[0];
+    const plateName=(grp?grp.plate:(quotes.find(function(q){return plateKey(q.plate)===key})||{}).plate)||key;
+    if(isM){
+      if(!grp){body='<div class="empty">Veículo não encontrado.</div>'}
+      else if(hwin.vi<0){
+        const sp=maintSpent(key);
+        body='<div class="panel" style="margin:0"><div class="panel-head"><h2>'+esc(plateName)+'</h2></div><small class="subtle">'+esc([grp.visits[0].client,grp.visits[0].model].filter(Boolean).join(' · ')||'—')+' · gasto '+money(sp.total)+'</small></div>'+
+          '<div class="list-stack" style="margin-top:10px">'+grp.visits.map(function(t,i){return '<div class="list-row click" onclick="hwinVisit('+i+')"><div class="grow"><b>'+(i+1)+'ª entrada</b> <span class="pill">'+esc(t.status||'')+'</span><small>'+esc(t.reason||'Motivo não informado')+'</small></div><div class="rowacts"><span class="small-btn">Ver</span></div></div>'}).join('')+'</div>';
+      }else{
+        const t=grp.visits[hwin.vi];
+        const qs=quotes.filter(function(q){return q.truckId===t.id&&q.status&&q.status!==''});
+        body='<div class="panel" style="margin:0"><div class="panel-head"><h2>'+(hwin.vi+1)+'ª entrada</h2><span class="pill">'+esc(t.status||'')+'</span></div>'+
+          '<small class="subtle">Entrada em '+esc(visitDate(t))+(t.deliveredAt?' · Entregue em '+esc(fmtDate(t.deliveredAt)):'')+'</small>'+
+          '<p style="margin:10px 0 4px"><b>Motivo:</b> '+esc(t.reason||'não informado')+'</p><p style="margin:0"><b>Mecânico:</b> '+esc(mechanicName(t.mechanicId))+'</p></div>'+
+          '<div class="list-stack" style="margin-top:10px">'+(qs.length?qs.map(function(q){return '<div class="list-row"><div class="grow"><b>Orçamento nº '+esc(quoteNumber(q))+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+esc(q.date||'')+' · '+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>'}).join(''):'<div class="empty">Nenhum orçamento nesta entrada.</div>')+'</div>'+
+          '<div class="modal-actions" style="justify-content:flex-start;margin-top:10px"><button class="btn primary" onclick="hwinOpenTruck(\''+t.id+'\')">Abrir veículo</button></div>';
+      }
+    }else{
+      const qs=quotes.filter(function(q){return plateKey(q.plate)===key&&q.status&&q.status!==''}).sort(function(a,b){return String(b.iso||b.date||'').localeCompare(String(a.iso||a.date||''))});
+      if(!hwin.qi){
+        body='<div class="panel" style="margin:0"><div class="panel-head"><h2>'+esc(plateName)+'</h2></div></div><div class="list-stack" style="margin-top:10px">'+qs.map(function(q){return '<div class="list-row click" onclick="hwinQuote(\''+q.id+'\')"><div class="grow"><b>Orçamento nº '+esc(quoteNumber(q))+'</b> <span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span><small>'+q.items.length+' item(ns)</small></div><div class="money pos">'+money(qTotal(q))+'</div></div>'}).join('')+'</div>';
+      }else{
+        const q=qs.find(function(x){return x.id===hwin.qi});
+        body=q?'<div class="panel" style="margin:0"><div class="panel-head"><h2>Orçamento nº '+esc(quoteNumber(q))+'</h2><span class="pill '+statusClass(q.status)+'">'+esc(q.status)+'</span></div><small class="subtle">Data: '+esc(q.date||'')+'</small>'+
+          '<div class="list-stack" style="margin-top:10px">'+q.items.map(function(i){return '<div class="list-row"><div class="grow"><b>'+esc(i.desc||i.type||'Item')+'</b><small>'+i.qty+' x '+money(i.price)+'</small></div><div class="money">'+money(i.qty*i.price)+'</div></div>'}).join('')+'</div>'+
+          '<p style="margin:10px 0 0"><b>Total: '+money(qTotal(q))+'</b></p></div>'+
+          '<div class="modal-actions" style="justify-content:flex-start;margin-top:10px"><button class="btn primary" onclick="closeModal(\'orcHistModal\');openQuote(\''+q.id+'\',\'\')">Abrir orçamento</button></div>':'<div class="empty">Orçamento não encontrado.</div>';
+      }
+    }
+  }
+  $(isM?'maintTitle':'orcHistTitle').textContent=title;
+  $(isM?'maintBody':'orcHistBody').innerHTML=body;
+  $(isM?'maintBack':'orcHistBack').style.display=back?'':'none';
+}
+function maintOpen(companyId){hwin={mode:'manut',co:companyId||'',plate:'',vi:-1,qi:''};hwinRender();openModal('maintModal')}
+function orcHistOpen(companyId){hwin={mode:'orc',co:companyId||'',plate:'',vi:-1,qi:''};hwinRender();openModal('orcHistModal')}
+NEWPAGE.notificacoes=function(){
+  if(ws&&ws.is_admin)return NEWPAGE.orbe_notif();
+  const st=notifStockHTML();
+  return pageHead('Notificações','Avisos do aplicativo. Aqui chegam os alertas de cada área.','')+'<div class="panel section-gap">'+(st||'<div class="empty">Nenhuma notificação por enquanto.</div>')+'</div>';
+};
 NEWPAGE.orbe_notif=function(){
   if(admNeedData())return pageHead('Notificações','Só você vê esta página.','')+'<div class="empty">Carregando…</div>';
   const S=admSummary(admList||[]);
@@ -5657,6 +5953,8 @@ async function bootAfterLogin(){
   checkIndBanner();
   if(ws&&ws.id&&!ws.ok){showAuth('',false,{t:ws.status==='blocked'?'Acesso suspenso':'Teste grátis encerrado',d:'Seus dados continuam guardados. Pague a mensalidade em atraso para voltar a usar.',btn:true,pay:ws.status==='blocked'});return}
   if(!ROLE_READ[pr.role]){const inat=pr.role==='inativo';showAuth('',false,{t:inat?'Acesso bloqueado':'Aguardando liberação',d:inat?'Fale com o dono da oficina.':'Seu cadastro foi criado. Peça ao dono para liberar o seu acesso e depois toque em “Verificar de novo”.',btn:!inat});return}
+  try{await netLoad()}catch(e){netLoaded=true}
+  if(netView&&!netChildren.some(function(c){return c.id===netView})){syncedSave({});netResetLocal();netView=null;try{localStorage.removeItem('orbe_net_view')}catch(e){}}
   try{await syncAll(true)}catch(e){}
   if(prof&&prof.role==='dono'&&!(ws&&ws.is_admin)){try{await segWizard()}catch(e){}}
   a.style.display='none';a.innerHTML='';
@@ -5735,10 +6033,32 @@ async function syncPhotosDown(){
 }
 function refreshOpenPhotos(){if(ph&&ph.live&&ph.truckId&&$(ph.box)&&$('truckModal').classList.contains('open'))dbOf(ph.truckId).then(function(l){ph.list=l;renderPhotos()}).catch(function(){})}
 
+/* ---------- Painel das oficinas (plano de rede) ---------- */
+async function netLoad(){const r=await sb('/rest/v1/rpc/net_children',{method:'POST',body:{}});netChildren=r.ok&&Array.isArray(r.json)?r.json:[];netLoaded=true;return netChildren}
+function netName(){const c=netChildren.find(x=>x.id===netView);return c?c.name+(c.shop_number?' ('+c.shop_number+')':''):'Oficina'}
+function netResetLocal(){Object.keys(COLS).forEach(c=>{try{COLS[c][1]([])}catch(e){}});try{persistLocal()}catch(e){}}
+async function netSwitch(id){
+  if(hasPending()){try{await syncAll()}catch(e){}}
+  if(hasPending()){alert('Ainda há alterações que não foram enviadas para a nuvem. Verifique a internet e tente de novo.');return}
+  syncedSave({});
+  netResetLocal();
+  netView=id||null;
+  try{if(netView)localStorage.setItem('orbe_net_view',netView);else localStorage.removeItem('orbe_net_view')}catch(e){}
+  syncedSave({});
+  currentPage='inicio';render();
+  try{await syncAll()}catch(e){}
+  render();
+}
+NEWPAGE.painel_rede=function(){
+  if(!netLoaded){netLoad().then(function(){render()}).catch(function(){netLoaded=true;render()});return pageHead('Painel das oficinas','Carregando as suas oficinas…','')}
+  const head=pageHead('Painel das oficinas','Suas oficinas. Toque em uma para abrir o painel completo dela.','<button class="btn soft" onclick="netLoaded=false;render()">↻ Atualizar</button>');
+  if(!netChildren.length)return head+'<div class="empty">Nenhuma oficina vinculada ao seu plano de rede. Fale com o suporte para vincular.</div>';
+  return head+'<div class="panel"><div class="list-stack">'+netChildren.map(function(c){return '<div class="list-row click" onclick="netSwitch(\''+c.id+'\')"><div class="grow"><b>'+esc(c.name)+'</b><small>'+esc((c.shop_number?c.shop_number+' · ':'')+(c.status||''))+'</small></div><button class="small-btn" onclick="event.stopPropagation();netSwitch(\''+c.id+'\')">Abrir</button></div>'}).join('')+'</div></div>';
+};
 /* sincronização por registro */
 function curMap(c){const m={};COLS[c][0]().forEach(x=>{if(x&&x.id)m[x.id]=canon(x)});return m}
-function syncedLoad(){try{return JSON.parse(localStorage.getItem(SYK+':'+prof.id)||'{}')}catch(e){return {}}}
-function syncedSave(x){try{localStorage.setItem(SYK+':'+prof.id,JSON.stringify(x))}catch(e){}}
+function syncedLoad(){try{return JSON.parse(localStorage.getItem(SYK+':'+prof.id+(netView?':net:'+netView:''))||'{}')}catch(e){return {}}}
+function syncedSave(x){try{localStorage.setItem(SYK+':'+prof.id+(netView?':net:'+netView:''),JSON.stringify(x))}catch(e){}}
 function hasPending(){const syn=syncedLoad();return ROLE_WRITE[prof.role].some(c=>{const cur=curMap(c),old=syn[c]||{};return Object.keys(cur).some(id=>old[id]!==cur[id])||Object.keys(old).some(id=>!(id in cur))})}
 async function pushDiffs(){
   const cols=ROLE_WRITE[prof.role],syn=syncedLoad(),up=[],del={},snap={};
@@ -5750,12 +6070,17 @@ async function pushDiffs(){
     Object.keys(del).forEach(c=>{delete del[c]});
     if(!window.__guardWarned){window.__guardWarned=true;setTimeout(function(){alert('Atenção: este aparelho ficou sem vários registros. Por segurança NÃO apaguei nada na nuvem e vou restaurar tudo a partir dela.')},50)}
   }
+  if(netView){const dl=[];Object.keys(del).forEach(c=>del[c].forEach(id=>dl.push({collection:c,id:String(id)})));
+    for(let i=0;i<up.length;i+=150){const r=await sb('/rest/v1/rpc/net_push',{method:'POST',body:{p_tenant:netView,p_rows:up.slice(i,i+150).map(u=>({collection:u.collection,id:u.id,data:u.data})),p_del:[]}});if(!r.ok)throw new Error('push '+r.status)}
+    if(dl.length){const r=await sb('/rest/v1/rpc/net_push',{method:'POST',body:{p_tenant:netView,p_rows:[],p_del:dl}});if(!r.ok)throw new Error('del '+r.status)}
+  }else{
   for(let i=0;i<up.length;i+=150){const r=await sb('/rest/v1/records?on_conflict=tenant_id,collection,id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:up.slice(i,i+150)});if(!r.ok)throw new Error('push '+r.status)}
   for(const c of Object.keys(del)){for(let i=0;i<del[c].length;i+=40){const ids=del[c].slice(i,i+40).join(',');const r=await sb('/rest/v1/records?collection=eq.'+c+'&id=in.('+encodeURIComponent(ids)+')',{method:'DELETE'});if(!r.ok)throw new Error('del '+r.status)}}
+  }
   const ns=Object.assign({},syn);cols.forEach(c=>{ns[c]=snap[c]});syncedSave(ns);
 }
 async function pull(){
-  const r=await sb('/rest/v1/records?select=collection,id,data&order=updated_at.desc&limit=20000');
+  const r=netView?await sb('/rest/v1/rpc/net_pull',{method:'POST',body:{p_tenant:netView}}):await sb('/rest/v1/records?select=collection,id,data&order=updated_at.desc&limit=20000');
   if(!r.ok)throw new Error('pull '+r.status);
   if(hasPending())return;
   const by={};r.json.forEach(x=>{(by[x.collection]=by[x.collection]||[]).push(x.data)});
@@ -5770,10 +6095,11 @@ async function pull(){
   syncedSave(syn);
   if(changed){persistLocal();render()}
 }
+function gar90Migrate(){if(localStorage.getItem('gar90_v2'))return;if(!trucks.length)return;trucks.forEach(function(t){if(!t.warrantyDays)t.warrantyDays=90});localStorage.setItem('gar90_v2','1');persist()}
 async function syncAll(first){
   if(!prof||syncing){syncAgain=true;return}
   syncing=true;setBadge('Sincronizando…');
-  try{try{await syncPhotosUp()}catch(e){if(String(e.message)==='sessao')throw e}await pushDiffs();await pull();try{await syncPhotosDown()}catch(e){}setBadge('☁ Na nuvem')}
+  try{if(!netView){try{await syncPhotosUp()}catch(e){if(String(e.message)==='sessao')throw e}}await pushDiffs();await pull();if(!netView)gar90Migrate();try{if(!netView)await syncPhotosDown()}catch(e){}setBadge('☁ Na nuvem')}
   catch(e){setBadge('⚠ Sem conexão',true);if(first)throw e}
   finally{syncing=false;if(syncAgain){syncAgain=false;scheduleSync()}}
 }
@@ -5782,6 +6108,7 @@ let pollOn=false;
 function startPolling(){if(pollOn)return;pollOn=true;setInterval(function(){if(prof&&!document.hidden)syncAll()},30000);document.addEventListener('visibilitychange',function(){if(prof)syncAll()})}
 async function logout(){
   if(prof&&ROLE_WRITE[prof.role]){try{await syncPhotosUp();await pushDiffs()}catch(e){if(!confirm('Há alterações que ainda não foram enviadas para a nuvem (sem internet?). Se sair agora elas serão perdidas. Sair mesmo assim?'))return}}
+  netView=null;try{localStorage.removeItem('orbe_net_view')}catch(e){}
   try{await dbClear()}catch(e){}
   try{localStorage.removeItem('rds_cloudphotos_v1');localStorage.removeItem('rds_safety_v1');localStorage.removeItem('rds_lastbackup_v1');Object.keys(K).forEach(k=>localStorage.removeItem(K[k]));Object.keys(localStorage).filter(k=>k.indexOf(SYK)===0).forEach(k=>localStorage.removeItem(k))}catch(e){}
   sessSave(null);location.reload();
